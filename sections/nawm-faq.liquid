@@ -26,6 +26,7 @@
   endif
 
   assign keys = 'q1,q2,q3,q4,q5,q6,q7,q8' | split: ','
+  assign practical = 'p1,p2,p3' | split: ','
   assign verify_notes = 'functionele producttest van FM-selectie als wekbron,exact aantal wekgeluiden apart van totaal ontspanningsgeluiden,voeding en back-upgedrag bij stroomuitval' | split: ','
   assign jsonld = ''
   assign index = 0
@@ -105,7 +106,7 @@
         Praktische vragen. De antwoorden komen uit de themasettings, zodat
         levertijd, retour en garantie overal op de site identiek zijn.
       {%- endcomment -%}
-      {%- for key in 'p1,p2,p3' | split: ',' -%}
+      {%- for key in practical -%}
         {%- liquid
           assign base = 'nawm.faq.practical.' | append: key
           assign k_q = base | append: '.q'
