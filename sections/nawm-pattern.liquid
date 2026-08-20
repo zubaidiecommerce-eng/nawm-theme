@@ -1,0 +1,237 @@
+{% comment %}
+  Sectie 3 — Het patroon. BUILD SPEC §5.3.
+
+  Het mechanisme zichtbaar maken: scrollen → geen afbouw → abrupt alarm →
+  snooze → zware start. Een horizontale tijdlijn op desktop, verticaal
+  gestapeld op mobiel.
+
+  Dit is de enige plek op de pagina waar genummerde markers zijn toegestaan,
+  omdat het werkelijk een volgorde in de tijd is — en dan met kloktijden in
+  mono, niet met 01 / 02 / 03.
+
+  Ook de enige sectie waar --nawm-cool prominent mag: koud telefoonschijnsel op
+  de eerste twee knopen, tegenover amber op de laatste. Het contrast doet het
+  argument.
+
+  Taalregel: overal 'kan', 'vaak', 'bij veel mensen'. Nooit 'zorgt ervoor dat'.
+{% endcomment %}
+
+{% liquid
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pattern.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pattern.heading' | t
+  endif
+
+  assign body = section.settings.body
+  if body == blank
+    assign body = 'nawm.pattern.body' | t
+  endif
+
+  assign nodes = 'n1,n2,n3,n4,n5' | split: ','
+%}
+
+<section class="nawm-section nawm-pattern ctx-night">
+  <div class="nawm-wrap">
+    <div class="nawm-pattern__intro">
+      <div class="nawm-pattern__text nawm-reveal">
+        {% render 'nawm-eyebrow', text: eyebrow %}
+        <h2>{{ heading }}</h2>
+        <p class="nawm-pattern__body">{{ body }}</p>
+      </div>
+
+      <div class="nawm-pattern__media nawm-reveal" style="--reveal-delay: 120ms;">
+        {% render 'nawm-figure',
+          image: section.settings.image,
+          alt: 'nawm.pattern.image_alt' | t,
+          slug: 'koud-scherm',
+          sizes: '(min-width: 1024px) 34vw, 100vw',
+          ratio: '4 / 5'
+        %}
+      </div>
+    </div>
+
+    <ol class="nawm-pattern__timeline">
+      {%- for key in nodes -%}
+        {%- liquid
+          assign base = 'nawm.pattern.nodes.' | append: key
+          assign k_time = base | append: '.time'
+          assign k_moment = base | append: '.moment'
+          assign k_feel = base | append: '.feel'
+          assign k_do = base | append: '.do'
+
+          assign tone = 'amber'
+          if forloop.index <= 2
+            assign tone = 'cool'
+          elsif forloop.index == 3
+            assign tone = 'ember'
+          endif
+        -%}
+        <li
+          class="nawm-pattern__node nawm-pattern__node--{{ tone }} nawm-reveal"
+          style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms;"
+        >
+          <time class="nawm-pattern__time nawm-mono">{{ k_time | t }}</time>
+          <h3 class="nawm-pattern__moment">{{ k_moment | t }}</h3>
+          <dl class="nawm-pattern__detail">
+            <dt>{{ 'nawm.pattern.col_feel' | t }}</dt>
+            <dd>{{ k_feel | t }}</dd>
+            <dt>{{ 'nawm.pattern.col_do' | t }}</dt>
+            <dd>{{ k_do | t }}</dd>
+          </dl>
+        </li>
+      {%- endfor -%}
+    </ol>
+  </div>
+</section>
+
+{% stylesheet %}
+  .nawm-pattern__intro {
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  .nawm-pattern__body {
+    max-width: 56ch;
+    margin-block-start: var(--sp-4);
+  }
+
+  .nawm-pattern__timeline {
+    list-style: none;
+    margin: clamp(3rem, 7vw, 5rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  .nawm-pattern__node {
+    --node: var(--nawm-amber);
+
+    position: relative;
+    padding-block-start: var(--sp-4);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .nawm-pattern__node--cool {
+    --node: var(--nawm-cool);
+  }
+  .nawm-pattern__node--ember {
+    --node: var(--nawm-ember);
+  }
+
+  .nawm-pattern__node::before {
+    content: "";
+    position: absolute;
+    inset-block-start: -3px;
+    inset-inline-start: 0;
+    width: 5px;
+    height: 5px;
+    border-radius: var(--r-pill);
+    background: var(--node);
+  }
+
+  .nawm-pattern__time {
+    display: block;
+    color: var(--node);
+    font-size: 1rem;
+    letter-spacing: .1em;
+  }
+
+  .nawm-pattern__moment {
+    margin-block-start: var(--sp-1);
+    font-size: 1.0625rem;
+    font-weight: 500;
+  }
+
+  .nawm-pattern__detail {
+    margin: var(--sp-3) 0 0;
+    display: grid;
+    gap: var(--sp-1) var(--sp-3);
+  }
+
+  .nawm-pattern__detail dt {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--fg-soft);
+    opacity: .8;
+  }
+
+  .nawm-pattern__detail dd {
+    margin: 0;
+    color: var(--fg);
+    font-size: var(--fs-small);
+  }
+
+  .nawm-pattern__detail dt + dd {
+    margin-block-end: var(--sp-2);
+  }
+
+  @media (min-width: 1024px) {
+    .nawm-pattern__intro {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      align-items: end;
+      gap: var(--sp-7);
+    }
+
+    .nawm-pattern__timeline {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0;
+    }
+
+    .nawm-pattern__node {
+      padding-inline-end: var(--sp-4);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Patroon",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De vijf knopen en hun kloktijden staan in locales/nl.default.json onder nawm.pattern.nodes."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Tekst"
+    },
+    {
+      "type": "header",
+      "content": "Beeld"
+    },
+    {
+      "type": "paragraph",
+      "content": "Koud telefoonschijnsel tegenover warm licht — zie §9.3, prompt 8."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Beeld (4:5)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Patroon"
+    }
+  ]
+}
+{% endschema %}

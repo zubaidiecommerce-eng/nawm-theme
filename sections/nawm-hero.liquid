@@ -1,0 +1,298 @@
+{% comment %}
+  Sectie 1 — Hero. BUILD SPEC §5.1.
+
+  Herkenning binnen drie seconden: eyebrow, hoofdresultaat, product in warme
+  slaapkamercontext, prijs, één CTA. Desktop is asymmetrisch 7/5 met een beeld
+  dat tot de rechterrand van het scherm doorloopt; mobiel komt het beeld eerst
+  op 16:11 zodat de CTA niet onder de vouw wordt geduwd.
+
+  Dit is ook `data-dawn-start`: hier staat de klok op 23:30 en begint de nacht.
+{% endcomment %}
+
+{% liquid
+  assign product = settings.nawm_product
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.hero.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.hero.heading' | t
+  endif
+
+  assign subheading = section.settings.subheading
+  if subheading == blank
+    assign subheading = 'nawm.hero.subheading' | t
+  endif
+
+  assign trust = section.settings.trust_line
+  if trust == blank
+    assign trust = 'nawm.hero.trust' | t
+  endif
+
+  assign lines = heading | split: '|'
+%}
+
+{%- capture price -%}
+  {%- render 'nawm-price', product: product -%}
+{%- endcapture -%}
+
+{%- capture cta_label -%}
+  {%- if section.settings.cta_label != blank -%}
+    {{ section.settings.cta_label }}
+  {%- else -%}
+    {{ 'nawm.hero.cta' | t: price: price }}
+  {%- endif -%}
+{%- endcapture -%}
+
+<section
+  class="nawm-section nawm-hero ctx-night"
+  data-dawn-start
+  data-nawm-hero
+>
+  <div class="nawm-hero__grid">
+    <div class="nawm-hero__media">
+      {% render 'nawm-figure',
+        image: section.settings.image,
+        image_mobile: section.settings.image_mobile,
+        alt: 'nawm.hero.image_alt' | t,
+        slug: 'hero-nachtkastje',
+        sizes: '(min-width: 1024px) 45vw, 100vw',
+        eager: true,
+        ratio: '16 / 11',
+        class: 'nawm-figure--bleed nawm-hero__figure'
+      %}
+    </div>
+
+    <div class="nawm-hero__text">
+      {% render 'nawm-eyebrow', text: eyebrow, class: 'nawm-hero__eyebrow' %}
+
+      <h1 class="nawm-hero__heading">
+        {%- for line in lines -%}
+          <span class="nawm-hero__line" style="--line-index: {{ forloop.index0 }};">{{ line | strip }}</span>
+          {% unless forloop.last %} {% endunless %}
+        {%- endfor -%}
+      </h1>
+
+      <p class="nawm-lede nawm-hero__sub">{{ subheading }}</p>
+
+      <div class="nawm-hero__action">
+        {% render 'nawm-cta',
+          label: cta_label,
+          url: section.settings.cta_url | default: '#offer',
+          event: 'view_offer_click'
+        %}
+
+        <p class="nawm-mono nawm-hero__trust">
+          {{- trust -}}
+          {%- if section.settings.show_trial -%}
+            · {{ 'nawm.hero.trial' | t: nights: settings.trial_nights }}
+          {%- endif -%}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  /*
+   * De hero is de enige sectie zonder de gedeelde padding-block: het beeld moet
+   * op desktop de volle hoogte onder de header vullen. Overal elders komt de
+   * sectiepadding uitsluitend uit .nawm-section in nawm-tokens.css.
+   */
+  .nawm-hero {
+    padding-block: 0;
+    overflow: clip;
+  }
+
+  .nawm-hero__grid {
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  .nawm-hero__figure,
+  .nawm-hero__figure img,
+  .nawm-hero__figure .nawm-figure__placeholder {
+    height: 100%;
+  }
+
+  .nawm-hero__figure img {
+    object-fit: cover;
+  }
+
+  .nawm-hero__text {
+    width: min(100% - var(--gutter) * 2, 62ch);
+    margin-inline: auto;
+    padding-block-end: clamp(3rem, 8vw, 5rem);
+  }
+
+  .nawm-hero__heading {
+    margin-block: var(--sp-3) var(--sp-4);
+  }
+
+  .nawm-hero__sub {
+    color: var(--fg-soft);
+  }
+
+  .nawm-hero__action {
+    margin-block-start: var(--sp-5);
+  }
+
+  .nawm-hero__trust {
+    margin-block-start: var(--sp-3);
+    color: var(--fg-soft);
+    line-height: 1.6;
+  }
+
+  @media (min-width: 750px) {
+    .nawm-hero__line {
+      display: block;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nawm-hero__grid {
+      --hero-inset: max(var(--gutter), (100vw - var(--wrap)) / 2);
+
+      grid-template-columns:
+        var(--hero-inset)
+        minmax(0, min(calc(var(--wrap) * 7 / 12), 50%))
+        minmax(0, 1fr);
+      align-items: center;
+      gap: var(--sp-6);
+      min-height: calc(100dvh - var(--header-height, 60px));
+    }
+
+    .nawm-hero__media {
+      grid-column: 3;
+      grid-row: 1;
+      align-self: stretch;
+    }
+
+    .nawm-hero__text {
+      grid-column: 2;
+      grid-row: 1;
+      width: auto;
+      margin-inline: 0;
+      padding-block: var(--sp-7);
+    }
+  }
+
+  /*
+   * Eén georkestreerde binnenkomst en daarna niets meer. Geen parallax.
+   * Beweging doet licht en opaciteit; de verplaatsing blijft 12px.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    .nawm-js .nawm-hero__eyebrow,
+    .nawm-js .nawm-hero__line,
+    .nawm-js .nawm-hero__sub,
+    .nawm-js .nawm-hero__action {
+      animation: nawm-hero-in var(--dur-slow) var(--ease) both;
+    }
+
+    .nawm-js .nawm-hero__eyebrow {
+      animation-delay: 0ms;
+    }
+    .nawm-js .nawm-hero__line {
+      animation-delay: calc(120ms + var(--line-index) * 120ms);
+    }
+    .nawm-js .nawm-hero__sub {
+      animation-delay: 400ms;
+    }
+    .nawm-js .nawm-hero__action {
+      animation-delay: 560ms;
+    }
+
+    @keyframes nawm-hero-in {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Hero",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Laat de tekstvelden leeg om de copy uit locales/nl.default.json te gebruiken. Een verticale streep (|) in de kop maakt een regelovergang."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subkop"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Knoptekst",
+      "info": "Leeg laten toont de knoptekst met de prijs erin."
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Knoplink",
+      "info": "Standaard springt de knop naar het aanbod (#offer)."
+    },
+    {
+      "type": "text",
+      "id": "trust_line",
+      "label": "Trustregel"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trial",
+      "label": "Proefperiode noemen",
+      "default": false,
+      "info": "Alleen aanzetten wanneer retourlogistiek en producthygiëne operationeel vaststaan."
+    },
+    {
+      "type": "header",
+      "content": "Beeld"
+    },
+    {
+      "type": "paragraph",
+      "content": "Dit is het LCP-beeld. Genereer de scène met een lege plek op het nachtkastje en composit de échte productfoto erop — zie §9.3, prompt 1."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Beeld (3:2)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Beeld mobiel (4:5)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Hero"
+    }
+  ]
+}
+{% endschema %}

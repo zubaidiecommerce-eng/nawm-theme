@@ -9,7 +9,7 @@
     },
     "hero": {
       "eyebrow": "Je slaapt misschien lang genoeg. Maar word je ook uitgerust wakker?",
-      "heading": "Frisser wakker begint de avond ervoor.",
+      "heading": "Frisser wakker begint|de avond ervoor.",
       "subheading": "Bouw in 30 minuten af zonder eindeloos scrollen en word geleidelijk wakker met licht, natuurgeluiden of radio. Eén systeem voor een rustigere avond en een zachtere start.",
       "cta": "Start mijn Sleep–Wake routine — {{ price }}",
       "trust": "Inclusief Nederlandse Sleep–Wake Guide · EU-stekker · verzending inbegrepen",

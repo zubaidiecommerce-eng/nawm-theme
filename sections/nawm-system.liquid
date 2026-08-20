@@ -1,0 +1,210 @@
+{% comment %}
+  Sectie 4 — Het NAWM-systeem. BUILD SPEC §5.4.
+
+  Het aanbod als één systeem met twee helften, het product als fysiek anker in
+  het midden. Dit is het kantelpunt van de pagina: --ember piekt hier en de
+  achtergrond is op zijn warmst-donkerst.
+
+  De FM-radio staat in de copy, maar wordt pas als feit getoond zodra
+  `has_fm_radio` op het verkoopmodel is bevestigd (§13, punt 2). Tot die tijd
+  rendert het VERIFY-token in plaats van de radiobelofte.
+{% endcomment %}
+
+{% liquid
+  assign product = settings.nawm_product
+  assign radio = product.metafields.nawm.has_fm_radio
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.system.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.system.heading' | t
+  endif
+
+  assign body = section.settings.body
+  if body == blank
+    assign body = 'nawm.system.body' | t
+  endif
+%}
+
+<section class="nawm-section nawm-system ctx-night" data-dawn-marker="mid">
+  <div class="nawm-wrap">
+    <div class="nawm-system__head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+      <p class="nawm-lede nawm-system__body">{{ body }}</p>
+    </div>
+
+    <div class="nawm-system__grid">
+      <div class="nawm-system__column nawm-system__column--evening nawm-reveal">
+        <h3 class="nawm-system__column-heading">{{ 'nawm.system.evening.heading' | t }}</h3>
+        <ul class="nawm-list">
+          <li>{{ 'nawm.system.evening.item1' | t }}</li>
+          <li>{{ 'nawm.system.evening.item2' | t }}</li>
+          <li>{{ 'nawm.system.evening.item3' | t }}</li>
+        </ul>
+      </div>
+
+      <div class="nawm-system__anchor nawm-reveal" style="--reveal-delay: 100ms;">
+        {% render 'nawm-figure',
+          image: section.settings.image,
+          alt: 'nawm.system.image_alt' | t,
+          slug: 'product-anker',
+          sizes: '(min-width: 1024px) 32vw, 100vw',
+          ratio: '1 / 1'
+        %}
+      </div>
+
+      <div class="nawm-system__column nawm-system__column--morning nawm-reveal" style="--reveal-delay: 200ms;">
+        <h3 class="nawm-system__column-heading">{{ 'nawm.system.morning.heading' | t }}</h3>
+        <ul class="nawm-list">
+          <li>{{ 'nawm.system.morning.item1' | t }}</li>
+          <li>
+            {%- if radio.value == true -%}
+              {{ 'nawm.system.morning.item2' | t }}
+            {%- else -%}
+              {{ 'nawm.system.morning.item2_no_radio' | t }} ·
+              {% render 'nawm-verify',
+                field: 'has_fm_radio',
+                note: 'FM-radio als wekbron — model, knoppen, ontvangst en handleiding één-op-één controleren'
+              %}
+            {%- endif -%}
+          </li>
+          <li>{{ 'nawm.system.morning.item3' | t }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .nawm-system__body {
+    margin-block-start: var(--sp-4);
+  }
+
+  .nawm-system__grid {
+    margin-block-start: clamp(3rem, 7vw, 5rem);
+    display: grid;
+    gap: var(--sp-6);
+  }
+
+  .nawm-system__column-heading {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    margin-block-end: var(--sp-4);
+    color: var(--fg);
+  }
+
+  .nawm-system__column--evening {
+    --accent: var(--nawm-cool);
+  }
+  .nawm-system__column--morning {
+    --accent: var(--nawm-amber);
+  }
+  .nawm-system__column li::before {
+    background: var(--accent);
+  }
+
+  /* De amber gloed achter het product — licht, geen schaduw. */
+  .nawm-system__anchor {
+    position: relative;
+  }
+  .nawm-system__anchor::before {
+    content: "";
+    position: absolute;
+    inset: 8%;
+    border-radius: var(--r-pill);
+    box-shadow: var(--glow-amber);
+    pointer-events: none;
+  }
+
+  /* Mobiel: product bovenaan, daaronder de twee kolommen met een scheidingslijn
+     die van koel naar amber verloopt. */
+  @media (max-width: 1023px) {
+    .nawm-system__anchor {
+      order: -1;
+    }
+    .nawm-system__grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+    .nawm-system__column--morning {
+      padding-block-start: var(--sp-5);
+      border-block-start: 1px solid transparent;
+      border-image: linear-gradient(90deg, var(--nawm-cool), var(--nawm-amber)) 1;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nawm-system__head {
+      max-width: 62ch;
+    }
+    .nawm-system__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1fr);
+      align-items: center;
+      gap: var(--sp-7);
+    }
+    .nawm-system__column--morning {
+      text-align: end;
+    }
+    .nawm-system__column--morning .nawm-list li {
+      padding-inline: 0 var(--sp-4);
+    }
+    .nawm-system__column--morning .nawm-list li::before {
+      inset-inline: auto 0;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Systeem",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Het kantelpunt van de pagina. De kolomitems staan in locales/nl.default.json onder nawm.system."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Tekst"
+    },
+    {
+      "type": "header",
+      "content": "Beeld"
+    },
+    {
+      "type": "paragraph",
+      "content": "Compositie-achtergrond met de échte productfoto erop — zie §9.3, prompt 2."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Productbeeld (1:1)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Systeem"
+    }
+  ]
+}
+{% endschema %}
