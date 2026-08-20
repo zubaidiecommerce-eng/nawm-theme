@@ -98,8 +98,16 @@
           </div>
         </div>
 
+        {%- comment -%}
+          Het getal loopt mee met de schuif, want de zin zou anders na één
+          beweging niet meer kloppen. Nooit suggereren dat de doorloop realtime
+          is: het is en blijft een samenvatting van zes seconden.
+        {%- endcomment -%}
+        {%- capture live_minutes -%}
+          <span data-minutes>{{ section.settings.default_minutes }}</span>
+        {%- endcapture -%}
         <p class="nawm-sunrise__summary nawm-mono">
-          {{ 'nawm.sunrise.summary' | t: minutes: section.settings.default_minutes }}
+          {{ 'nawm.sunrise.summary' | t: minutes: live_minutes }}
         </p>
       </nawm-sunrise>
 

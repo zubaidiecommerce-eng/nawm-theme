@@ -109,7 +109,7 @@
         {{ 'nawm.offer.company_label' | t }}: {{ settings.company_name }}
       {%- endif -%}
       {%- if settings.contact_url != blank -%}
-        · <a href="{{ settings.contact_url }}">{{ 'nawm.offer.contact_label' | t }}</a>
+        {{ ' · ' }}<a href="{{ settings.contact_url }}">{{ 'nawm.offer.contact_label' | t }}</a>
       {%- endif -%}
     </p>
   </div>

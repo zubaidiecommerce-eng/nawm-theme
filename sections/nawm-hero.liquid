@@ -87,7 +87,7 @@
         <p class="nawm-mono nawm-hero__trust">
           {{- trust -}}
           {%- if section.settings.show_trial -%}
-            · {{ 'nawm.hero.trial' | t: nights: settings.trial_nights }}
+            {{ ' · ' }}{{ 'nawm.hero.trial' | t: nights: settings.trial_nights }}
           {%- endif -%}
         </p>
       </div>

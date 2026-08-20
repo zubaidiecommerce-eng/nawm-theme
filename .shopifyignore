@@ -1,0 +1,4 @@
+# Buiten de theme-mappen: wordt niet gepusht en hoort niet in theme check.
+docs/
+scripts/
+.gitignore

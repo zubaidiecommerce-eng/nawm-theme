@@ -204,7 +204,7 @@ hoeft te scannen.
 ---
 
 <!-- claims-lint:start -->
-_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-20 15:40.  Niet met de hand bijwerken._
+_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-20 15:42.  Niet met de hand bijwerken._
 
 ### Openstaande VERIFY-tokens (12)
 
@@ -217,7 +217,7 @@ sections/nawm-offer.liquid:82:          {% render 'nawm-verify', field: 'return_
 sections/nawm-offer.liquid:89:          {% render 'nawm-verify', field: 'warranty_line', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
 sections/nawm-specs.liquid:59:                {% render 'nawm-verify',
 sections/nawm-sunrise-demo.liquid:92:                {% render 'nawm-verify',
-sections/nawm-sunrise-demo.liquid:143:                {% render 'nawm-verify',
+sections/nawm-sunrise-demo.liquid:151:                {% render 'nawm-verify',
 sections/nawm-system.liquid:70:              {% render 'nawm-verify',
 snippets/nawm-price.liquid:29:  {%- render 'nawm-verify',
 snippets/nawm-spec-row.liquid:44:      {% render 'nawm-verify', field: field, note: note %}
