@@ -1,0 +1,268 @@
+{% comment %}
+  Sectie 8 — Wat je krijgt. BUILD SPEC §5.8.
+
+  De doos uitpakken, zodat de prijs tastbaar wordt. Eén breed knolling-beeld met
+  genummerde annotaties die op hover en tap oplichten, en daaronder dezelfde
+  items als lijst. De lijst is de toegankelijke bron; de annotaties zijn de
+  verrijking.
+
+  De handleiding wordt hier al als PDF gelinkt. Bestaande reviews klagen over de
+  handleiding; hem vóór de koop beschikbaar stellen draait dat bezwaar om in
+  vertrouwen.
+{% endcomment %}
+
+{% liquid
+  assign product = settings.nawm_product
+  assign manual = product.metafields.nawm.manual_pdf
+  assign guide = product.metafields.nawm.guide_pdf
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.inbox.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.inbox.heading' | t
+  endif
+
+  assign items = 'item1,item2,item3,item4,item5' | split: ','
+%}
+
+<section class="nawm-section nawm-inbox ctx-dawn">
+  <div class="nawm-wrap">
+    <div class="nawm-inbox__head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    <div class="nawm-inbox__stage nawm-reveal" style="--reveal-delay: 100ms;">
+      {% render 'nawm-figure',
+        image: section.settings.image,
+        alt: 'nawm.inbox.image_alt' | t,
+        slug: 'inhoud-knolling',
+        sizes: '(min-width: 1024px) 90vw, 100vw',
+        ratio: '16 / 9'
+      %}
+
+      {%- if section.settings.image != blank -%}
+        <ul class="nawm-inbox__dots">
+          {%- for key in items -%}
+            {%- liquid
+              assign label_key = 'nawm.inbox.' | append: key
+              assign x_key = 'hotspot_' | append: forloop.index | append: '_x'
+              assign y_key = 'hotspot_' | append: forloop.index | append: '_y'
+              assign x = section.settings[x_key]
+              assign y = section.settings[y_key]
+            -%}
+            <li class="nawm-inbox__dot-wrap" style="--x: {{ x }}%; --y: {{ y }}%;">
+              <button type="button" class="nawm-inbox__dot" aria-describedby="nawm-inbox-{{ forloop.index }}">
+                <span aria-hidden="true">{{ forloop.index }}</span>
+                <span class="nawm-visually-hidden">{{ label_key | t }}</span>
+              </button>
+              <span class="nawm-inbox__tip" aria-hidden="true">{{ label_key | t }}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    <ol class="nawm-inbox__list">
+      {%- for key in items -%}
+        {%- assign label_key = 'nawm.inbox.' | append: key -%}
+        <li id="nawm-inbox-{{ forloop.index }}" class="nawm-inbox__item">
+          <span class="nawm-mono nawm-inbox__num">{{ forloop.index }}</span>
+          <span>{{ label_key | t }}</span>
+        </li>
+      {%- endfor -%}
+    </ol>
+
+    {%- if manual != blank or guide != blank -%}
+      <p class="nawm-inbox__docs">
+        {%- if manual != blank -%}
+          <a href="{{ manual | file_url }}" class="nawm-inbox__doc" data-nawm-event="open_guide">
+            {{- 'nawm.inbox.manual_link' | t -}}
+          </a>
+        {%- endif -%}
+        {%- if guide != blank -%}
+          <a href="{{ guide | file_url }}" class="nawm-inbox__doc" data-nawm-event="open_guide">
+            {{- 'nawm.inbox.guide_link' | t -}}
+          </a>
+        {%- endif -%}
+      </p>
+    {%- else -%}
+      <p class="nawm-small nawm-inbox__docs">
+        {% render 'nawm-verify',
+          field: 'manual_pdf',
+          note: 'Nederlandse handleiding en Sleep–Wake Guide als PDF — verplicht vóór livegang'
+        %}
+      </p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .nawm-inbox__stage {
+    position: relative;
+    margin-block-start: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .nawm-inbox__dots {
+    position: absolute;
+    inset: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nawm-inbox__dot-wrap {
+    position: absolute;
+    inset-inline-start: var(--x);
+    inset-block-start: var(--y);
+    transform: translate(-50%, -50%);
+  }
+
+  .nawm-inbox__dot {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--nawm-ember);
+    background: color-mix(in oklab, var(--nawm-dawn) 88%, transparent);
+    color: var(--ink-day);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    cursor: pointer;
+    transition: background-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+  }
+
+  .nawm-inbox__dot:hover,
+  .nawm-inbox__dot:focus-visible {
+    background: var(--nawm-amber);
+    transform: scale(1.08);
+  }
+
+  .nawm-inbox__tip {
+    position: absolute;
+    inset-block-start: calc(100% + var(--sp-2));
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    width: max-content;
+    max-width: 16rem;
+    padding: var(--sp-2) var(--sp-3);
+    border-radius: var(--r-data);
+    background: var(--nawm-midnight);
+    color: var(--ink-night);
+    font-size: var(--fs-small);
+    line-height: 1.35;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+
+  .nawm-inbox__dot-wrap:hover .nawm-inbox__tip,
+  .nawm-inbox__dot:focus-visible + .nawm-inbox__tip {
+    opacity: 1;
+  }
+
+  .nawm-inbox__list {
+    list-style: none;
+    margin: clamp(2rem, 5vw, 3rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-3);
+    max-width: 68ch;
+  }
+
+  .nawm-inbox__item {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: var(--sp-3);
+    align-items: baseline;
+    padding-block-end: var(--sp-3);
+    border-block-end: 1px solid var(--line);
+    color: var(--fg);
+  }
+
+  .nawm-inbox__num {
+    color: var(--nawm-ember);
+  }
+
+  .nawm-inbox__docs {
+    margin-block-start: var(--sp-5);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4);
+  }
+
+  .nawm-inbox__doc {
+    color: var(--fg);
+    text-decoration-color: var(--nawm-ember);
+    text-underline-offset: 4px;
+  }
+
+  /* Op smalle schermen zijn 32px-punten op een 16:9-beeld te dicht op elkaar. */
+  @media (max-width: 749px) {
+    .nawm-inbox__dots {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Wat je krijgt",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De vijf items staan in locales/nl.default.json onder nawm.inbox. De annotatieposities hieronder zijn percentages op het beeld."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "header",
+      "content": "Beeld"
+    },
+    {
+      "type": "paragraph",
+      "content": "Knolling van bovenaf. Fotografie vereist voor de objecten — AI genereert alleen het oppervlak (§9.3, prompt 3)."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Beeld (16:9)"
+    },
+    { "type": "header", "content": "Annotatie 1" },
+    { "type": "range", "id": "hotspot_1_x", "label": "Horizontaal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 22 },
+    { "type": "range", "id": "hotspot_1_y", "label": "Verticaal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 45 },
+    { "type": "header", "content": "Annotatie 2" },
+    { "type": "range", "id": "hotspot_2_x", "label": "Horizontaal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 44 },
+    { "type": "range", "id": "hotspot_2_y", "label": "Verticaal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 30 },
+    { "type": "header", "content": "Annotatie 3" },
+    { "type": "range", "id": "hotspot_3_x", "label": "Horizontaal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 58 },
+    { "type": "range", "id": "hotspot_3_y", "label": "Verticaal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 58 },
+    { "type": "header", "content": "Annotatie 4" },
+    { "type": "range", "id": "hotspot_4_x", "label": "Horizontaal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 74 },
+    { "type": "range", "id": "hotspot_4_y", "label": "Verticaal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 34 },
+    { "type": "header", "content": "Annotatie 5" },
+    { "type": "range", "id": "hotspot_5_x", "label": "Horizontaal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 87 },
+    { "type": "range", "id": "hotspot_5_y", "label": "Verticaal", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 62 }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Wat je krijgt"
+    }
+  ]
+}
+{% endschema %}

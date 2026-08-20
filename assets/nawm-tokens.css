@@ -9,6 +9,7 @@
 
   /* scroll-state, gezet door nawm-dawn.js */
   --dawn: 0;    /* 0 = 23:30, 1 = 07:00 */
+  --sky: 0;     /* crossfade nacht -> ochtend, loopt binnen de ochtenddemo */
   --ember: 0;   /* piek 1 rond --dawn .5 */
 
   /* type */

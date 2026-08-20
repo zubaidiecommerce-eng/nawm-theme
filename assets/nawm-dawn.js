@@ -27,13 +27,32 @@ function clock(dawn) {
   }
 }
 
+/**
+ * Twee spans, geen één.
+ *
+ * `--dawn` loopt lineair van de bovenkant van de hero tot de onderkant van de
+ * ochtenddemo. Dat is de reis die de klok vertelt: 23:30 → 07:00.
+ *
+ * De lucht hangt aan een tweede variabele, `--sky`, die pas binnen de
+ * ochtenddemo van 0 naar 1 loopt. Zonder die splitsing zou de achtergrond al
+ * halverwege de nachtsecties oplichten, terwijl secties 2 tot en met 5 met
+ * `ctx-night` lichte tekst dragen — dat breekt de contrasteisen uit spec §3.2,
+ * en die zijn niet onderhandelbaar. Zie docs/DESIGN-NOTES.md.
+ */
 function bounds() {
   const a = document.querySelector('[data-dawn-start]');
   const b = document.querySelector('[data-dawn-end]');
   if (!a || !b) return null;
   const top = a.getBoundingClientRect().top + window.scrollY;
-  const bottom = b.getBoundingClientRect().bottom + window.scrollY;
-  return { top, span: Math.max(1, bottom - top) };
+  const skyBox = b.getBoundingClientRect();
+  const skyTop = skyBox.top + window.scrollY;
+  const bottom = skyBox.bottom + window.scrollY;
+  return {
+    top,
+    span: Math.max(1, bottom - top),
+    skyTop,
+    skySpan: Math.max(1, bottom - skyTop),
+  };
 }
 
 let box = bounds();
@@ -43,8 +62,13 @@ function paint() {
   ticking = false;
   if (!box) return;
   const raw = clamp01((window.scrollY + window.innerHeight * 0.55 - box.top) / box.span);
+  const rawSky = clamp01((window.scrollY + window.innerHeight * 0.85 - box.skyTop) / box.skySpan);
+
   const dawn = reduce.matches ? (raw < 0.5 ? 0 : 1) : raw;
+  const sky = reduce.matches ? (rawSky < 0.5 ? 0 : 1) : rawSky;
+
   root.style.setProperty('--dawn', dawn.toFixed(4));
+  root.style.setProperty('--sky', sky.toFixed(4));
   root.style.setProperty('--ember', (1 - Math.abs(dawn * 2 - 1)).toFixed(4));
   clock(dawn);
 }

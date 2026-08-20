@@ -37,15 +37,15 @@ html.nawm-page .shopify-section:has(.nawm-section) {
 }
 .nawm-sky__night {
   background: radial-gradient(120% 90% at 50% 110%, #16233A 0%, #0B1220 55%);
-  opacity: calc(1 - var(--dawn));
+  opacity: calc(1 - var(--sky));
 }
 .nawm-sky__ember {
   background: radial-gradient(90% 60% at 50% 100%, #C4562B 0%, transparent 62%);
-  opacity: calc(var(--ember) * .55);
+  opacity: calc(var(--ember) * .55 * (1 - var(--sky)));
 }
 .nawm-sky__morning {
   background: linear-gradient(180deg, #F7CFA8 0%, #FBF3EA 45%);
-  opacity: var(--dawn);
+  opacity: var(--sky);
 }
 
 /* ---------------------------------------------------------------- nachtklok */
