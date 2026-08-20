@@ -1,4 +1,11 @@
-{
+/*
+ * ------------------------------------------------------------
+ * De dertien NAWM-secties in de volgorde uit BUILD SPEC §5.
+ * Mentale route: herkenning, nieuw inzicht, mechanisme, bewijs,
+ * aanbod, risicoverlaging. Wie de volgorde omgooit, breekt het
+ * argument.
+ * ------------------------------------------------------------
+ */{
   "sections": {
     "nawm_hero": { "type": "nawm-hero" },
     "nawm_paradox": { "type": "nawm-paradox" },
