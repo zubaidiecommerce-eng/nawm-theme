@@ -1,0 +1,317 @@
+{% comment %}
+  Sectie 9 — Specificaties. BUILD SPEC §5.9.
+
+  Een vertrouwenssectie, geen verkoopsectie — daarom mag hij er functioneel en
+  dicht uitzien: definitielijst, mono waarden, harde 4px-hoeken in plaats van
+  ronde kaarten.
+
+  Alle waarden komen uit metafields (§8.1). Nul hardcoded getallen. Ontbreekt
+  een waarde, dan rendert het VERIFY-token.
+
+  Verplichte disambiguatie: het aantal ontspanningsgeluiden en het aantal
+  selecteerbare wekgeluiden zijn verschillende getallen en staan daarom in twee
+  aparte rijen met eigen labels. Doe je dat niet, dan koopt iemand met de
+  verwachting van 25 wekgeluiden en dat is een retour plus een negatieve review.
+{% endcomment %}
+
+{% liquid
+  assign product = settings.nawm_product
+  assign mf = product.metafields.nawm
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.specs.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.specs.heading' | t
+  endif
+%}
+
+<section class="nawm-section nawm-specs ctx-dawn" id="specificaties">
+  <div class="nawm-wrap">
+    <div class="nawm-specs__head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    <div class="nawm-specs__groups">
+      <section class="nawm-specs__group">
+        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.light' | t }}</h3>
+        <dl class="nawm-specs__list">
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.brightness_levels' | t,
+            metafield: mf.brightness_levels,
+            field: 'brightness_levels',
+            note: 'aantal helderheidsniveaus — bevestigen op het verkoopmodel'
+          %}
+
+          <div class="nawm-specs__row">
+            <dt class="nawm-specs__label">{{ 'nawm.specs.rows.sunrise_range' | t }}</dt>
+            <dd class="nawm-specs__value nawm-mono">
+              {%- if mf.sunrise_min_minutes.type != blank and mf.sunrise_max_minutes.type != blank -%}
+                {{-
+                  'nawm.specs.sunrise_range_value'
+                  | t: min: mf.sunrise_min_minutes.value, max: mf.sunrise_max_minutes.value
+                -}}
+              {%- else -%}
+                {% render 'nawm-verify',
+                  field: 'sunrise_min_minutes / sunrise_max_minutes',
+                  note: 'instelbare zonsopgangduur — bevestigen op het verkoopmodel'
+                %}
+              {%- endif -%}
+            </dd>
+          </div>
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.light_colors' | t,
+            metafield: mf.light_colors,
+            field: 'light_colors',
+            kind: 'list',
+            note: 'lichtkleuren — bron noemt acht kleuren, bevestigen op het verkoopmodel'
+          %}
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.display_dimmable' | t,
+            metafield: mf.display_dimmable,
+            field: 'display_dimmable',
+            kind: 'bool',
+            note: 'display dimbaar'
+          %}
+        </dl>
+      </section>
+
+      <section class="nawm-specs__group">
+        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.sound' | t }}</h3>
+        <p class="nawm-small nawm-specs__note">{{ 'nawm.specs.disambiguation' | t }}</p>
+        <dl class="nawm-specs__list">
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.relax_sounds_count' | t,
+            metafield: mf.relax_sounds_count,
+            field: 'relax_sounds_count',
+            note: 'aantal ontspanningsgeluiden — listing noemt 25, tellen op het verkoopmodel'
+          %}
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.wake_sounds_count' | t,
+            metafield: mf.wake_sounds_count,
+            field: 'wake_sounds_count',
+            note: 'aantal selecteerbare wekgeluiden — bronnen noemen 22 én zeven, tellen op het verkoopmodel'
+          %}
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.wake_sounds_list' | t,
+            metafield: mf.wake_sounds_list,
+            field: 'wake_sounds_list',
+            kind: 'list',
+            note: 'welke geluiden daadwerkelijk als wekgeluid selecteerbaar zijn'
+          %}
+        </dl>
+      </section>
+
+      <section class="nawm-specs__group">
+        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.alarms' | t }}</h3>
+        <dl class="nawm-specs__list">
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.alarms' | t,
+            metafield: mf.alarms,
+            field: 'alarms',
+            note: 'alarmen, week/weekend, snooze en sleeptimer'
+          %}
+        </dl>
+      </section>
+
+      <section class="nawm-specs__group">
+        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.connectivity' | t }}</h3>
+        <dl class="nawm-specs__list">
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.has_fm_radio' | t,
+            metafield: mf.has_fm_radio,
+            field: 'has_fm_radio',
+            kind: 'bool',
+            note: 'FM-radio — model, knoppen, ontvangst en handleiding één-op-één controleren'
+          %}
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.has_bluetooth' | t,
+            metafield: mf.has_bluetooth,
+            field: 'has_bluetooth',
+            kind: 'bool',
+            note: 'bluetooth'
+          %}
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.has_usb_port' | t,
+            metafield: mf.has_usb_port,
+            field: 'has_usb_port',
+            kind: 'bool',
+            note: 'USB-poort — alleen vermelden als hij de telefoon van het nachtkastje kan houden'
+          %}
+        </dl>
+      </section>
+
+      <section class="nawm-specs__group">
+        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.power' | t }}</h3>
+        <dl class="nawm-specs__list">
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.power' | t,
+            metafield: mf.power,
+            field: 'power',
+            note: 'voeding'
+          %}
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.battery_backup' | t,
+            metafield: mf.battery_backup,
+            field: 'battery_backup',
+            note: 'back-upgedrag bij stroomuitval — blijven tijd en alarm bewaard, en hoelang'
+          %}
+        </dl>
+      </section>
+
+      <section class="nawm-specs__group">
+        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.physical' | t }}</h3>
+        <dl class="nawm-specs__list">
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.dimensions_mm' | t,
+            metafield: mf.dimensions_mm,
+            field: 'dimensions_mm',
+            note: 'afmetingen — meten op het verkoopmodel'
+          %}
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.weight_g' | t,
+            metafield: mf.weight_g,
+            field: 'weight_g',
+            suffix: 'g',
+            note: 'gewicht — wegen op het verkoopmodel'
+          %}
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.ean' | t,
+            metafield: mf.ean,
+            field: 'ean',
+            note: 'EAN — moet identiek zijn aan verpakking en bol-listing'
+          %}
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.warranty' | t,
+            metafield: mf.warranty,
+            field: 'warranty',
+            note: 'garantietermijn — verpakking en leverancier'
+          %}
+        </dl>
+      </section>
+
+      <section class="nawm-specs__group">
+        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.box' | t }}</h3>
+        <dl class="nawm-specs__list">
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.in_the_box' | t,
+            metafield: mf.in_the_box,
+            field: 'in_the_box',
+            kind: 'list',
+            note: 'exacte inhoud van de doos'
+          %}
+        </dl>
+      </section>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .nawm-specs__groups {
+    margin-block-start: clamp(2.5rem, 6vw, 4rem);
+    display: grid;
+    gap: var(--sp-6);
+  }
+
+  .nawm-specs__group-heading {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--nawm-ember);
+    padding-block-end: var(--sp-2);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .nawm-specs__note {
+    margin-block-start: var(--sp-3);
+    max-width: 62ch;
+  }
+
+  .nawm-specs__list {
+    margin: var(--sp-3) 0 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .nawm-specs__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-1);
+    padding: var(--sp-3);
+    border-radius: var(--r-data);
+  }
+
+  .nawm-specs__row:nth-child(odd) {
+    background: color-mix(in oklab, var(--nawm-peach) 26%, transparent);
+  }
+
+  .nawm-specs__label {
+    color: var(--fg-soft);
+    font-size: var(--fs-small);
+  }
+
+  .nawm-specs__value {
+    margin: 0;
+    color: var(--fg);
+    font-size: var(--fs-small);
+  }
+
+  @media (min-width: 750px) {
+    .nawm-specs__row {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      gap: var(--sp-4);
+      align-items: baseline;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nawm-specs__groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--sp-6) var(--sp-7);
+      align-items: start;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Specificaties",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Alle waarden komen uit de metafields in de namespace nawm op het gekozen product. Ontbreekt er één, dan verschijnt hier een magenta VERIFY-token in plaats van een gok."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Specificaties"
+    }
+  ]
+}
+{% endschema %}

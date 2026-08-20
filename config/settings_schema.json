@@ -2116,5 +2116,132 @@
         "default": "equal-width-buttons"
       }
     ]
+  },
+  {
+    "name": "NAWM Sleep–Wake System",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Handelsvoorwaarden en cijfers die op meerdere plekken terugkomen staan hier één keer, zodat prijs, levertijd en garantie overal identiek zijn."
+      },
+      {
+        "type": "header",
+        "content": "Product en prijs"
+      },
+      {
+        "type": "product",
+        "id": "nawm_product",
+        "label": "NAWM-product",
+        "info": "De bron voor prijs, voorraad en alle specificatie-metafields."
+      },
+      {
+        "type": "select",
+        "id": "price_display_source",
+        "label": "Prijs tonen vanuit",
+        "options": [
+          { "value": "product", "label": "Het product" },
+          { "value": "manual", "label": "Handmatige waarde" }
+        ],
+        "default": "product"
+      },
+      {
+        "type": "text",
+        "id": "price_manual",
+        "label": "Handmatige prijs",
+        "info": "Alleen gebruikt wanneer de prijsbron op handmatig staat. Schrijf als €69,95.",
+        "visible_if": "{{ settings.price_display_source == 'manual' }}"
+      },
+      {
+        "type": "header",
+        "content": "Proefperiode"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_trial_period",
+        "label": "Proefperiode tonen",
+        "default": false,
+        "info": "Alleen aanzetten wanneer retourlogistiek en producthygiëne operationeel vaststaan."
+      },
+      {
+        "type": "range",
+        "id": "trial_nights",
+        "label": "Aantal nachten",
+        "min": 7,
+        "max": 60,
+        "step": 1,
+        "default": 30,
+        "visible_if": "{{ settings.show_trial_period }}"
+      },
+      {
+        "type": "header",
+        "content": "Levering, retour en garantie"
+      },
+      {
+        "type": "text",
+        "id": "shipping_line",
+        "label": "Verzendregel"
+      },
+      {
+        "type": "text",
+        "id": "delivery_time",
+        "label": "Levertijd"
+      },
+      {
+        "type": "text",
+        "id": "return_policy_line",
+        "label": "Retourvoorwaarden"
+      },
+      {
+        "type": "text",
+        "id": "warranty_line",
+        "label": "Garantie"
+      },
+      {
+        "type": "text",
+        "id": "company_name",
+        "label": "Bedrijfsnaam"
+      },
+      {
+        "type": "url",
+        "id": "contact_url",
+        "label": "Contactpagina"
+      },
+      {
+        "type": "header",
+        "content": "Reviewcijfer"
+      },
+      {
+        "type": "paragraph",
+        "content": "Vul deze drie samen in. Zonder controledatum toont de cijferregel niets — een score zonder datum veroudert stilletjes."
+      },
+      {
+        "type": "text",
+        "id": "review_score",
+        "label": "Score",
+        "info": "Bijvoorbeeld 4,4/5."
+      },
+      {
+        "type": "text",
+        "id": "review_count",
+        "label": "Aantal beoordelingen"
+      },
+      {
+        "type": "text",
+        "id": "review_checked_on",
+        "label": "Gecontroleerd op",
+        "info": "Datum waarop het cijfer met de bron is vergeleken."
+      },
+      {
+        "type": "header",
+        "content": "Typografie"
+      },
+      {
+        "type": "checkbox",
+        "id": "nawm_self_hosted_fonts",
+        "label": "Self-hosted fonts laden",
+        "default": false,
+        "info": "Zet pas aan zodra Fraunces-var.woff2, InterTight-var.woff2 en IBMPlexMono-Regular.woff2 in assets/ staan."
+      }
+    ]
   }
 ]

@@ -1,0 +1,382 @@
+{% comment %}
+  Sectie 6 — Ochtenddemo. BUILD SPEC §5.6 en §4.3.
+
+  De meest interactieve sectie en het einde van de nacht. `data-dawn-end` staat
+  hier: de lucht loopt binnen deze sectie van nacht naar ochtend, zodat alles
+  eronder licht is.
+
+  Twee dingen naast elkaar, en het verschil ertussen is expliciet gelabeld:
+  de scrubber is een schematische weergave, de video is het bewijs. Een
+  gerenderde animatie tonen alsof het productbeeld is, is verboden.
+
+  De scrubber toont alleen wat het apparaat werkelijk doet: licht dat oploopt,
+  een helderheidsgetal, een tijd en een geluid. Geen melatoninegrafiek.
+{% endcomment %}
+
+{% liquid
+  assign product = settings.nawm_product
+  assign sounds = product.metafields.nawm.wake_sounds_list.value
+  assign wake = section.settings.wake_time | default: '07:00'
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.sunrise.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.sunrise.heading' | t
+  endif
+
+  assign body = section.settings.body
+  if body == blank
+    assign body = 'nawm.sunrise.body' | t
+  endif
+%}
+
+<script src="{{ 'nawm-sunrise.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<section class="nawm-section nawm-sunrise-demo ctx-night" data-dawn-end id="ochtenddemo">
+  <div class="nawm-wrap">
+    <div class="nawm-sunrise-demo__grid">
+      <nawm-sunrise class="nawm-sunrise" data-wake="{{ wake }}">
+        <div class="nawm-sunrise__panel" data-panel aria-hidden="true">
+          <p class="nawm-sunrise__panel-time nawm-mono" data-time>{{ wake }}</p>
+        </div>
+
+        <p class="nawm-sunrise__tag nawm-mono">{{ 'nawm.sunrise.schematic' | t }}</p>
+
+        <div class="nawm-sunrise__controls">
+          <label class="nawm-sunrise__label" for="nawm-sunrise-range">
+            {{ 'nawm.sunrise.slider_label' | t }}
+          </label>
+          <input
+            id="nawm-sunrise-range"
+            type="range"
+            min="10"
+            max="60"
+            step="5"
+            value="{{ section.settings.default_minutes }}"
+          >
+
+          <p class="nawm-sunrise__readout nawm-mono">
+            <span data-minutes>{{ section.settings.default_minutes }}</span>
+            {{ 'nawm.common.minutes' | t }}
+            ·
+            {{ 'nawm.sunrise.level_label' | t }}
+            <span data-level>1</span>
+            {{ 'nawm.sunrise.level_of' | t }}
+          </p>
+
+          <button type="button" class="nawm-chip nawm-sunrise__replay" data-play>
+            {{ 'nawm.sunrise.replay' | t }}
+          </button>
+        </div>
+
+        <div class="nawm-sunrise__sounds">
+          <p class="nawm-sunrise__label" id="nawm-sounds-label">{{ 'nawm.sunrise.sounds_label' | t }}</p>
+          <div class="nawm-sunrise__chips" role="group" aria-labelledby="nawm-sounds-label">
+            {%- if sounds != blank -%}
+              {%- for sound in sounds -%}
+                <button
+                  type="button"
+                  class="nawm-chip"
+                  data-sound="{{ sound | escape }}"
+                  aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                >
+                  {{ sound }}
+                </button>
+              {%- endfor -%}
+            {%- else -%}
+              <p class="nawm-small">
+                {% render 'nawm-verify',
+                  field: 'wake_sounds_list',
+                  note: 'exacte lijst selecteerbare wekgeluiden — fysieke test van het verkoopmodel'
+                %}
+              </p>
+            {%- endif -%}
+          </div>
+        </div>
+
+        {%- comment -%}
+          Het getal loopt mee met de schuif, want de zin zou anders na één
+          beweging niet meer kloppen. Nooit suggereren dat de doorloop realtime
+          is: het is en blijft een samenvatting van zes seconden.
+        {%- endcomment -%}
+        {%- capture live_minutes -%}
+          <span data-minutes>{{ section.settings.default_minutes }}</span>
+        {%- endcapture -%}
+        <p class="nawm-sunrise__summary nawm-mono">
+          {{ 'nawm.sunrise.summary' | t: minutes: live_minutes }}
+        </p>
+      </nawm-sunrise>
+
+      <div class="nawm-sunrise-demo__text nawm-reveal">
+        {% render 'nawm-eyebrow', text: eyebrow %}
+        <h2>{{ heading }}</h2>
+        <p class="nawm-lede nawm-sunrise-demo__body">{{ body }}</p>
+
+        <div class="nawm-sunrise-demo__video">
+          <p class="nawm-sunrise__tag nawm-mono">{{ 'nawm.sunrise.recording' | t }}</p>
+
+          {%- if section.settings.video != blank -%}
+            <video
+              class="nawm-sunrise-demo__player"
+              controls
+              muted
+              playsinline
+              preload="none"
+              {% if section.settings.poster != blank %}
+                poster="{{ section.settings.poster | image_url: width: 1080 }}"
+              {% endif %}
+              width="{{ section.settings.video.sources[0].width | default: 1280 }}"
+              height="{{ section.settings.video.sources[0].height | default: 720 }}"
+            >
+              {%- for source in section.settings.video.sources -%}
+                <source src="{{ source.url }}" type="{{ source.mime_type }}">
+              {%- endfor -%}
+              {%- if section.settings.captions_asset != blank -%}
+                <track
+                  kind="captions"
+                  srclang="nl"
+                  label="Nederlands"
+                  src="{{ section.settings.captions_asset | asset_url }}"
+                  default
+                >
+              {%- endif -%}
+            </video>
+
+            {%- if section.settings.captions_asset == blank -%}
+              <p class="nawm-small">
+                {% render 'nawm-verify',
+                  field: 'video_captions_nl',
+                  note: 'Nederlandse ondertiteling (.vtt) bij de ochtenddemo — verplicht volgens §10.3'
+                %}
+              </p>
+            {%- endif -%}
+          {%- else -%}
+            <p class="nawm-small">{{ 'nawm.sunrise.video_missing' | t }}</p>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  /*
+   * De laatste donkere slab van de pagina. De lucht erachter loopt binnen deze
+   * sectie naar ochtend; de slab zelf blijft donker en laat via het masker aan
+   * de onderrand het eerste licht doorschemeren. Zo houdt de tekst hier het
+   * contrast van ctx-night terwijl de wereld eronder al licht is.
+   */
+  .nawm-sunrise-demo {
+    background: linear-gradient(
+      180deg,
+      var(--nawm-midnight) 0%,
+      var(--nawm-midnight) 68%,
+      color-mix(in oklab, var(--nawm-midnight), var(--nawm-ember) 22%) 100%
+    );
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 88%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 88%, transparent 100%);
+  }
+
+  .nawm-sunrise-demo__grid {
+    display: grid;
+    gap: var(--sp-6);
+  }
+
+  .nawm-sunrise-demo__body {
+    margin-block-start: var(--sp-4);
+  }
+
+  .nawm-sunrise-demo__video {
+    margin-block-start: var(--sp-6);
+  }
+
+  .nawm-sunrise-demo__player {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--r-card);
+    background: var(--nawm-indigo);
+  }
+
+  .nawm-sunrise__tag {
+    display: inline-block;
+    margin-block: var(--sp-3);
+    padding: 2px var(--sp-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-data);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--fg-soft);
+  }
+
+  /* ---------------------------------------------------------- de scrubber */
+
+  .nawm-sunrise {
+    --rise: 0;
+    --lit: 1;
+
+    display: block;
+  }
+
+  .nawm-sunrise__panel {
+    position: relative;
+    display: grid;
+    place-items: end center;
+    aspect-ratio: 4 / 3;
+    padding: var(--sp-5);
+    border-radius: var(--r-card);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    background:
+      radial-gradient(
+        calc(50% + var(--lit) * 30%) calc(40% + var(--lit) * 30%) at 50% 100%,
+        color-mix(
+          in oklab,
+          var(--nawm-ember),
+          var(--nawm-amber) calc(var(--rise) * var(--lit) * 70%)
+        ) 0%,
+        transparent 70%
+      ),
+      var(--nawm-midnight);
+    filter: saturate(calc(1 + var(--rise) * .2));
+  }
+
+  .nawm-sunrise__panel-time {
+    font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+    letter-spacing: .08em;
+    color: color-mix(in oklab, var(--ink-night), #fff calc(var(--lit) * 40%));
+  }
+
+  .nawm-sunrise__controls {
+    margin-block-start: var(--sp-4);
+  }
+
+  .nawm-sunrise__label {
+    display: block;
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--fg-soft);
+    margin-block-end: var(--sp-2);
+  }
+
+  .nawm-sunrise input[type="range"] {
+    width: 100%;
+    height: 44px;
+    accent-color: var(--nawm-amber);
+    cursor: pointer;
+  }
+
+  .nawm-sunrise__readout {
+    margin-block-start: var(--sp-2);
+    color: var(--fg);
+  }
+
+  .nawm-sunrise__replay {
+    margin-block-start: var(--sp-3);
+  }
+
+  .nawm-sunrise__sounds {
+    margin-block-start: var(--sp-5);
+  }
+
+  .nawm-sunrise__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .nawm-sunrise__summary {
+    margin-block-start: var(--sp-4);
+    color: var(--fg-soft);
+  }
+
+  @media (min-width: 1024px) {
+    .nawm-sunrise-demo__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--sp-7);
+      align-items: start;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Ochtenddemo",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Deze sectie draagt data-dawn-end: hierbinnen loopt de lucht van nacht naar ochtend. Zet hem daarom altijd vóór de ochtendsecties."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Tekst"
+    },
+    {
+      "type": "header",
+      "content": "Scrubber"
+    },
+    {
+      "type": "range",
+      "id": "default_minutes",
+      "label": "Startwaarde zonsopgang",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "min",
+      "default": 30
+    },
+    {
+      "type": "text",
+      "id": "wake_time",
+      "label": "Wektijd in de demo",
+      "default": "07:00"
+    },
+    {
+      "type": "header",
+      "content": "Opname van het verkoopmodel"
+    },
+    {
+      "type": "paragraph",
+      "content": "Alleen echt opgenomen materiaal. AI-video is hier niet toegestaan: het beeld functioneert als bewijs (§9.5)."
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Timelapse zonsopgang"
+    },
+    {
+      "type": "image_picker",
+      "id": "poster",
+      "label": "Poster"
+    },
+    {
+      "type": "text",
+      "id": "captions_asset",
+      "label": "Ondertitelbestand",
+      "info": "Bestandsnaam van de Nederlandse .vtt in assets/, bijvoorbeeld nawm-ochtenddemo-nl.vtt. Ondertiteling is verplicht."
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Ochtenddemo"
+    }
+  ]
+}
+{% endschema %}

@@ -1,8 +1,21 @@
+{%- comment -%}
+  `nawm_page` markeert de twee sjablonen die de night-to-dawn opbouw dragen:
+  de landingspagina en de productpagina van de wake-up light. Alleen daar wordt
+  de vaste lucht getekend, zodat de rest van de winkel onaangeraakt blijft.
+  Zie NAWM_SHOPIFY_BUILD_SPEC.md §4.
+{%- endcomment -%}
+{%- liquid
+  assign nawm_page = false
+  if template.name == 'index' or template.suffix == 'wake-up-light'
+    assign nawm_page = true
+  endif
+-%}
 <!doctype html>
 <html
-  {% if request.design_mode %}
-    class="shopify-design-mode"
-  {% endif %}
+  class="
+    {%- if request.design_mode %}shopify-design-mode {% endif -%}
+    {%- if nawm_page %}nawm-page{% endif -%}
+  "
   lang="{{ request.locale.iso_code }}"
 >
   <head>
@@ -43,6 +56,10 @@
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-palette' -%}
 
+    {%- if nawm_page -%}
+      {%- render 'nawm-head' -%}
+    {%- endif -%}
+
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
     {% endif %}
@@ -52,6 +69,10 @@
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
+
+    {%- if nawm_page -%}
+      {%- render 'nawm-shell' -%}
+    {%- endif -%}
 
     {% render 'chat-drawer' %}
 

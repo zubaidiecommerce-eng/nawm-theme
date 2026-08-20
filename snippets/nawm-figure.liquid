@@ -1,0 +1,95 @@
+{% doc %}
+  Het enige plek waar een <img> wordt geschreven. BUILD SPEC §9.4.
+
+  Levert srcset op 400/640/828/1080/1440/1920, altijd width, height, alt en
+  loading. Shopify's CDN onderhandelt zelf over AVIF en WebP zolang we geen
+  vast formaat forceren — daarom staat er geen `format:` in de image_url-filters.
+
+  Ontbreekt het beeld, dan rendert een zichtbare placeholder met de naam uit de
+  beeldenlijst (§9.3), zodat een lege plek nooit stilletjes doorschuift.
+
+  @param {object} [image] - Shopify image object.
+  @param {object} [image_mobile] - Alternatief beeld onder 749px.
+  @param {string} alt - Nederlandse, beschrijvende alt-tekst. Nooit keyword-stuffed.
+  @param {string} [slug] - Naam uit §9.3, bijvoorbeeld 'hero-nachtkastje'.
+  @param {string} [sizes] - sizes-attribuut. Standaard 100vw.
+  @param {boolean} [eager] - Alleen voor het LCP-beeld.
+  @param {string} [ratio] - CSS aspect-ratio voor de placeholder, bv. '3 / 2'.
+  @param {string} [caption] - Zichtbaar bijschrift.
+  @param {string} [class] - Extra klassen op de <figure>.
+{% enddoc %}
+
+{%- liquid
+  assign widths = '400,640,828,1080,1440,1920'
+  assign width_list = widths | split: ','
+  assign sizes_attr = sizes | default: '100vw'
+  assign loading_attr = 'lazy'
+  assign fetch_attr = 'auto'
+  if eager
+    assign loading_attr = 'eager'
+    assign fetch_attr = 'high'
+  endif
+-%}
+
+<figure class="nawm-figure {{ class }}">
+  {%- if image != blank -%}
+    {%- if image_mobile != blank -%}
+      <picture>
+        {%- capture mobile_srcset -%}
+          {%- for w in width_list -%}
+            {%- assign width = w | times: 1 -%}
+            {%- if width <= image_mobile.width -%}
+              {{ image_mobile | image_url: width: width }} {{ width }}w,
+            {%- endif -%}
+          {%- endfor -%}
+          {{ image_mobile | image_url: width: image_mobile.width }} {{ image_mobile.width }}w
+        {%- endcapture -%}
+        <source
+          media="(max-width: 749px)"
+          srcset="{{ mobile_srcset }}"
+          sizes="{{ sizes_attr }}"
+          width="{{ image_mobile.width }}"
+          height="{{ image_mobile.height }}"
+        >
+        {{
+          image
+          | image_url: width: 1920
+          | image_tag:
+            widths: widths,
+            sizes: sizes_attr,
+            alt: alt,
+            loading: loading_attr,
+            fetchpriority: fetch_attr,
+            decoding: 'async'
+        }}
+      </picture>
+    {%- else -%}
+      {{
+        image
+        | image_url: width: 1920
+        | image_tag:
+          widths: widths,
+          sizes: sizes_attr,
+          alt: alt,
+          loading: loading_attr,
+          fetchpriority: fetch_attr,
+          decoding: 'async'
+      }}
+    {%- endif -%}
+  {%- else -%}
+    <div
+      class="nawm-figure__placeholder"
+      role="img"
+      aria-label="{{ alt | default: 'Beeld volgt nog' | escape }}"
+      {% if ratio != blank %}
+        style="--ph-ratio: {{ ratio }};"
+      {% endif %}
+    >
+      IMG:{{ slug | default: 'onbenoemd' }}
+    </div>
+  {%- endif -%}
+
+  {%- if caption != blank -%}
+    <figcaption>{{ caption }}</figcaption>
+  {%- endif -%}
+</figure>

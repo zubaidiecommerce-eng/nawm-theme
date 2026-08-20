@@ -1,0 +1,38 @@
+{% doc %}
+  Eén reviewkaart uit metaobject `nawm_review`. BUILD SPEC §5.7 / §8.2.
+
+  Harde regel: een review zonder bron-url en datum rendert niet. Die guard zit
+  hier in Liquid en niet in de redactie, zodat hij niet per ongeluk overgeslagen
+  kan worden. Citaten worden letterlijk overgenomen — nooit ingekort zonder dat
+  zichtbaar te maken, nooit herschreven, nooit vertaald.
+
+  @param {object} review - Metaobject nawm_review.
+{% enddoc %}
+
+{%- liquid
+  assign quote = review.citaat.value | default: review.citaat
+  assign source = review.bron.value | default: review.bron
+  assign source_url = review.bron_url.value | default: review.bron_url
+  assign date = review.datum.value | default: review.datum
+  assign name = review.naam.value | default: review.naam
+  assign theme_label = review.thema.value | default: review.thema
+-%}
+
+{%- if quote != blank and source_url != blank and date != blank -%}
+  <figure class="nawm-review">
+    {%- if theme_label != blank -%}
+      <p class="nawm-review__theme nawm-mono">{{ theme_label }}</p>
+    {%- endif -%}
+
+    <blockquote class="nawm-review__quote" cite="{{ source_url }}">{{ quote }}</blockquote>
+
+    <figcaption class="nawm-review__meta nawm-mono">
+      {%- if name != blank -%}{{ name }} · {% endif -%}
+      <a href="{{ source_url }}" rel="nofollow noopener" target="_blank">
+        {{- source | default: 'bron' -}}
+        <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
+      </a>
+      · <time datetime="{{ date | date: '%Y-%m-%d' }}">{{ date | date: '%-d %B %Y' }}</time>
+    </figcaption>
+  </figure>
+{%- endif -%}

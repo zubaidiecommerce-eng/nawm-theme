@@ -1,0 +1,190 @@
+{% comment %}
+  Sectie 5 — Vanavond gebruiken. BUILD SPEC §5.5.
+
+  Laten zien dat installatie snel en concreet is, en het bezwaar wegnemen:
+  "moet ik weer iets leren?" Vier stappen, 2×2 op desktop, gestapeld op mobiel.
+  Kaarten met een mono-tijdstempel linksboven en geen icoon.
+
+  Het uitklapblok bevat de volledige 30-minutenroutine uit de blauwdruk. Dat is
+  waardevolle content en tegelijk SEO-materiaal, en het is een native <details>
+  zodat semantiek en toetsenbord gratis meekomen.
+{% endcomment %}
+
+{% liquid
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.tonight.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.tonight.heading' | t
+  endif
+
+  assign steps = 's1,s2,s3,s4' | split: ','
+  assign routine = 'r1,r2,r3,r4,r5,r6' | split: ','
+%}
+
+<section class="nawm-section nawm-tonight ctx-night">
+  <div class="nawm-wrap">
+    <div class="nawm-tonight__head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    <ol class="nawm-tonight__steps">
+      {%- for key in steps -%}
+        {%- liquid
+          assign base = 'nawm.tonight.steps.' | append: key
+          assign k_time = base | append: '.time'
+          assign k_text = base | append: '.text'
+        -%}
+        <li
+          class="nawm-card nawm-tonight__step nawm-reveal"
+          style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms;"
+        >
+          <p class="nawm-mono nawm-tonight__stamp">{{ k_time | t }}</p>
+          <p class="nawm-tonight__text">{{ k_text | t }}</p>
+        </li>
+      {%- endfor -%}
+    </ol>
+
+    {%- if section.settings.show_routine -%}
+      <details class="nawm-tonight__routine" data-nawm-event="open_guide">
+        <summary class="nawm-tonight__summary">{{ 'nawm.tonight.routine_label' | t }}</summary>
+        <div class="nawm-tonight__routine-body">
+          <p class="nawm-small">{{ 'nawm.tonight.routine_intro' | t }}</p>
+          <dl class="nawm-tonight__routine-list">
+            {%- for key in routine -%}
+              {%- liquid
+                assign base = 'nawm.tonight.routine.' | append: key
+                assign k_time = base | append: '.time'
+                assign k_text = base | append: '.text'
+              -%}
+              <dt class="nawm-mono">{{ k_time | t }}</dt>
+              <dd>{{ k_text | t }}</dd>
+            {%- endfor -%}
+          </dl>
+        </div>
+      </details>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .nawm-tonight__head h2 {
+    max-width: 20ch;
+  }
+
+  .nawm-tonight__steps {
+    list-style: none;
+    margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-4);
+  }
+
+  .nawm-tonight__step {
+    padding: var(--sp-5);
+  }
+
+  .nawm-tonight__stamp {
+    color: var(--nawm-amber);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    margin-block-end: var(--sp-4);
+  }
+
+  .nawm-tonight__text {
+    color: var(--fg);
+    font-size: var(--fs-h3);
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    max-width: 26ch;
+  }
+
+  .nawm-tonight__routine {
+    margin-block-start: var(--sp-5);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .nawm-tonight__summary {
+    padding-block: var(--sp-4);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--nawm-amber);
+    cursor: pointer;
+  }
+
+  .nawm-tonight__routine-body {
+    padding-block-end: var(--sp-5);
+  }
+
+  .nawm-tonight__routine-list {
+    margin: var(--sp-4) 0 0;
+    display: grid;
+    gap: var(--sp-2) var(--sp-5);
+    max-width: 62ch;
+  }
+
+  .nawm-tonight__routine-list dt {
+    color: var(--fg-soft);
+    letter-spacing: .1em;
+  }
+
+  .nawm-tonight__routine-list dd {
+    margin: 0 0 var(--sp-3);
+    color: var(--fg);
+  }
+
+  @media (min-width: 750px) {
+    .nawm-tonight__steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--sp-5);
+    }
+
+    .nawm-tonight__routine-list {
+      grid-template-columns: max-content minmax(0, 1fr);
+      align-items: baseline;
+    }
+
+    .nawm-tonight__routine-list dd {
+      margin-block-end: 0;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Vanavond",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De vier stappen en de volledige routine staan in locales/nl.default.json onder nawm.tonight."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_routine",
+      "label": "Volledige 30-minutenroutine uitklapbaar tonen",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Vanavond"
+    }
+  ]
+}
+{% endschema %}

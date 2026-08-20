@@ -1,0 +1,217 @@
+{% comment %}
+  Sectie 10 — Vergelijking. BUILD SPEC §5.10.
+
+  Het proces vergelijken, niet gezondheidsuitkomsten. Geen vinkjes en kruisjes:
+  die suggereren goed/fout waar het over een keuze gaat. In plaats daarvan een
+  dunne verbindingslijn per rij.
+
+  Kleur draagt hier nooit alleen betekenis — beide kolommen hebben een tekstkop
+  die zegt waar je naar kijkt.
+
+  Verboden in deze sectie: merknamen van concurrenten, en elke rij die een
+  gezondheidsuitkomst claimt.
+{% endcomment %}
+
+{% liquid
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.compare.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.compare.heading' | t
+  endif
+
+  assign rows = 'r1,r2,r3,r4,r5' | split: ','
+%}
+
+<section class="nawm-section nawm-compare ctx-dawn">
+  <div class="nawm-wrap">
+    <div class="nawm-compare__head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    <table class="nawm-compare__table">
+      <caption class="nawm-visually-hidden">{{ heading }}</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="nawm-compare__col nawm-compare__col--phone">
+            {{ 'nawm.compare.col_a' | t }}
+          </th>
+          <th scope="col" class="nawm-compare__col nawm-compare__col--nawm">
+            {{ 'nawm.compare.col_b' | t }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for key in rows -%}
+          {%- liquid
+            assign base = 'nawm.compare.rows.' | append: key
+            assign k_a = base | append: '.a'
+            assign k_b = base | append: '.b'
+          -%}
+          <tr class="nawm-compare__row nawm-reveal" style="--reveal-delay: {{ forloop.index0 | times: 60 }}ms;">
+            <td
+              class="nawm-compare__cell nawm-compare__cell--phone"
+              data-label="{{ 'nawm.compare.col_a' | t | escape }}"
+            >
+              {{- k_a | t -}}
+            </td>
+            <td
+              class="nawm-compare__cell nawm-compare__cell--nawm"
+              data-label="{{ 'nawm.compare.col_b' | t | escape }}"
+            >
+              {{- k_b | t -}}
+            </td>
+          </tr>
+        {%- endfor -%}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% stylesheet %}
+  .nawm-compare__table {
+    margin-block-start: clamp(2.5rem, 6vw, 4rem);
+    width: 100%;
+    border-collapse: collapse;
+    text-align: start;
+  }
+
+  .nawm-compare__col {
+    padding-block-end: var(--sp-3);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    font-weight: 400;
+    text-align: start;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    border-block-end: 2px solid currentcolor;
+    width: 50%;
+  }
+
+  .nawm-compare__col--phone {
+    color: color-mix(in oklab, var(--nawm-cool), var(--ink-day) 45%);
+  }
+
+  .nawm-compare__col--nawm {
+    color: var(--nawm-ember);
+  }
+
+  .nawm-compare__cell {
+    position: relative;
+    padding-block: var(--sp-4);
+    vertical-align: top;
+    color: var(--fg);
+    font-size: var(--fs-small);
+    line-height: 1.45;
+    border-block-end: 1px solid var(--line);
+  }
+
+  .nawm-compare__cell--phone {
+    padding-inline-end: var(--sp-5);
+    color: var(--fg-soft);
+  }
+
+  .nawm-compare__cell--nawm {
+    padding-inline-start: var(--sp-5);
+  }
+
+  /* De dunne verbindingslijn per rij: van koel naar warm, in plaats van een
+     vinkje tegenover een kruisje. */
+  .nawm-compare__cell--phone::after {
+    content: "";
+    position: absolute;
+    inset-inline-end: calc(var(--sp-5) * -1 + var(--sp-2));
+    inset-block-start: calc(var(--sp-4) + .6em);
+    width: calc(var(--sp-5) * 2 - var(--sp-2) * 2);
+    height: 1px;
+    background: linear-gradient(90deg, var(--nawm-cool), var(--nawm-amber));
+  }
+
+  @media (max-width: 749px) {
+    .nawm-compare__table,
+    .nawm-compare__table thead,
+    .nawm-compare__table tbody,
+    .nawm-compare__table tr,
+    .nawm-compare__table th,
+    .nawm-compare__table td {
+      display: block;
+      width: auto;
+    }
+
+    .nawm-compare__table thead {
+      display: none;
+    }
+
+    .nawm-compare__row {
+      padding-block: var(--sp-4);
+      border-block-end: 1px solid var(--line);
+    }
+
+    .nawm-compare__cell {
+      padding-block: 0;
+      padding-inline: 0;
+      border: 0;
+    }
+
+    .nawm-compare__cell::before {
+      display: block;
+      font-family: var(--ff-mono);
+      font-size: var(--fs-mono);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      margin-block-end: var(--sp-1);
+    }
+
+    .nawm-compare__cell--phone::before {
+      content: attr(data-label);
+      color: color-mix(in oklab, var(--nawm-cool), var(--ink-day) 45%);
+    }
+
+    .nawm-compare__cell--phone::after {
+      display: none;
+    }
+
+    .nawm-compare__cell--nawm {
+      margin-block-start: var(--sp-3);
+      padding-block-start: var(--sp-3);
+      border-block-start: 1px solid transparent;
+      border-image: linear-gradient(90deg, var(--nawm-cool), var(--nawm-amber)) 1;
+    }
+
+    .nawm-compare__cell--nawm::before {
+      content: attr(data-label);
+      color: var(--nawm-ember);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Vergelijking",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De vijf rijen staan in locales/nl.default.json onder nawm.compare.rows. Geen merknamen van concurrenten en geen rij die een gezondheidsuitkomst claimt."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Vergelijking"
+    }
+  ]
+}
+{% endschema %}

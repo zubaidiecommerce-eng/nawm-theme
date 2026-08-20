@@ -1,0 +1,33 @@
+{% doc %}
+  De prijs, uit één bron. BUILD SPEC §5.11.
+
+  Nooit hardcoded. Standaard komt de prijs uit het gekozen product; staat de
+  themasetting op handmatig, dan uit `price_manual`. Ontbreken ze allebei, dan
+  rendert het VERIFY-token — de definitieve webshopprijs is nog een besluit
+  (§13, punt 3: blauwdruk €69,95 tegenover de bol-listing op €39,95).
+
+  Geen doorgestreepte adviesprijs tenzij die juridisch en feitelijk
+  verdedigbaar is; daarom wordt `compare_at_price` hier bewust niet getoond.
+
+  @param {object} [product] - Het NAWM-product.
+{% enddoc %}
+
+{%- liquid
+  assign source = settings.price_display_source | default: 'product'
+  assign resolved = blank
+
+  if source == 'manual'
+    assign resolved = settings.price_manual
+  elsif product != blank and product.price != blank
+    assign resolved = product.price | money
+  endif
+-%}
+
+{%- if resolved != blank -%}
+  {{- resolved -}}
+{%- else -%}
+  {%- render 'nawm-verify',
+    field: 'price',
+    note: 'definitieve webshopprijs — kanaalconflict met de bol-listing eerst beslissen'
+  -%}
+{%- endif -%}

@@ -1,0 +1,71 @@
+{% comment %}
+  Sectie 2 — De paradox. BUILD SPEC §5.2.
+
+  Het "jullie begrijpen wat ik mis"-moment. Dit is de stilste sectie van de
+  pagina: één centrale kolom, bewust smal, veel lucht eromheen. Eén haarlijn
+  amber boven de kop en verder geen decoratie — geen icoon, geen kaart, geen
+  beeld.
+{% endcomment %}
+
+{% liquid
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.paradox.heading' | t
+  endif
+
+  assign body = section.settings.body
+  if body == blank
+    assign body = 'nawm.paradox.body' | t
+  endif
+%}
+
+<section class="nawm-section nawm-paradox ctx-night">
+  <div class="nawm-wrap nawm-paradox__inner">
+    <hr class="nawm-rule nawm-rule--center nawm-reveal">
+    <h2 class="nawm-paradox__heading nawm-reveal" style="--reveal-delay: 80ms;">{{ heading }}</h2>
+    <p class="nawm-paradox__body nawm-reveal" style="--reveal-delay: 160ms;">{{ body }}</p>
+  </div>
+</section>
+
+{% stylesheet %}
+  .nawm-paradox__inner {
+    text-align: center;
+  }
+
+  .nawm-paradox__heading {
+    max-width: 34ch;
+    margin-inline: auto;
+  }
+
+  .nawm-paradox__body {
+    max-width: 56ch;
+    margin: var(--sp-5) auto 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Paradox",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Laat leeg om de copy uit locales/nl.default.json te gebruiken."
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Tekst"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Paradox"
+    }
+  ]
+}
+{% endschema %}

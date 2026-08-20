@@ -1,0 +1,47 @@
+{% doc %}
+  Eén rij in de specificatietabel. BUILD SPEC §5.9 / §8.1.
+
+  Nul hardcoded getallen: elke waarde komt uit een metafield. Ontbreekt het
+  metafield, dan rendert het VERIFY-token in plaats van een gok.
+
+  Bestaan wordt getest op `metafield.type`, niet op de waarde. Een boolean die
+  op false staat is in Liquid gelijk aan blank, en zou anders ten onrechte als
+  "nog te verifiëren" doorgaan in plaats van als "nee".
+
+  @param {string} label - Zichtbaar label, uit locales/nl.default.json.
+  @param {object} [metafield] - Het metafield zelf, niet .value.
+  @param {string} field - Sleutel voor docs/OPEN.md, bijvoorbeeld 'weight_g'.
+  @param {string} [kind] - 'text' (standaard), 'bool' of 'list'.
+  @param {string} [suffix] - Eenheid achter de waarde.
+  @param {string} [note] - Wat er geverifieerd moet worden en waaruit.
+{% enddoc %}
+
+{%- liquid
+  assign exists = false
+  if metafield.type != blank
+    assign exists = true
+  endif
+-%}
+
+<div class="nawm-specs__row">
+  <dt class="nawm-specs__label">{{ label }}</dt>
+  <dd class="nawm-specs__value nawm-mono">
+    {%- if exists -%}
+      {%- case kind -%}
+        {%- when 'bool' -%}
+          {%- if metafield.value -%}
+            {{- 'nawm.common.yes' | t -}}
+          {%- else -%}
+            {{- 'nawm.common.no' | t -}}
+          {%- endif -%}
+        {%- when 'list' -%}
+          {{- metafield.value | join: ' · ' -}}
+        {%- else -%}
+          {{- metafield.value -}}
+          {%- if suffix != blank %} {{ suffix }}{% endif -%}
+      {%- endcase -%}
+    {%- else -%}
+      {% render 'nawm-verify', field: field, note: note %}
+    {%- endif -%}
+  </dd>
+</div>

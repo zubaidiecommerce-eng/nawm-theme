@@ -1,0 +1,191 @@
+{% comment %}
+  Sectie 7 — Social proof. BUILD SPEC §5.7.
+
+  Bevestiging door echte klanten. Reviews komen uit metaobject `nawm_review`;
+  de guard zit in snippets/nawm-review-card.liquid en niet in de redactie: een
+  review zonder bron-url en datum rendert niet.
+
+  Het reviewcijfer is datumgebonden. Zonder controledatum toont de cijferregel
+  niets — een score zonder datum veroudert stilletjes en dat is precies wat de
+  blauwdruk wil voorkomen.
+
+  Geen carrousel met autoplay: op mobiel is dit een scroll-snap lijst die de
+  bezoeker zelf bedient.
+{% endcomment %}
+
+{% liquid
+  assign reviews = shop.metaobjects.nawm_review.values
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.proof.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.proof.heading' | t
+  endif
+
+  assign has_score = false
+  if settings.review_score != blank and settings.review_count != blank and settings.review_checked_on != blank
+    assign has_score = true
+  endif
+%}
+
+<section class="nawm-section nawm-proof ctx-dawn">
+  {%- if section.settings.image != blank -%}
+    <div class="nawm-proof__band">
+      {% render 'nawm-figure',
+        image: section.settings.image,
+        alt: 'nawm.proof.image_alt' | t,
+        slug: 'ochtend-raam',
+        sizes: '100vw',
+        ratio: '16 / 9',
+        class: 'nawm-figure--bleed'
+      %}
+    </div>
+  {%- endif -%}
+
+  <div class="nawm-wrap">
+    <div class="nawm-proof__head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+
+      {%- if has_score -%}
+        <p class="nawm-mono nawm-proof__score">
+          {{-
+            'nawm.proof.score_line'
+            | t: score: settings.review_score, count: settings.review_count, date: settings.review_checked_on
+          -}}
+        </p>
+      {%- endif -%}
+    </div>
+
+    {%- assign rendered = 0 -%}
+    <div class="nawm-proof__list">
+      {%- for review in reviews -%}
+        {%- if review.bron_url != blank and review.datum != blank -%}
+          {%- assign rendered = rendered | plus: 1 -%}
+          <div class="nawm-card nawm-proof__item nawm-reveal" style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms;">
+            {% render 'nawm-review-card', review: review %}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if rendered == 0 -%}
+      <p class="nawm-small nawm-proof__empty">{{ 'nawm.proof.empty' | t }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .nawm-proof__band {
+    margin-block-end: clamp(3rem, 8vw, 5rem);
+  }
+
+  .nawm-proof__score {
+    margin-block-start: var(--sp-4);
+    color: var(--fg-soft);
+  }
+
+  .nawm-proof__list {
+    margin-block-start: clamp(2.5rem, 6vw, 4rem);
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(78%, 20rem);
+    gap: var(--sp-4);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-block-end: var(--sp-3);
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    scrollbar-width: thin;
+  }
+
+  .nawm-proof__item {
+    scroll-snap-align: start;
+    display: flex;
+  }
+
+  .nawm-proof__empty {
+    margin-block-start: var(--sp-5);
+  }
+
+  .nawm-review {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    margin: 0;
+  }
+
+  .nawm-review__theme {
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--nawm-ember);
+  }
+
+  .nawm-review__quote {
+    margin: 0;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--fg);
+  }
+
+  .nawm-review__meta {
+    margin-block-start: auto;
+    color: var(--fg-soft);
+  }
+
+  @media (min-width: 1024px) {
+    .nawm-proof__list {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-columns: auto;
+      overflow: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+      gap: var(--sp-5);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Social proof",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Reviews komen uit metaobject nawm_review. Een citaat zonder bron-url en datum wordt niet getoond. Het cijfer, het aantal en de controledatum staan in de themasettings."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "header",
+      "content": "Beeld"
+    },
+    {
+      "type": "paragraph",
+      "content": "De overgang naar de ochtend — zie §9.3, prompt 6."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Beeld (16:9)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Social proof"
+    }
+  ]
+}
+{% endschema %}
