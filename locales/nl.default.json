@@ -120,7 +120,8 @@
       "eyebrow": "Social proof",
       "heading": "Wat kopers terugmelden.",
       "score_line": "{{ score }} uit {{ count }} beoordelingen op bol.com · gecontroleerd op {{ date }}",
-      "empty": "Er staan nog geen gecontroleerde citaten klaar. Een review zonder bron en datum tonen we niet."
+      "empty": "Er staan nog geen gecontroleerde citaten klaar. Een review zonder bron en datum tonen we niet.",
+      "image_alt": "Vroeg ochtendlicht valt in een band over verkreukeld beddengoed"
     },
     "inbox": {
       "eyebrow": "Wat je krijgt",

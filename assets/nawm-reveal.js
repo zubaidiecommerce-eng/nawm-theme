@@ -35,3 +35,6 @@ if (reduce.matches || !('IntersectionObserver' in window)) {
     if (e.matches) revealAll();
   });
 }
+
+/* Meldt aan het vangnet in nawm-head.liquid dat de reveals bediend worden. */
+window.nawmRevealReady = true;

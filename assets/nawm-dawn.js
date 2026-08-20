@@ -1,23 +1,32 @@
 /**
  * nawm-dawn.js — de dawn-engine en de nachtklok. BUILD SPEC §4.1 / §4.2.
  *
- * Zet één variabele op <html>: `--dawn` loopt van 0 (23:30, bovenkant hero)
- * naar 1 (07:00, einde ochtenddemo). `--ember` piekt op 1 rond --dawn .5.
- * De hele pagina hangt daaraan; niets anders leest de scrollpositie.
+ * Zet twee variabelen op <html>:
+ *
+ *   --dawn  0 → 1, lineair van de bovenkant van de hero tot de onderkant van de
+ *           ochtenddemo. Dat is de reis die de klok vertelt: 23:30 → 07:00.
+ *           Stuurt ook de SOFT-as van Fraunces.
+ *   --sky   0 → 1, maar pas binnen de ochtenddemo. Dit is de crossfade van
+ *           nacht naar ochtend.
+ *
+ * De spec (§4.1) laat de lucht aan --dawn hangen. Met één lineaire variabele
+ * licht de achtergrond al halverwege de nachtsecties op, terwijl secties 2 tot
+ * en met 5 met ctx-night lichte tekst dragen — dat breekt de contrasteisen uit
+ * §3.2, en die zijn niet onderhandelbaar. Zie docs/DESIGN-NOTES.md.
  *
  * Kosten: één rAF per scroll-frame. Binnen de frame worden geen layout-reads
- * gedaan — de bounds zijn gecached en worden alleen bij resize/load hermeten.
+ * gedaan — de bounds zijn gecached en worden alleen bij resize, load en
+ * sectiewijzigingen hermeten.
  */
 
 const root = document.documentElement;
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 const clamp01 = (n) => (n < 0 ? 0 : n > 1 ? 1 : n);
 
-const HHMM = document.querySelector('[data-nawm-clock]');
 const clockNodes = document.querySelectorAll('[data-nawm-clock]');
 
 function clock(dawn) {
-  if (!HHMM) return;
+  if (clockNodes.length === 0) return;
   const total = (23 * 60 + 30 + dawn * 450) % 1440;
   const h = String(Math.floor(total / 60)).padStart(2, '0');
   const m = String(Math.floor(total % 60)).padStart(2, '0');
@@ -28,25 +37,36 @@ function clock(dawn) {
 }
 
 /**
- * Twee spans, geen één.
- *
- * `--dawn` loopt lineair van de bovenkant van de hero tot de onderkant van de
- * ochtenddemo. Dat is de reis die de klok vertelt: 23:30 → 07:00.
- *
- * De lucht hangt aan een tweede variabele, `--sky`, die pas binnen de
- * ochtenddemo van 0 naar 1 loopt. Zonder die splitsing zou de achtergrond al
- * halverwege de nachtsecties oplichten, terwijl secties 2 tot en met 5 met
- * `ctx-night` lichte tekst dragen — dat breekt de contrasteisen uit spec §3.2,
- * en die zijn niet onderhandelbaar. Zie docs/DESIGN-NOTES.md.
+ * Horizon maakt vanaf 990px `.page-wrapper` de scroll-container en zet html en
+ * body op `overflow: hidden`. Boven die breedte blijft `window.scrollY` dus op
+ * 0 staan en vuurt het window geen scroll-event. Zonder deze detectie zou de
+ * hele engine op desktop stilstaan.
  */
+let host = null; // null betekent: het window scrollt
+
+function resolveHost() {
+  const wrapper = document.querySelector('.page-wrapper');
+  host = wrapper && wrapper.scrollHeight - wrapper.clientHeight > 1 ? wrapper : null;
+}
+
+const scrollTop = () => (host ? host.scrollTop : window.scrollY);
+const viewport = () => (host ? host.clientHeight : window.innerHeight);
+
+function offsetTop(el) {
+  const box = el.getBoundingClientRect();
+  if (!host) return box.top + window.scrollY;
+  return box.top - host.getBoundingClientRect().top + host.scrollTop;
+}
+
 function bounds() {
   const a = document.querySelector('[data-dawn-start]');
   const b = document.querySelector('[data-dawn-end]');
   if (!a || !b) return null;
-  const top = a.getBoundingClientRect().top + window.scrollY;
-  const skyBox = b.getBoundingClientRect();
-  const skyTop = skyBox.top + window.scrollY;
-  const bottom = skyBox.bottom + window.scrollY;
+
+  const top = offsetTop(a);
+  const skyTop = offsetTop(b);
+  const bottom = skyTop + b.offsetHeight;
+
   return {
     top,
     span: Math.max(1, bottom - top),
@@ -55,14 +75,18 @@ function bounds() {
   };
 }
 
-let box = bounds();
+let box = null;
 let ticking = false;
 
 function paint() {
   ticking = false;
   if (!box) return;
-  const raw = clamp01((window.scrollY + window.innerHeight * 0.55 - box.top) / box.span);
-  const rawSky = clamp01((window.scrollY + window.innerHeight * 0.85 - box.skyTop) / box.skySpan);
+
+  const y = scrollTop();
+  const h = viewport();
+
+  const raw = clamp01((y + h * 0.55 - box.top) / box.span);
+  const rawSky = clamp01((y + h * 0.85 - box.skyTop) / box.skySpan);
 
   const dawn = reduce.matches ? (raw < 0.5 ? 0 : 1) : raw;
   const sky = reduce.matches ? (rawSky < 0.5 ? 0 : 1) : rawSky;
@@ -80,11 +104,23 @@ function onScroll() {
   }
 }
 
+let attached = null;
+
+function attach() {
+  if (attached === host) return;
+  if (attached) attached.removeEventListener('scroll', onScroll);
+  if (host) host.addEventListener('scroll', onScroll, { passive: true });
+  attached = host;
+}
+
 function remeasure() {
+  resolveHost();
+  attach();
   box = bounds();
   onScroll();
 }
 
+/* Het window blijft luisteren: onder 990px is dát de scroller. */
 addEventListener('scroll', onScroll, { passive: true });
 addEventListener('resize', remeasure, { passive: true });
 addEventListener('load', remeasure);
@@ -99,4 +135,4 @@ if ('ResizeObserver' in window) {
 document.addEventListener('shopify:section:load', remeasure);
 document.addEventListener('shopify:section:unload', remeasure);
 
-paint();
+remeasure();

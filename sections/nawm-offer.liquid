@@ -128,7 +128,7 @@
 
 <div class="nawm-sticky-cta" data-nawm-sticky-cta inert>
   <p class="nawm-sticky-cta__price nawm-mono">{{ price }}</p>
-  {% render 'nawm-cta', label: 'nawm.offer.sticky_label' | t, url: '#offer', event: 'view_offer' %}
+  {% render 'nawm-cta', label: 'nawm.offer.sticky_label' | t, url: '#offer' %}
 </div>
 
 {% stylesheet %}
@@ -281,7 +281,6 @@
 {% schema %}
 {
   "name": "NAWM · Aanbod",
-  "tag": "section",
   "settings": [
     {
       "type": "paragraph",

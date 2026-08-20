@@ -67,6 +67,7 @@ function onView(selector, event) {
 
 onView('[data-nawm-hero]', 'view_hero');
 onView('#offer', 'view_offer');
+onView('#specificaties', 'open_specifications');
 
 document.addEventListener('click', (e) => {
   const el = e.target.closest('[data-nawm-event]');

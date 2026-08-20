@@ -81,8 +81,7 @@
       <div class="nawm-hero__action">
         {% render 'nawm-cta',
           label: cta_label,
-          url: section.settings.cta_url | default: '#offer',
-          event: 'view_offer_click'
+          url: section.settings.cta_url | default: '#offer'
         %}
 
         <p class="nawm-mono nawm-hero__trust">
@@ -221,7 +220,6 @@
 {% schema %}
 {
   "name": "NAWM · Hero",
-  "tag": "section",
   "settings": [
     {
       "type": "paragraph",

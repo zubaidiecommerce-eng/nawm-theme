@@ -8,6 +8,18 @@
 
 <script>
   document.documentElement.classList.add('nawm-js');
+
+  /*
+   * Vangnet. Zodra `nawm-js` staat, starten reveals op opacity 0 en maakt
+   * nawm-reveal.js ze zichtbaar. Laadt dat script niet, dan zou de halve
+   * pagina onzichtbaar blijven — een leesbaar artikel is belangrijker dan een
+   * animatie, dus na twee seconden zet dit alles alsnog aan.
+   */
+  setTimeout(function () {
+    if (window.nawmRevealReady) return;
+    var hidden = document.querySelectorAll('.nawm-reveal:not(.is-revealed)');
+    for (var i = 0; i < hidden.length; i++) hidden[i].classList.add('is-revealed');
+  }, 2000);
 </script>
 
 {{ 'nawm-tokens.css' | asset_url | stylesheet_tag }}

@@ -1,0 +1,17 @@
+# scripts/claims-allow.txt
+#
+# Regels die de claims-lint zou vlaggen, maar die na beoordeling mogen blijven.
+# Eén regel per item, woordelijk zoals hij in het bestand staat, zonder
+# inspringing. Wijzigt de regel, dan valt hij weer door de lint. Dat is opzet:
+# een goedkeuring geldt voor déze formulering en niet voor een volgende.
+#
+# Elk item hoort een reden te hebben. Zonder reden hoort het hier niet.
+#
+# --- locales/nl.default.json ------------------------------------------------
+#
+# Reden: dit is de vraag die de bezoeker stelt, en het antwoord eronder is
+# expliciet "Nee" respectievelijk "Geen product kan dat voor iedereen
+# garanderen." De pagina doet hier dus precies het tegenovergestelde van de
+# claim die de lint zoekt. Zie BUILD SPEC §5.12, verbatim overgenomen.
+"q": "Helpt NAWM mij gegarandeerd om sneller in slaap te vallen?",
+"q": "Word ik gegarandeerd energieker wakker?",

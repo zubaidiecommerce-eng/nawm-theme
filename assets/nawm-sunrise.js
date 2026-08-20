@@ -132,11 +132,12 @@ class NawmSunrise extends HTMLElement {
     this.report();
   }
 
+  /* Via nawmTrack, zodat het event de consent-wachtrij van nawm-analytics.js
+     doorloopt en niet rechtstreeks in de dataLayer belandt. */
   report() {
     if (this.reported) return;
     this.reported = true;
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: 'use_sunrise_scrubber' });
+    if (typeof window.nawmTrack === 'function') window.nawmTrack('use_sunrise_scrubber');
   }
 }
 

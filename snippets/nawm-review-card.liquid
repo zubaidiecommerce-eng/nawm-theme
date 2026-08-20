@@ -30,7 +30,7 @@
       {%- if name != blank -%}{{ name }} · {% endif -%}
       <a href="{{ source_url }}" rel="nofollow noopener" target="_blank">
         {{- source | default: 'bron' -}}
-        <span class="nawm-visually-hidden"> ({{ 'nawm.proof.opens_new_tab' | t }})</span>
+        <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
       </a>
       · <time datetime="{{ date | date: '%Y-%m-%d' }}">{{ date | date: '%-d %B %Y' }}</time>
     </figcaption>
