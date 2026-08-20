@@ -1,0 +1,12 @@
+{% doc %}
+  De mono-eyebrow boven een sectiekop. Uppercase, letter-spacing .14em.
+
+  @param {string} text - De tekst, altijd uit locales/nl.default.json.
+  @param {string} [tag] - Elementnaam, standaard 'p'. Gebruik 'span' binnen een kop.
+  @param {string} [class] - Extra klassen.
+{% enddoc %}
+
+{%- if text != blank -%}
+  {%- assign el = tag | default: 'p' -%}
+  <{{ el }} class="nawm-eyebrow {{ class }}">{{ text }}</{{ el }}>
+{%- endif -%}

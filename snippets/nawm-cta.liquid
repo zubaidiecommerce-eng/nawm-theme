@@ -1,0 +1,60 @@
+{% doc %}
+  De enige knop van deze pagina. Eén vorm, twee varianten.
+
+  Geef een product mee en de knop wordt een echte add-to-cart. Geef alleen een
+  url mee en het wordt een link. Knoplabels blijven consistent door de hele
+  flow (BUILD SPEC §6.2) — het label komt dus altijd uit dezelfde locale-sleutel.
+
+  @param {string} label - Knoptekst uit locales/nl.default.json.
+  @param {string} [url] - Bestemming wanneer er geen product is meegegeven.
+  @param {object} [product] - Product; maakt er een add-to-cart-formulier van.
+  @param {string} [variant] - 'primary' (standaard) of 'ghost'.
+  @param {boolean} [full] - Volle breedte.
+  @param {string} [event] - dataLayer-event bij klik, zie §11.1.
+  @param {string} [id] - Optioneel id op het klikbare element.
+{% enddoc %}
+
+{%- liquid
+  assign classes = 'nawm-cta'
+  if variant == 'ghost'
+    assign classes = classes | append: ' nawm-cta--ghost'
+  endif
+  if full
+    assign classes = classes | append: ' nawm-cta--full'
+  endif
+-%}
+
+{%- if product != blank and product.available -%}
+  {%- form 'product', product, id: id, class: 'nawm-cta-form', novalidate: 'novalidate' -%}
+    <input
+      type="hidden"
+      name="id"
+      value="{{ product.selected_or_first_available_variant.id }}"
+    >
+    <button
+      type="submit"
+      name="add"
+      class="{{ classes }}"
+      {% if event != blank %}
+        data-nawm-event="{{ event }}"
+      {% endif %}
+    >
+      {{ label }}
+    </button>
+  {%- endform -%}
+{%- elsif product != blank -%}
+  <span class="{{ classes }}" aria-disabled="true">{{ 'nawm.offer.sold_out' | t }}</span>
+{%- else -%}
+  <a
+    class="{{ classes }}"
+    href="{{ url | default: '#offer' }}"
+    {% if id != blank %}
+      id="{{ id }}"
+    {% endif %}
+    {% if event != blank %}
+      data-nawm-event="{{ event }}"
+    {% endif %}
+  >
+    {{ label }}
+  </a>
+{%- endif -%}

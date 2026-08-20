@@ -1,0 +1,45 @@
+/* NAWM design tokens — de enige plek met kleur- en typewaarden. Zie BUILD SPEC §3.6. */
+:root {
+  /* kleur */
+  --nawm-midnight:#0B1220; --nawm-indigo:#16233A; --nawm-ember:#C4562B;
+  --nawm-amber:#F2A24C;    --nawm-peach:#F7CFA8;  --nawm-dawn:#FBF3EA;
+  --nawm-cool:#7FA8C9;
+  --ink-night:#E7E3DC; --ink-night-soft:#A9B0BD;
+  --ink-day:#1A1710;   --ink-day-soft:#5C544A;
+
+  /* scroll-state, gezet door nawm-dawn.js */
+  --dawn: 0;    /* 0 = 23:30, 1 = 07:00 */
+  --ember: 0;   /* piek 1 rond --dawn .5 */
+
+  /* type */
+  --ff-display:"Fraunces", Georgia, serif;
+  --ff-body:"Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ff-mono:"IBM Plex Mono", ui-monospace, monospace;
+  --fs-hero:clamp(2.75rem,1.6rem + 5.2vw,5.5rem);
+  --fs-h2:clamp(2rem,1.3rem + 3vw,3.5rem);
+  --fs-h3:clamp(1.375rem,1.1rem + 1.1vw,1.875rem);
+  --fs-body:clamp(1.0625rem,1.02rem + .2vw,1.1875rem);
+  --fs-small:.9375rem; --fs-mono:.8125rem;
+
+  /* ruimte */
+  --sp-1:.5rem; --sp-2:.75rem; --sp-3:1rem; --sp-4:1.5rem; --sp-5:2rem;
+  --sp-6:3rem; --sp-7:4.5rem; --sp-8:7rem; --sp-9:10rem;
+  --r-card:14px; --r-pill:999px; --r-data:4px;
+  --wrap:1240px; --gutter:clamp(1.25rem,4vw,2.5rem);
+
+  /* motion */
+  --ease:cubic-bezier(.22,1,.36,1);
+  --dur-fast:180ms; --dur:420ms; --dur-slow:900ms;
+  --glow-amber:0 0 80px -20px rgb(242 162 76 / .45);
+}
+
+/* Secties declareren hun eigen dag/nacht-context. Niets erft per ongeluk. */
+.ctx-night { --bg:var(--nawm-midnight); --fg:var(--ink-night); --fg-soft:var(--ink-night-soft); --line:rgb(255 255 255 / .10); }
+.ctx-dawn  { --bg:var(--nawm-dawn);     --fg:var(--ink-day);   --fg-soft:var(--ink-day-soft);   --line:rgb(26 23 16 / .12); }
+
+.nawm-section { padding-block:clamp(4.5rem,10vw,10rem); color:var(--fg); position:relative; }
+.nawm-wrap { width:min(var(--wrap), 100% - var(--gutter)*2); margin-inline:auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}

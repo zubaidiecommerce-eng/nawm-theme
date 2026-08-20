@@ -1,0 +1,16 @@
+{% doc %}
+  Alles wat de NAWM-pagina in de <head> nodig heeft. BUILD SPEC §10.2.
+
+  Twee stylesheets, render-blocking en klein: tokens en base. Sectie-specifieke
+  CSS staat in de secties zelf. Verder de fonts en één inline regel die `nawm-js`
+  op <html> zet, zodat CSS weet dat reveals veilig verborgen mogen starten.
+{% enddoc %}
+
+<script>
+  document.documentElement.classList.add('nawm-js');
+</script>
+
+{{ 'nawm-tokens.css' | asset_url | stylesheet_tag }}
+{{ 'nawm-base.css' | asset_url | stylesheet_tag }}
+
+{% render 'nawm-fonts' %}

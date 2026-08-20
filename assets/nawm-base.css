@@ -1,0 +1,359 @@
+/* NAWM base — reset-aanvullingen, typografie, gedeelde primitieven.
+   Sectie-specifieke CSS staat in de sectie zelf via een stylesheet-tag. */
+
+/* ---------------------------------------------------------------- pagina */
+
+html.nawm-page {
+  background: var(--nawm-midnight);
+}
+
+html.nawm-page body {
+  background: transparent;
+  font-family: var(--ff-body);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Horizon zet een eigen achtergrond op sectiewrappers. De lucht moet erdoorheen. */
+html.nawm-page .shopify-section:has(.nawm-section) {
+  background: transparent;
+}
+
+/* ------------------------------------------------------------------ lucht */
+
+.nawm-sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--nawm-midnight);
+  pointer-events: none;
+}
+.nawm-sky > * {
+  position: absolute;
+  inset: 0;
+  will-change: opacity;
+}
+.nawm-sky__night {
+  background: radial-gradient(120% 90% at 50% 110%, #16233A 0%, #0B1220 55%);
+  opacity: calc(1 - var(--dawn));
+}
+.nawm-sky__ember {
+  background: radial-gradient(90% 60% at 50% 100%, #C4562B 0%, transparent 62%);
+  opacity: calc(var(--ember) * .55);
+}
+.nawm-sky__morning {
+  background: linear-gradient(180deg, #F7CFA8 0%, #FBF3EA 45%);
+  opacity: var(--dawn);
+}
+
+/* ---------------------------------------------------------------- nachtklok */
+
+.nawm-clock {
+  position: fixed;
+  left: var(--gutter);
+  bottom: var(--gutter);
+  z-index: 20;
+  margin: 0;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .12em;
+  color: var(--ink-night-soft);
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+@media (max-width: 749px) {
+  .nawm-clock { display: none; } /* verhuist naar de header */
+}
+
+.nawm-clock--header {
+  position: static;
+  display: none;
+  mix-blend-mode: normal;
+  color: var(--ink-night-soft);
+}
+@media (max-width: 749px) {
+  .nawm-clock--header { display: block; }
+}
+
+/* --------------------------------------------------------------- typografie */
+
+.nawm-section h1,
+.nawm-section h2,
+.nawm-section .display {
+  font-family: var(--ff-display);
+  font-variation-settings: "opsz" 96, "SOFT" 60, "WONK" 0;
+  font-variation-settings:
+    "opsz" 96,
+    "SOFT" calc(60 - (var(--dawn) * 60)),
+    "WONK" 0;
+  font-weight: 300;
+  letter-spacing: -.02em;
+  line-height: 1.03;
+  text-wrap: balance;
+  margin: 0;
+  color: var(--fg);
+}
+
+.nawm-section h1 { font-size: var(--fs-hero); }
+.nawm-section h2 { font-size: var(--fs-h2); }
+.nawm-section h3 {
+  font-family: var(--ff-body);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  margin: 0;
+  color: var(--fg);
+}
+
+.nawm-section p { margin: 0; color: var(--fg-soft); }
+.nawm-section a { color: inherit; }
+
+.nawm-body { max-width: 62ch; }
+.nawm-body > * + * { margin-block-start: var(--sp-3); }
+
+.nawm-lede {
+  font-size: clamp(1.125rem, 1.02rem + .5vw, 1.375rem);
+  line-height: 1.45;
+  color: var(--fg);
+  max-width: 56ch;
+}
+
+.nawm-mono {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .04em;
+}
+
+.nawm-small { font-size: var(--fs-small); color: var(--fg-soft); }
+
+/* ----------------------------------------------------------------- eyebrow */
+
+.nawm-eyebrow {
+  display: block;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  line-height: 1.5;
+  color: var(--nawm-amber);
+  margin: 0 0 var(--sp-4);
+  max-width: 46ch;
+}
+.ctx-dawn .nawm-eyebrow { color: var(--nawm-ember); }
+
+/* ------------------------------------------------------------------ haarlijn */
+
+.nawm-rule {
+  display: block;
+  width: 64px;
+  height: 1px;
+  border: 0;
+  margin: 0 0 var(--sp-5);
+  background: var(--nawm-amber);
+}
+.nawm-rule--center { margin-inline: auto; }
+
+/* ---------------------------------------------------------------------- CTA */
+
+.nawm-cta {
+  --cta-bg: var(--nawm-amber);
+  --cta-fg: var(--ink-day);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 56px;
+  padding: var(--sp-3) var(--sp-5);
+  border: 1px solid transparent;
+  border-radius: var(--r-pill);
+  background: var(--cta-bg);
+  color: var(--cta-fg);
+  font-family: var(--ff-body);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.nawm-cta:hover { box-shadow: var(--glow-amber); }
+.nawm-cta[disabled],
+.nawm-cta[aria-disabled="true"] { opacity: .55; cursor: not-allowed; box-shadow: none; }
+
+.nawm-cta--ghost {
+  --cta-bg: transparent;
+  --cta-fg: var(--fg);
+  border-color: var(--line);
+  font-weight: 500;
+}
+.nawm-cta--ghost:hover { box-shadow: none; background: color-mix(in oklab, var(--fg) 8%, transparent); }
+
+.nawm-cta--full { width: 100%; }
+
+/* ------------------------------------------------------------------- kaarten */
+
+.nawm-card {
+  border-radius: var(--r-card);
+  padding: var(--sp-4);
+  background: var(--nawm-indigo);
+  border: 1px solid rgb(255 255 255 / .06);
+}
+.ctx-dawn .nawm-card {
+  background: color-mix(in oklab, var(--nawm-dawn) 92%, #fff);
+  border-color: var(--nawm-peach);
+  box-shadow: 0 1px 2px rgb(26 23 16 / .06), 0 8px 24px -12px rgb(26 23 16 / .12);
+}
+
+/* --------------------------------------------------------------------- chips */
+
+.nawm-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-pill);
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: .04em;
+  cursor: pointer;
+}
+.nawm-chip[aria-pressed="true"] {
+  border-color: var(--nawm-amber);
+  background: color-mix(in oklab, var(--nawm-amber) 18%, transparent);
+}
+
+/* -------------------------------------------------------------------- figure */
+
+.nawm-figure { margin: 0; }
+.nawm-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-card);
+}
+.nawm-figure--bleed img { border-radius: 0; }
+.nawm-figure figcaption {
+  margin-block-start: var(--sp-2);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: .04em;
+  color: var(--fg-soft);
+}
+.nawm-figure__placeholder {
+  display: grid;
+  place-items: center;
+  aspect-ratio: var(--ph-ratio, 3 / 2);
+  border-radius: var(--r-card);
+  border: 1px dashed var(--line);
+  background:
+    radial-gradient(80% 70% at 50% 110%, color-mix(in oklab, var(--nawm-ember) 45%, transparent) 0%, transparent 68%),
+    var(--nawm-indigo);
+  color: var(--ink-night-soft);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: .08em;
+  text-align: center;
+  padding: var(--sp-4);
+}
+.nawm-figure--bleed .nawm-figure__placeholder { border-radius: 0; }
+
+/* -------------------------------------------------------------------- reveal */
+
+.nawm-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity var(--dur-slow) var(--ease) var(--reveal-delay, 0ms),
+    transform var(--dur-slow) var(--ease) var(--reveal-delay, 0ms);
+}
+.nawm-reveal.is-revealed { opacity: 1; transform: none; }
+
+/* Zonder JS mag niets onzichtbaar blijven. */
+html:not(.nawm-js) .nawm-reveal { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* --------------------------------------------------------------------- focus */
+
+html.nawm-page :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--nawm-amber);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* -------------------------------------------------------------------- VERIFY */
+
+.verify {
+  display: inline;
+  padding: 0 .35em;
+  border-radius: 3px;
+  background: #FF00A0;
+  color: #fff;
+  font-family: var(--ff-mono);
+  font-size: .8em;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+
+.nawm-verify-banner {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 9999;
+  margin: 0;
+  padding: var(--sp-3) var(--gutter);
+  background: #FF00A0;
+  color: #fff;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------------ utilities */
+
+.nawm-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.nawm-stack > * + * { margin-block-start: var(--stack, var(--sp-4)); }
+
+.nawm-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.nawm-list li {
+  position: relative;
+  padding-inline-start: var(--sp-4);
+  color: var(--fg-soft);
+}
+.nawm-list li + li { margin-block-start: var(--sp-2); }
+.nawm-list li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: .68em;
+  width: 8px;
+  height: 1px;
+  background: var(--nawm-amber);
+}

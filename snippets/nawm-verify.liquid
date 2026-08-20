@@ -1,0 +1,25 @@
+{% doc %}
+  Rendert een waarde, of — als die ontbreekt — het VERIFY-token.
+
+  Zie BUILD SPEC §0.4. Geen enkele productspecificatie wordt geraden. Staat een
+  getal niet in §8 of §13, dan hoort hier een token te staan dat in de editor fel
+  magenta oplicht en op de live storefront de build blokkeert via nawm-verify.js.
+
+  @param {string} [value] - De geverifieerde waarde. Leeg betekent: nog niet bevestigd.
+  @param {string} field - Sleutel van het veld, bijvoorbeeld 'wake_sounds_count'.
+  @param {string} [note] - Wat er precies geverifieerd moet worden en waaruit.
+  @param {string} [suffix] - Tekst achter de waarde, bijvoorbeeld een eenheid.
+{% enddoc %}
+
+{%- liquid
+  assign has_value = false
+  if value != blank or value == 0
+    assign has_value = true
+  endif
+-%}
+
+{%- if has_value -%}
+  {{ value }}{% if suffix != blank %} {{ suffix }}{% endif %}
+{%- else -%}
+  <span class="verify" data-verify-field="{{ field }}">VERIFY: {{ note | default: field }}</span>
+{%- endif -%}
