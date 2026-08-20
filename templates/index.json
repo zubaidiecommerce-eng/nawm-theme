@@ -1,18 +1,66 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "nawm_hero": { "type": "nawm-hero" },
-    "nawm_paradox": { "type": "nawm-paradox" },
-    "nawm_pattern": { "type": "nawm-pattern" },
-    "nawm_system": { "type": "nawm-system" },
-    "nawm_tonight": { "type": "nawm-tonight" },
-    "nawm_sunrise_demo": { "type": "nawm-sunrise-demo" },
-    "nawm_proof": { "type": "nawm-proof" },
-    "nawm_inbox": { "type": "nawm-inbox" },
-    "nawm_specs": { "type": "nawm-specs" },
-    "nawm_compare": { "type": "nawm-compare" },
-    "nawm_offer": { "type": "nawm-offer" },
-    "nawm_faq": { "type": "nawm-faq" },
-    "nawm_safety": { "type": "nawm-safety" }
+    "nawm_hero": {
+      "type": "nawm-hero",
+      "settings": {}
+    },
+    "nawm_paradox": {
+      "type": "nawm-paradox",
+      "settings": {}
+    },
+    "nawm_pattern": {
+      "type": "nawm-pattern",
+      "settings": {}
+    },
+    "nawm_system": {
+      "type": "nawm-system",
+      "settings": {}
+    },
+    "nawm_tonight": {
+      "type": "nawm-tonight",
+      "settings": {}
+    },
+    "nawm_sunrise_demo": {
+      "type": "nawm-sunrise-demo",
+      "settings": {}
+    },
+    "nawm_proof": {
+      "type": "nawm-proof",
+      "settings": {}
+    },
+    "nawm_inbox": {
+      "type": "nawm-inbox",
+      "settings": {}
+    },
+    "nawm_specs": {
+      "type": "nawm-specs",
+      "settings": {}
+    },
+    "nawm_compare": {
+      "type": "nawm-compare",
+      "settings": {}
+    },
+    "nawm_offer": {
+      "type": "nawm-offer",
+      "settings": {}
+    },
+    "nawm_faq": {
+      "type": "nawm-faq",
+      "settings": {}
+    },
+    "nawm_safety": {
+      "type": "nawm-safety",
+      "settings": {}
+    }
   },
   "order": [
     "nawm_hero",
