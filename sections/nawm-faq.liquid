@@ -1,0 +1,228 @@
+{% comment %}
+  Sectie 12 — FAQ. BUILD SPEC §5.12.
+
+  Koopweerstand wegnemen, en eerlijk zijn over grenzen. Native <details> en
+  <summary>, geen JS-accordeon: semantiek en toetsenbord komen zo gratis mee.
+
+  De FAQPage JSON-LD wordt in dezelfde lus opgebouwd als de zichtbare lijst,
+  zodat er nooit twee versies van hetzelfde antwoord onderhouden worden.
+  Antwoorden die nog een VERIFY zijn, gaan bewust níét de structured data in.
+
+  Staan er metaobjects `nawm_faq` klaar, dan zijn die de bron. Anders komen de
+  vragen uit locales/nl.default.json.
+{% endcomment %}
+
+{% liquid
+  assign faqs = shop.metaobjects.nawm_faq.values | sort: 'volgorde'
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.faq.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.faq.heading' | t
+  endif
+
+  assign keys = 'q1,q2,q3,q4,q5,q6,q7,q8' | split: ','
+  assign verify_notes = 'functionele producttest van FM-selectie als wekbron,exact aantal wekgeluiden apart van totaal ontspanningsgeluiden,voeding en back-upgedrag bij stroomuitval' | split: ','
+  assign jsonld = ''
+  assign index = 0
+%}
+
+<section class="nawm-section nawm-faq ctx-dawn" id="faq">
+  <div class="nawm-wrap nawm-faq__inner">
+    <div class="nawm-faq__head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    <div class="nawm-faq__list">
+      {%- if faqs.size > 0 -%}
+        {%- for faq in faqs -%}
+          {%- liquid
+            assign question = faq.vraag.value | default: faq.vraag
+            assign answer = faq.antwoord.value | default: faq.antwoord
+          -%}
+          {%- if question != blank and answer != blank -%}
+            <details class="nawm-faq__item" {% if forloop.first %}open{% endif %} data-nawm-event="open_faq">
+              <summary class="nawm-faq__question">{{ question }}</summary>
+              <div class="nawm-faq__answer">{{ answer }}</div>
+            </details>
+            {%- unless faq.toon_in_json_ld == false or faq.toon_in_json_ld.value == false -%}
+              {%- capture jsonld -%}
+                {{- jsonld -}}
+                {%- unless index == 0 -%},{%- endunless -%}
+                {"@type":"Question","name":{{ question | strip_html | json }},"acceptedAnswer":{"@type":"Answer","text":{{ answer | strip_html | json }}}}
+              {%- endcapture -%}
+              {%- assign index = index | plus: 1 -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for key in keys -%}
+          {%- liquid
+            assign base = 'nawm.faq.items.' | append: key
+            assign k_q = base | append: '.q'
+            assign k_a = base | append: '.a'
+            assign question = k_q | t
+            assign answer = k_a | t
+          -%}
+          <details class="nawm-faq__item" {% if forloop.first %}open{% endif %} data-nawm-event="open_faq">
+            <summary class="nawm-faq__question">{{ question }}</summary>
+            <div class="nawm-faq__answer">
+              {%- if answer != blank -%}
+                <p>{{ answer }}</p>
+              {%- else -%}
+                {%- liquid
+                  assign note_index = 0
+                  if key == 'q5'
+                    assign note_index = 1
+                  elsif key == 'q6'
+                    assign note_index = 2
+                  endif
+                -%}
+                <p>
+                  {% render 'nawm-verify', field: key, note: verify_notes[note_index] %}
+                </p>
+              {%- endif -%}
+            </div>
+          </details>
+
+          {%- if answer != blank -%}
+            {%- capture jsonld -%}
+              {{- jsonld -}}
+              {%- unless index == 0 -%},{%- endunless -%}
+              {"@type":"Question","name":{{ question | strip_html | json }},"acceptedAnswer":{"@type":"Answer","text":{{ answer | strip_html | json }}}}
+            {%- endcapture -%}
+            {%- assign index = index | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- comment -%}
+        Praktische vragen. De antwoorden komen uit de themasettings, zodat
+        levertijd, retour en garantie overal op de site identiek zijn.
+      {%- endcomment -%}
+      {%- for key in 'p1,p2,p3' | split: ',' -%}
+        {%- liquid
+          assign base = 'nawm.faq.practical.' | append: key
+          assign k_q = base | append: '.q'
+          assign question = k_q | t
+
+          case key
+            when 'p1'
+              assign answer = settings.delivery_time
+            when 'p2'
+              assign answer = settings.return_policy_line
+            else
+              assign answer = settings.warranty_line
+          endcase
+        -%}
+        {%- if answer != blank -%}
+          <details class="nawm-faq__item" data-nawm-event="open_faq">
+            <summary class="nawm-faq__question">{{ question }}</summary>
+            <div class="nawm-faq__answer"><p>{{ answer }}</p></div>
+          </details>
+
+          {%- capture jsonld -%}
+            {{- jsonld -}}
+            {%- unless index == 0 -%},{%- endunless -%}
+            {"@type":"Question","name":{{ question | strip_html | json }},"acceptedAnswer":{"@type":"Answer","text":{{ answer | strip_html | json }}}}
+          {%- endcapture -%}
+          {%- assign index = index | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- if index > 0 -%}
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{ jsonld | strip_newlines | strip }}]}
+  </script>
+{%- endif -%}
+
+{% stylesheet %}
+  .nawm-faq__inner {
+    max-width: 68ch;
+  }
+
+  .nawm-faq__list {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .nawm-faq__item {
+    border-block-end: 1px solid var(--line);
+  }
+
+  .nawm-faq__question {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-block: var(--sp-4);
+    font-size: var(--fs-h3);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    color: var(--fg);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .nawm-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .nawm-faq__question::after {
+    content: "+";
+    flex: none;
+    font-family: var(--ff-mono);
+    font-size: 1.25rem;
+    color: var(--nawm-ember);
+  }
+
+  .nawm-faq__item[open] .nawm-faq__question::after {
+    content: "–";
+  }
+
+  .nawm-faq__answer {
+    padding-block-end: var(--sp-5);
+    max-width: 62ch;
+  }
+
+  .nawm-faq__answer p {
+    color: var(--fg-soft);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · FAQ",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Vragen komen uit metaobject nawm_faq wanneer die bestaat, anders uit locales/nl.default.json. De FAQPage JSON-LD wordt uit dezelfde bron opgebouwd."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · FAQ"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,307 @@
+{% comment %}
+  Sectie 11 — Prijs en CTA. BUILD SPEC §5.11.
+
+  De aankoop, met alle informatie die iemand nodig heeft om nu te beslissen.
+  Het amber CTA-blok is het visuele zwaartepunt van de ochtendhelft.
+
+  Prijsregels, letterlijk uit de blauwdruk:
+    · Geen doorgestreepte adviesprijs tenzij die juridisch en feitelijk
+      verdedigbaar is — die staat daarom nergens in deze sectie.
+    · "Gratis verzending" alleen als het in de marge is verwerkt; de verzendregel
+      is daarom een themasetting en geen vaste tekst.
+    · Proefperiode alleen tonen als retourlogistiek en producthygiëne zijn
+      ingericht.
+
+  De mobiele bestelbalk verschijnt pas nadat deze sectie één keer in beeld is
+  geweest — zie assets/nawm-sticky-cta.js.
+{% endcomment %}
+
+{% liquid
+  assign product = settings.nawm_product
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.offer.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.offer.heading' | t
+  endif
+%}
+
+{%- capture price -%}
+  {%- render 'nawm-price', product: product -%}
+{%- endcapture -%}
+
+<script src="{{ 'nawm-sticky-cta.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<section class="nawm-section nawm-offer ctx-dawn" id="offer">
+  <div class="nawm-wrap nawm-offer__inner">
+    <div class="nawm-offer__head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow, class: 'nawm-offer__eyebrow' %}
+      <h2>{{ heading }}</h2>
+      <p class="nawm-offer__price">{{ price }}</p>
+      <p class="nawm-offer__included">{{ 'nawm.offer.included' | t }}</p>
+    </div>
+
+    <div class="nawm-offer__cta nawm-reveal" style="--reveal-delay: 80ms;">
+      {% render 'nawm-cta',
+        label: 'nawm.offer.cta' | t,
+        product: product,
+        url: product.url,
+        event: 'add_to_cart',
+        full: true,
+        id: 'nawm-offer-cta'
+      %}
+
+      {%- if settings.show_trial_period -%}
+        <p class="nawm-mono nawm-offer__trial">{{ 'nawm.hero.trial' | t: nights: settings.trial_nights }}</p>
+      {%- endif -%}
+    </div>
+
+    <ul class="nawm-offer__facts nawm-reveal" style="--reveal-delay: 160ms;">
+      <li>
+        {%- if settings.shipping_line != blank -%}
+          {{ settings.shipping_line }}
+        {%- else -%}
+          {% render 'nawm-verify', field: 'shipping_line', note: 'verzendkosten en of ze in de marge zijn verwerkt' %}
+        {%- endif -%}
+      </li>
+      <li>
+        {%- if settings.delivery_time != blank -%}
+          {{ settings.delivery_time }}
+        {%- else -%}
+          {% render 'nawm-verify', field: 'delivery_time', note: 'levertijd' %}
+        {%- endif -%}
+      </li>
+      <li>
+        {%- if settings.return_policy_line != blank -%}
+          {{ settings.return_policy_line }}
+        {%- else -%}
+          {% render 'nawm-verify', field: 'return_policy_line', note: 'retourtermijn en -voorwaarden' %}
+        {%- endif -%}
+      </li>
+      <li>
+        {%- if settings.warranty_line != blank -%}
+          {{ settings.warranty_line }}
+        {%- else -%}
+          {% render 'nawm-verify', field: 'warranty_line', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
+        {%- endif -%}
+      </li>
+    </ul>
+
+    {%- if shop.enabled_payment_types.size > 0 -%}
+      <div class="nawm-offer__payment nawm-reveal" style="--reveal-delay: 200ms;">
+        <p class="nawm-mono nawm-offer__payment-label">{{ 'nawm.offer.payment_label' | t }}</p>
+        <ul class="nawm-offer__payment-list">
+          {%- for type in shop.enabled_payment_types -%}
+            <li class="nawm-offer__payment-item{% if type == 'ideal' %} is-primary{% endif %}">
+              {{ type | payment_type_svg_tag: class: 'nawm-offer__payment-icon' }}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+
+    <p class="nawm-small nawm-offer__company">
+      {%- if settings.company_name != blank -%}
+        {{ 'nawm.offer.company_label' | t }}: {{ settings.company_name }}
+      {%- endif -%}
+      {%- if settings.contact_url != blank -%}
+        · <a href="{{ settings.contact_url }}">{{ 'nawm.offer.contact_label' | t }}</a>
+      {%- endif -%}
+    </p>
+  </div>
+</section>
+
+{%- if product != blank -%}
+  {%- comment -%}
+    Product-structured data hoort waar de prijs en de knop staan, en komt uit
+    Shopify zelf — nooit met de hand samengesteld, zodat prijs en beschikbaarheid
+    niet uit elkaar kunnen lopen.
+  {%- endcomment -%}
+  <script type="application/ld+json">
+    {{ product | structured_data }}
+  </script>
+{%- endif -%}
+
+<div class="nawm-sticky-cta" data-nawm-sticky-cta inert>
+  <p class="nawm-sticky-cta__price nawm-mono">{{ price }}</p>
+  {% render 'nawm-cta', label: 'nawm.offer.sticky_label' | t, url: '#offer', event: 'view_offer' %}
+</div>
+
+{% stylesheet %}
+  .nawm-offer__inner {
+    text-align: center;
+    max-width: 46rem;
+  }
+
+  .nawm-offer__eyebrow {
+    margin-inline: auto;
+  }
+
+  .nawm-offer__price {
+    margin-block-start: var(--sp-4);
+    font-family: var(--ff-mono);
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
+  }
+
+  .nawm-offer__included {
+    margin-block-start: var(--sp-3);
+    max-width: 52ch;
+    margin-inline: auto;
+  }
+
+  .nawm-offer__cta {
+    margin-block-start: var(--sp-5);
+    padding: var(--sp-5);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-amber) 22%, var(--nawm-dawn));
+    border: 1px solid var(--nawm-amber);
+  }
+
+  .nawm-offer__trial {
+    margin-block-start: var(--sp-3);
+    color: var(--ink-day-soft);
+  }
+
+  .nawm-offer__facts {
+    list-style: none;
+    margin: var(--sp-5) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--sp-2) var(--sp-4);
+    font-size: var(--fs-small);
+    color: var(--fg-soft);
+  }
+
+  .nawm-offer__facts li {
+    position: relative;
+  }
+
+  .nawm-offer__facts li + li::before {
+    content: "·";
+    position: absolute;
+    inset-inline-start: calc(var(--sp-4) / -2 - .15em);
+  }
+
+  .nawm-offer__payment {
+    margin-block-start: var(--sp-5);
+  }
+
+  .nawm-offer__payment-label {
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--fg-soft);
+  }
+
+  .nawm-offer__payment-list {
+    list-style: none;
+    margin: var(--sp-3) 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .nawm-offer__payment-item {
+    display: grid;
+    place-items: center;
+    height: 28px;
+    opacity: .7;
+  }
+
+  /* iDEAL is het dominante betaalmiddel voor de doelgroep en staat vooraan. */
+  .nawm-offer__payment-item.is-primary {
+    order: -1;
+    height: 36px;
+    opacity: 1;
+  }
+
+  .nawm-offer__payment-item svg {
+    height: 100%;
+    width: auto;
+  }
+
+  .nawm-offer__company {
+    margin-block-start: var(--sp-5);
+  }
+
+  /* -------------------------------------------------- mobiele bestelbalk */
+
+  .nawm-sticky-cta {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    padding: var(--sp-3) var(--gutter);
+    padding-block-end: calc(var(--sp-3) + env(safe-area-inset-bottom));
+    background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
+    border-block-start: 1px solid var(--nawm-peach);
+    box-shadow: 0 -8px 24px -16px rgb(26 23 16 / .3);
+    transform: translateY(110%);
+    visibility: hidden;
+    transition: transform var(--dur) var(--ease), visibility var(--dur);
+  }
+
+  .nawm-sticky-cta.is-visible {
+    transform: none;
+    visibility: visible;
+  }
+
+  .nawm-sticky-cta__price {
+    flex: 1;
+    margin: 0;
+    font-size: 1rem;
+    color: var(--ink-day);
+  }
+
+  .nawm-sticky-cta .nawm-cta {
+    min-height: 48px;
+    padding-inline: var(--sp-4);
+  }
+
+  @media (min-width: 750px) {
+    .nawm-sticky-cta {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Aanbod",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Prijs, verzending, levertijd, retour en garantie komen uit de themasettings, zodat ze op de hele site identiek zijn. Geen doorgestreepte adviesprijs."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Aanbod"
+    }
+  ]
+}
+{% endschema %}

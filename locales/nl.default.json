@@ -231,7 +231,12 @@
           "a": "Nee. NAWM is een consumentenproduct voor routine en wekcomfort, geen medisch hulpmiddel of behandeling."
         }
       },
-      "practical_heading": "Bestellen en retourneren"
+      "practical_heading": "Bestellen en retourneren",
+      "practical": {
+        "p1": { "q": "Wanneer wordt mijn bestelling geleverd?" },
+        "p2": { "q": "Hoe werkt retourneren?" },
+        "p3": { "q": "Welke garantie krijg ik?" }
+      }
     },
     "safety": {
       "body": "Aanhoudende vermoeidheid, frequente hoofdpijn of langdurig sombere gevoelens verdienen beoordeling door je huisarts. NAWM is een consumentenproduct voor routine en wekcomfort en geen medisch hulpmiddel."

@@ -1,0 +1,63 @@
+{% comment %}
+  Sectie 13 — Veiligheidsnoot. BUILD SPEC §5.13.
+
+  De grens van het product markeren. Dit is geen kleine lettertjes-blok — het
+  maakt het merk geloofwaardiger. Daarom rustig ingesprongen, klein gezet, met
+  een dunne linkerlijn in peach. Geen waarschuwingsicoon, geen rode kleur.
+{% endcomment %}
+
+{% liquid
+  assign body = section.settings.body
+  if body == blank
+    assign body = 'nawm.safety.body' | t
+  endif
+%}
+
+<section class="nawm-section nawm-safety ctx-dawn">
+  <div class="nawm-wrap">
+    <p class="nawm-safety__text">{{ body }}</p>
+  </div>
+</section>
+
+{% stylesheet %}
+  /* Naast de hero de enige sectie die de gedeelde padding-block bijstelt: een
+     fijndruk-noot met 10rem lucht eromheen leest als een sectie, en dat is hij
+     bewust niet. */
+  .nawm-safety {
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .nawm-safety__text {
+    max-width: 62ch;
+    margin-inline-start: auto;
+    margin-inline-end: auto;
+    padding-inline-start: var(--sp-4);
+    border-inline-start: 2px solid var(--nawm-peach);
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    color: var(--ink-day-soft);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Veiligheidsnoot",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Deze tekst markeert waar het product ophoudt. Pas hem alleen aan in overleg — hij is onderdeel van het claimsbeleid uit §7."
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Tekst"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Veiligheidsnoot"
+    }
+  ]
+}
+{% endschema %}
