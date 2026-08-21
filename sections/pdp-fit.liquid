@@ -1,0 +1,136 @@
+{% comment %}
+  PDP-sectie: beantwoordt B2 (ik ben een zware slaper, licht wekt mij niet).
+  Zie NAWM_PDP_CONVERSIE_SPEC.md §3.3.
+
+  Dit is het zwaarste bezwaar bij dit product: vrijwel iedereen die een
+  wake-up light overweegt, denkt "maar ik ben een zware slaper".
+
+  De reflex is dat bezwaar wegpoetsen. Dat gebeurt hier bewust niet. Een pagina
+  die toegeeft waar het product minder geschikt is, wordt geloofwaardiger op
+  alle andere punten — en voorkomt de retour die anders in week twee terugkomt.
+
+  Vormregel: beide kolommen zijn gelijkwaardig opgemaakt. Niet de ene groen en
+  de andere rood, geen kruisjes. Het verschil zit in de tekst.
+
+  De afsluitende regel is geen vrijblijvend proza. Hij is het sterkste
+  vertrouwenssignaal op de pagina en de reden dat de lezer de rest van de
+  claims gelooft. Niet afzwakken.
+{% endcomment %}
+
+{% liquid
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.fit.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.fit.heading' | t
+  endif
+
+  assign yes_keys = 'y1,y2,y3,y4' | split: ','
+  assign no_keys = 'n1,n2,n3' | split: ','
+%}
+
+<section class="nawm-section pdp-fit ctx-dawn" id="past-dit">
+  <div class="nawm-wrap">
+    <div class="pdp-head pdp-head--wide nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    <div class="pdp-fit__columns">
+      <div class="pdp-fit__column nawm-reveal">
+        <h3 class="pdp-fit__column-heading">{{ 'nawm.pdp.fit.yes_heading' | t }}</h3>
+        <ul class="pdp-checklist">
+          {%- for key in yes_keys -%}
+            {%- assign k = 'nawm.pdp.fit.yes.' | append: key -%}
+            <li>{{ k | t }}</li>
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <div class="pdp-fit__column nawm-reveal" style="--reveal-delay: 80ms;">
+        <h3 class="pdp-fit__column-heading">{{ 'nawm.pdp.fit.no_heading' | t }}</h3>
+        <ul class="pdp-checklist pdp-checklist--neutral">
+          {%- for key in no_keys -%}
+            {%- assign k = 'nawm.pdp.fit.no.' | append: key -%}
+            <li>{{ k | t }}</li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+
+    <p class="pdp-fit__closing nawm-reveal">{{ 'nawm.pdp.fit.closing' | t }}</p>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pdp-fit__columns {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  @media (min-width: 750px) {
+    .pdp-fit__columns {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-6);
+    }
+  }
+
+  /* Gelijkwaardig opgemaakt: dezelfde rand, dezelfde achtergrond, dezelfde
+     ruimte. Alleen de tekst verschilt. */
+  .pdp-fit__column {
+    padding: var(--sp-5);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
+  }
+
+  .pdp-fit__column-heading {
+    margin-block-end: var(--sp-4);
+    padding-block-end: var(--sp-3);
+    border-block-end: 1px solid var(--line);
+    font-size: var(--fs-h3);
+  }
+
+  .pdp-fit__closing {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    max-width: 56ch;
+    font-family: var(--ff-display);
+    font-size: var(--fs-h3);
+    font-weight: 300;
+    line-height: 1.3;
+    letter-spacing: -.01em;
+    color: var(--fg);
+    text-wrap: balance;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP wel of niet",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Beantwoordt bezwaar B2: de zware slaper. De rechterkolom bewust niet afzwakken — die maakt de rest van de pagina geloofwaardig."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP wel of niet"
+    }
+  ]
+}
+{% endschema %}

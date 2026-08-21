@@ -1,0 +1,163 @@
+{% comment %}
+  PDP-sectie: beantwoordt B6 (is dit ingewikkeld om in te stellen?).
+  Zie NAWM_PDP_CONVERSIE_SPEC.md §3.5.
+
+  Vier stappen, 2×2 op desktop, gestapeld op mobiel. Mono-tijdstempel per
+  kaart, geen icoon.
+
+  Onderaan het ongebruikelijke stuk: de handleiding vóór de koop weggeven.
+  Bestaande reviews in deze categorie klagen structureel over onbegrijpelijke
+  handleidingen. Door hem vooraf te tonen draait het grootste categoriebezwaar
+  om in het sterkste vertrouwenssignaal. Ontbreekt de PDF, dan staat er een
+  VERIFY en geen dode link.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+
+  assign manual = pdp_product.metafields.nawm.manual_pdf
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.setup.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.setup.heading' | t
+  endif
+
+  assign steps = 's1,s2,s3,s4' | split: ','
+%}
+
+<section class="nawm-section pdp-setup ctx-dawn" id="instellen">
+  <div class="nawm-wrap">
+    <div class="pdp-head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    <ol class="pdp-setup__steps">
+      {%- for key in steps -%}
+        {%- liquid
+          assign base = 'nawm.pdp.setup.steps.' | append: key
+          assign k_time = base | append: '.time'
+          assign k_title = base | append: '.title'
+          assign k_body = base | append: '.body'
+          assign delay = forloop.index0 | times: 60
+        -%}
+        <li class="nawm-card pdp-setup__step nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
+          <p class="nawm-mono pdp-setup__time">{{ k_time | t }}</p>
+          <h3 class="pdp-setup__title">{{ k_title | t }}</h3>
+          <p class="pdp-setup__body">{{ k_body | t }}</p>
+        </li>
+      {%- endfor -%}
+    </ol>
+
+    <div class="pdp-setup__manual nawm-reveal">
+      {%- if manual.value != blank -%}
+        <a
+          class="pdp-setup__manual-link"
+          href="{{ manual.value.url }}"
+          data-nawm-event="open_manual"
+          target="_blank"
+          rel="noopener"
+        >
+          {{- 'nawm.pdp.setup.manual_cta' | t -}}
+          <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
+        </a>
+      {%- else -%}
+        <p class="pdp-setup__manual-link">
+          {% render 'nawm-verify',
+            field: 'manual_pdf',
+            note: 'Nederlandstalige handleiding als PDF, te uploaden via Content → Bestanden'
+          %}
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pdp-setup__steps {
+    list-style: none;
+    margin: clamp(2rem, 5vw, 3rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-4);
+  }
+
+  @media (min-width: 750px) {
+    .pdp-setup__steps {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .pdp-setup__time {
+    color: var(--nawm-ember);
+    letter-spacing: .12em;
+  }
+
+  .pdp-setup__title {
+    margin-block-start: var(--sp-2);
+  }
+
+  .pdp-setup__body {
+    margin-block-start: var(--sp-2);
+    max-width: 44ch;
+  }
+
+  .pdp-setup__manual {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    padding: var(--sp-4) var(--sp-5);
+    border: 1px solid var(--nawm-peach);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-amber) 14%, var(--nawm-dawn));
+  }
+
+  .pdp-setup__manual-link {
+    margin: 0;
+    font-size: var(--fs-h3);
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -.01em;
+    color: var(--ink-day);
+    text-decoration: none;
+    text-wrap: balance;
+  }
+
+  a.pdp-setup__manual-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP instellen",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Beantwoordt bezwaar B6: is dit ingewikkeld? De handleiding-link leest uit product.metafields.nawm.manual_pdf."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP instellen"
+    }
+  ]
+}
+{% endschema %}
