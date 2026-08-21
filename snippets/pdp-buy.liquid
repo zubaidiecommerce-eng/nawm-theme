@@ -20,6 +20,8 @@
   @param {string} [event] - dataLayer-event bij klik. Standaard add_to_cart.
   @param {boolean} [microcopy] - Toon de regel eronder. Standaard true.
   @param {boolean} [shipping] - Neem de verzendregel mee in de microcopy.
+  @param {boolean} [short] - Label zonder prijs. Alleen voor de mobiele koopbalk,
+    waar de prijs er los naast staat.
 {% enddoc %}
 
 {%- liquid
@@ -30,15 +32,32 @@
 
   assign click_event = event | default: 'add_to_cart'
 
-  capture price
-    render 'nawm-price', product: product
-  endcapture
+  if short
+    assign label = 'nawm.pdp.common.cta_short' | t
+  else
+    capture price
+      render 'nawm-price', product: product
+    endcapture
+    assign label = 'nawm.pdp.common.cta' | t: price: price
+  endif
+-%}
 
-  assign label = 'nawm.pdp.common.cta' | t: price: price
+{%- liquid
+  comment
+    In de mobiele koopbalk past geen uitvoeringskeuze. Heeft het product er
+    meer dan één, dan springt de knop daar naar het koopblok in plaats van
+    stilzwijgend de eerste variant te bestellen.
+  endcomment
+  assign jump_to_buy_block = false
+  if short and product != blank and product.has_only_default_variant == false
+    assign jump_to_buy_block = true
+  endif
 -%}
 
 <div class="pdp-buy">
-  {%- if product != blank and product.available -%}
+  {%- if jump_to_buy_block -%}
+    <a class="nawm-cta nawm-cta--full pdp-buy__button" href="#koopblok">{{ label }}</a>
+  {%- elsif product != blank and product.available -%}
     {%- form 'product', product, id: id, class: 'pdp-buy__form', novalidate: 'novalidate' -%}
       {%- unless product.has_only_default_variant -%}
         <div class="pdp-buy__variants">
