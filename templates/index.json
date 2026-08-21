@@ -11,55 +11,119 @@
   "sections": {
     "nawm_hero": {
       "type": "nawm-hero",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "subheading": "",
+        "cta_label": "",
+        "cta_url": "",
+        "trust_line": "",
+        "show_trial": false,
+        "image": "shopify://shop_images/hero-nachtkastje.jpg"
+      }
     },
     "nawm_paradox": {
       "type": "nawm-paradox",
-      "settings": {}
+      "settings": {
+        "heading": "",
+        "body": ""
+      }
     },
     "nawm_pattern": {
       "type": "nawm-pattern",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "body": "",
+        "image": "shopify://shop_images/koud-scherm.jpg"
+      }
     },
     "nawm_system": {
       "type": "nawm-system",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "body": "",
+        "image": "shopify://shop_images/product-anker.jpg"
+      }
     },
     "nawm_tonight": {
       "type": "nawm-tonight",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "show_routine": true
+      }
     },
     "nawm_sunrise_demo": {
       "type": "nawm-sunrise-demo",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "body": "",
+        "default_minutes": 30,
+        "wake_time": "07:00",
+        "captions_asset": ""
+      }
     },
     "nawm_proof": {
       "type": "nawm-proof",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
     "nawm_inbox": {
       "type": "nawm-inbox",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "image": "shopify://shop_images/inhoud-knolling.jpg",
+        "hotspot_1_x": 22,
+        "hotspot_1_y": 45,
+        "hotspot_2_x": 44,
+        "hotspot_2_y": 30,
+        "hotspot_3_x": 58,
+        "hotspot_3_y": 58,
+        "hotspot_4_x": 74,
+        "hotspot_4_y": 34,
+        "hotspot_5_x": 87,
+        "hotspot_5_y": 62
+      }
     },
     "nawm_specs": {
       "type": "nawm-specs",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
     "nawm_compare": {
       "type": "nawm-compare",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
     "nawm_offer": {
       "type": "nawm-offer",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
     "nawm_faq": {
       "type": "nawm-faq",
-      "settings": {}
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
     "nawm_safety": {
       "type": "nawm-safety",
-      "settings": {}
+      "settings": {
+        "body": ""
+      }
     }
   },
   "order": [
