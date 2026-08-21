@@ -1,0 +1,343 @@
+{% comment %}
+  PDP-sectie: beantwoordt B5 (hoeveel geluiden krijg ik nou echt?).
+  Zie NAWM_PDP_CONVERSIE_SPEC.md §3.8.
+
+  De geluidenkwestie is de belangrijkste rij op deze pagina. Er circuleren drie
+  getallen over dit product: 25 ontspanningsgeluiden in de listingtitel, 22
+  wekgeluiden in de specificaties en "kies uit de 7 beste natuurgeluiden bij
+  het instellen" in de omschrijving. Wie 25 wekgeluiden verwacht en er 7 vindt,
+  stuurt hem terug én schrijft een slechte review.
+
+  Daarom staan er drie aparte rijen met eigen labels, en nooit één getal dat
+  ze samenvat. Voeg die samenvatting later ook niet toe.
+
+  Alle waarden komen uit metafields. Nul hardcoded getallen: ontbreekt een
+  metafield, dan rendert het VERIFY-token in plaats van een gok.
+
+  Afmetingen, voeding en aansluitingen staan in een dichtgeklapte <details>.
+  Wie daarnaar zoekt, vindt het; de rest wordt er niet mee lastiggevallen.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+
+  assign nawm = pdp_product.metafields.nawm
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.specs.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.specs.heading' | t
+  endif
+
+  assign sunrise_min = nawm.sunrise_min_minutes.value
+  assign sunrise_max = nawm.sunrise_max_minutes.value
+
+  assign box_items = nawm.in_the_box.value
+  assign box_fallback = 'b1,b2,b3,b4' | split: ','
+%}
+
+<section class="nawm-section pdp-specs ctx-dawn" id="specificaties" data-pdp-specs>
+  <div class="nawm-wrap">
+    <div class="pdp-head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    <div class="pdp-specs__groups">
+      {%- comment -%} ---------------------------------------------------- licht {%- endcomment -%}
+      <div class="pdp-specs__group nawm-reveal">
+        <h3 class="pdp-specs__group-heading">{{ 'nawm.specs.groups.light' | t }}</h3>
+        <dl class="pdp-specs__list">
+          <div class="nawm-specs__row">
+            <dt class="nawm-specs__label">{{ 'nawm.specs.rows.sunrise_range' | t }}</dt>
+            <dd class="nawm-specs__value nawm-mono">
+              {%- if sunrise_min != blank and sunrise_max != blank -%}
+                {{ 'nawm.specs.sunrise_range_value' | t: min: sunrise_min, max: sunrise_max }}
+              {%- else -%}
+                {% render 'nawm-verify',
+                  field: 'sunrise_min_minutes',
+                  note: 'instelbare zonsopgangduur op het verkoopmodel'
+                %}
+              {%- endif -%}
+            </dd>
+          </div>
+
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.brightness_levels' | t,
+            metafield: nawm.brightness_levels,
+            field: 'brightness_levels',
+            note: 'aantal helderheidsstanden'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.light_colors' | t,
+            metafield: nawm.light_colors,
+            field: 'light_colors',
+            kind: 'list',
+            note: 'lichtkleuren bevestigen op het verkoopmodel'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.display_dimmable' | t,
+            metafield: nawm.display_dimmable,
+            field: 'display_dimmable',
+            kind: 'bool',
+            note: 'kan het display volledig uit of alleen dimmen'
+          %}
+        </dl>
+      </div>
+
+      {%- comment -%} --------------------------------------------------- geluid {%- endcomment -%}
+      <div class="pdp-specs__group nawm-reveal">
+        <h3 class="pdp-specs__group-heading">{{ 'nawm.specs.groups.sound' | t }}</h3>
+        <dl class="pdp-specs__list">
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.relax_sounds_count' | t,
+            metafield: nawm.relax_sounds_count,
+            field: 'relax_sounds_count',
+            note: 'aantal ontspanningsgeluiden — geteld op het verkoopmodel'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.wake_sounds_count' | t,
+            metafield: nawm.wake_sounds_count,
+            field: 'wake_sounds_count',
+            note: 'hoeveel daarvan als wekgeluid selecteerbaar zijn — apart tellen'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.pdp.specs.radio_row' | t,
+            metafield: nawm.has_fm_radio,
+            field: 'has_fm_radio',
+            kind: 'bool',
+            note: 'FM-radio als wekbron, functioneel getest op het verkoopmodel'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.wake_sounds_list' | t,
+            metafield: nawm.wake_sounds_list,
+            field: 'wake_sounds_list',
+            kind: 'list',
+            note: 'welke geluiden selecteerbaar zijn als wekgeluid'
+          %}
+        </dl>
+        <p class="nawm-small pdp-specs__note">{{ 'nawm.specs.disambiguation' | t }}</p>
+      </div>
+
+      {%- comment -%} -------------------------------------------------- alarmen {%- endcomment -%}
+      <div class="pdp-specs__group nawm-reveal">
+        <h3 class="pdp-specs__group-heading">{{ 'nawm.specs.groups.alarms' | t }}</h3>
+        <dl class="pdp-specs__list">
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.alarms' | t,
+            metafield: nawm.alarms,
+            field: 'alarms',
+            note: 'alarmopties zoals ze op het apparaat heten'
+          %}
+        </dl>
+      </div>
+
+      {%- comment -%} ----------------------------------------------- in de doos {%- endcomment -%}
+      <div class="pdp-specs__group nawm-reveal">
+        <h3 class="pdp-specs__group-heading">{{ 'nawm.pdp.specs.box_heading' | t }}</h3>
+        {%- comment -%}
+          Uitsluitend wat er werkelijk in zit. De landingspagina noemt vijf
+          gedrukte onderdelen; op basis van de doosfoto klopt dat niet. Komt de
+          Sleep–Wake Guide er later bij, dan pas je deze lijst aan — niet eerder.
+        {%- endcomment -%}
+        <ul class="nawm-list pdp-specs__box">
+          {%- if box_items != blank -%}
+            {%- for item in box_items -%}
+              <li>{{ item }}</li>
+            {%- endfor -%}
+          {%- else -%}
+            {%- for key in box_fallback -%}
+              {%- assign k = 'nawm.pdp.specs.box.' | append: key -%}
+              <li>{{ k | t }}</li>
+            {%- endfor -%}
+          {%- endif -%}
+        </ul>
+      </div>
+    </div>
+
+    {%- comment -%} ---------------------------------------- progressive disclosure {%- endcomment -%}
+    <details class="pdp-specs__details" data-nawm-event="open_specs">
+      <summary class="pdp-specs__summary">{{ 'nawm.pdp.specs.details_label' | t }}</summary>
+      <div class="pdp-specs__details-body">
+        <dl class="pdp-specs__list">
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.dimensions_mm' | t,
+            metafield: nawm.dimensions_mm,
+            field: 'dimensions_mm',
+            note: 'afmetingen in millimeters, gemeten aan het verkoopmodel'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.weight_g' | t,
+            metafield: nawm.weight_g,
+            field: 'weight_g',
+            suffix: 'g',
+            note: 'gewicht in gram'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.power' | t,
+            metafield: nawm.power,
+            field: 'power',
+            note: 'voeding: netstroom, adapter, kabellengte'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.battery_backup' | t,
+            metafield: nawm.battery_backup,
+            field: 'battery_backup',
+            note: 'blijven tijd en alarm bewaard bij stroomuitval, en hoelang'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.has_usb_port' | t,
+            metafield: nawm.has_usb_port,
+            field: 'has_usb_port',
+            kind: 'bool',
+            note: 'USB-poort en of die een telefoon kan opladen'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.has_bluetooth' | t,
+            metafield: nawm.has_bluetooth,
+            field: 'has_bluetooth',
+            kind: 'bool',
+            note: 'bluetooth op het verkoopmodel'
+          %}
+          {% render 'nawm-spec-row',
+            label: 'nawm.specs.rows.ean' | t,
+            metafield: nawm.ean,
+            field: 'ean',
+            note: 'EAN van het verkoopmodel'
+          %}
+        </dl>
+      </div>
+    </details>
+
+    {%- if nawm.manual_pdf.value != blank -%}
+      <p class="pdp-specs__manual">
+        <a href="{{ nawm.manual_pdf.value.url }}" data-nawm-event="open_manual" target="_blank" rel="noopener">
+          {{- 'nawm.pdp.specs.manual_link' | t -}}
+          <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
+        </a>
+      </p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .pdp-specs__groups {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    display: grid;
+    gap: var(--sp-5);
+  }
+
+  @media (min-width: 750px) {
+    .pdp-specs__groups {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-6) var(--sp-5);
+    }
+  }
+
+  .pdp-specs__group-heading {
+    padding-block-end: var(--sp-2);
+    border-block-end: 1px solid var(--fg);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+  }
+
+  /* De rijen zelf komen uit sections/nawm-specs.liquid — sectiestylesheets
+     worden door Shopify tot één bestand samengevoegd, dus .nawm-specs__row en
+     de zebrastreping gelden hier al. Ze hier opnieuw definiëren zou de twee
+     secties om de opmaak laten vechten; alleen de marge eromheen is van deze
+     sectie. */
+  .pdp-specs__list {
+    margin: 0;
+    display: grid;
+    gap: 2px;
+  }
+
+  .pdp-specs__note {
+    margin-block-start: var(--sp-3);
+    max-width: 46ch;
+  }
+
+  .pdp-specs__box {
+    margin-block-start: var(--sp-3);
+  }
+
+  .pdp-specs__details {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    border-block: 1px solid var(--line);
+  }
+
+  .pdp-specs__summary {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-block: var(--sp-4);
+    font-weight: 500;
+    color: var(--fg);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .pdp-specs__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .pdp-specs__summary::after {
+    content: "+";
+    flex: none;
+    font-family: var(--ff-mono);
+    font-size: 1.25rem;
+    color: var(--nawm-ember);
+  }
+
+  .pdp-specs__details[open] .pdp-specs__summary::after {
+    content: "–";
+  }
+
+  .pdp-specs__details-body {
+    padding-block-end: var(--sp-4);
+    max-width: 44rem;
+  }
+
+  .pdp-specs__manual {
+    margin-block-start: var(--sp-4);
+    font-size: var(--fs-small);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP specificaties",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Beantwoordt bezwaar B5. Alle waarden komen uit de metafields in de namespace nawm. Ontspanningsgeluiden en selecteerbare wekgeluiden staan bewust als twee aparte rijen — voeg er nooit één samenvattend getal aan toe."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP specificaties"
+    }
+  ]
+}
+{% endschema %}
