@@ -9,72 +9,109 @@
  */
 {
   "sections": {
-    "nawm_hero": {
-      "type": "nawm-hero",
-      "settings": {}
+    "pdp_hero": {
+      "type": "pdp-hero",
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "subheading": ""
+      }
     },
-    "nawm_paradox": {
-      "type": "nawm-paradox",
-      "settings": {}
+    "pdp_mechanism": {
+      "type": "pdp-mechanism",
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "body": ""
+      }
     },
-    "nawm_pattern": {
-      "type": "nawm-pattern",
-      "settings": {}
+    "pdp_fit": {
+      "type": "pdp-fit",
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
-    "nawm_system": {
-      "type": "nawm-system",
-      "settings": {}
+    "pdp_evening": {
+      "type": "pdp-evening",
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "body": ""
+      }
     },
-    "nawm_tonight": {
-      "type": "nawm-tonight",
-      "settings": {}
+    "pdp_setup": {
+      "type": "pdp-setup",
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
-    "nawm_sunrise_demo": {
-      "type": "nawm-sunrise-demo",
-      "settings": {}
+    "pdp_demo": {
+      "type": "pdp-demo",
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "body": "",
+        "default_minutes": 30,
+        "wake_time": "07:00",
+        "captions_asset": ""
+      }
     },
-    "nawm_proof": {
-      "type": "nawm-proof",
-      "settings": {}
+    "pdp_proof": {
+      "type": "pdp-proof",
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
-    "nawm_inbox": {
-      "type": "nawm-inbox",
-      "settings": {}
+    "pdp_specs": {
+      "type": "pdp-specs",
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
-    "nawm_specs": {
-      "type": "nawm-specs",
-      "settings": {}
+    "pdp_offer": {
+      "type": "pdp-offer",
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
-    "nawm_compare": {
-      "type": "nawm-compare",
-      "settings": {}
+    "pdp_faq": {
+      "type": "pdp-faq",
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     },
-    "nawm_offer": {
-      "type": "nawm-offer",
-      "settings": {}
+    "pdp_close": {
+      "type": "pdp-close",
+      "settings": {
+        "heading": ""
+      }
     },
-    "nawm_faq": {
-      "type": "nawm-faq",
-      "settings": {}
-    },
-    "nawm_safety": {
-      "type": "nawm-safety",
-      "settings": {}
+    "pdp_brand": {
+      "type": "pdp-brand",
+      "settings": {
+        "heading": "",
+        "body": ""
+      }
     }
   },
   "order": [
-    "nawm_hero",
-    "nawm_paradox",
-    "nawm_pattern",
-    "nawm_system",
-    "nawm_tonight",
-    "nawm_sunrise_demo",
-    "nawm_proof",
-    "nawm_inbox",
-    "nawm_specs",
-    "nawm_compare",
-    "nawm_offer",
-    "nawm_faq",
-    "nawm_safety"
+    "pdp_hero",
+    "pdp_mechanism",
+    "pdp_fit",
+    "pdp_evening",
+    "pdp_setup",
+    "pdp_demo",
+    "pdp_proof",
+    "pdp_specs",
+    "pdp_offer",
+    "pdp_faq",
+    "pdp_close",
+    "pdp_brand"
   ]
 }

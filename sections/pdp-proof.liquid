@@ -152,11 +152,11 @@
               </li>
               {%- liquid
                 assign rendered = rendered | plus: 1
-                unless themes contains theme_label
-                  if theme_label != blank
+                if theme_label != blank
+                  unless themes contains theme_label
                     assign themes = themes | append: theme_label | append: '|'
-                  endif
-                endunless
+                  endunless
+                endif
               -%}
             {%- endif -%}
           {%- endfor -%}

@@ -204,7 +204,7 @@ hoeft te scannen.
 ---
 
 <!-- claims-lint:start -->
-_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-21 10:23.  Niet met de hand bijwerken._
+_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-21 10:27.  Niet met de hand bijwerken._
 
 ### Openstaande VERIFY-tokens (43)
 
@@ -240,11 +240,11 @@ sections/nawm-offer.liquid:82:          {% render 'nawm-verify', field: 'return_
 sections/nawm-offer.liquid:89:          {% render 'nawm-verify', field: 'warranty_line', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
 sections/pdp-evening.liquid:75:              {% render 'nawm-verify',
 sections/pdp-evening.liquid:89:              {% render 'nawm-verify',
-sections/pdp-hero.liquid:196:                {% render 'nawm-verify',
-sections/pdp-hero.liquid:214:                {% render 'nawm-verify',
-sections/pdp-hero.liquid:244:                {% render 'nawm-verify', field: 'manual_pdf', note: 'Nederlandstalige handleiding als PDF' %}
-sections/pdp-hero.liquid:288:              {% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
-sections/pdp-hero.liquid:304:              {% render 'nawm-verify', field: 'warranty_years', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
+sections/pdp-hero.liquid:203:                {% render 'nawm-verify',
+sections/pdp-hero.liquid:221:                {% render 'nawm-verify',
+sections/pdp-hero.liquid:251:                {% render 'nawm-verify', field: 'manual_pdf', note: 'Nederlandstalige handleiding als PDF' %}
+sections/pdp-hero.liquid:295:              {% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
+sections/pdp-hero.liquid:311:              {% render 'nawm-verify', field: 'warranty_years', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
 sections/pdp-demo.liquid:104:                  {% render 'nawm-verify',
 sections/pdp-demo.liquid:160:              {% render 'nawm-verify',
 sections/pdp-faq.liquid:150:                <p>{% render 'nawm-verify', field: verify_field, note: verify_note %}</p>

@@ -50,9 +50,16 @@
   assign placeholder_slugs = 'hero-recht-van-voren,hero-schuin-van-boven,hero-achterkant,avond-donkere-kamer,hero-schaalgevoel' | split: ','
   assign placeholder_alts = 'front,angle,back,dark,scale' | split: ','
 
+  comment
+    De galerij toont maximaal zes beelden. Het aantal slides, de indicator en
+    de thumbnails lezen alle drie dit ene getal, zodat "afbeelding 7 van 8"
+    nooit kan verwijzen naar een slide die er niet is.
+  endcomment
   assign slide_count = images.size
   if slide_count == 0
     assign slide_count = placeholder_slugs.size
+  elsif slide_count > 6
+    assign slide_count = 6
   endif
 
   assign return_days = settings.return_days | times: 1

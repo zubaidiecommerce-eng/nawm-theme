@@ -7,10 +7,17 @@
   dit snippet niets zodra één van beide ontbreekt. De aanroeper valt dan terug
   op `settings.delivery_time`, en pas daarna op een VERIFY.
 
-  Weekenden tellen niet mee. De teller begint morgen zodra de besteldeadline
-  van vandaag voorbij is.
+  Er wordt in twee stappen gerekend, en die volgorde is het hele punt:
 
-  Twee details die er echt toe doen:
+  1. Bepaal de verzenddag. Dat is vandaag, of morgen als de besteldeadline
+     voorbij is, en daarna doorgeschoven naar de eerstvolgende werkdag. Een
+     pakket dat op zaterdag "weggaat", gaat maandag weg.
+  2. Tel daar pas de transportwerkdagen bij op.
+
+  Zonder stap 1 komt een zaterdagbestelling een dag te vroeg uit: die zou
+  maandag in huis zijn terwijl hij maandag pas verstuurd wordt.
+
+  Twee details die er verder toe doen:
 
   · Er wordt gerekend vanaf lokale middag, niet vanaf middernacht. Bij een
     zomertijdwissel verschuift een dag met een uur; vanaf middernacht zou dat
@@ -32,8 +39,8 @@
     assign anchor = today_key | date: '%s' | times: 1 | plus: 43200
 
     comment
-      Is de besteldeadline van vandaag al voorbij, dan gaat het pakket morgen
-      pas weg en begint de teller een dag later.
+      Stap 1 — de verzenddag. Is de besteldeadline van vandaag voorbij, dan
+      gaat het pakket morgen pas weg.
     endcomment
     assign cursor = anchor
 
@@ -52,6 +59,22 @@
       endif
     endif
 
+    comment
+      En schuif die verzenddag door naar de eerstvolgende werkdag. Twee
+      doorlopen zijn genoeg om uit elk weekend te komen.
+    endcomment
+    for step in (1..2)
+      assign ship_weekday = cursor | date: '%w' | times: 1
+      if ship_weekday == 0 or ship_weekday == 6
+        assign cursor = cursor | plus: day_seconds
+      else
+        break
+      endif
+    endfor
+
+    comment
+      Stap 2 — de transportwerkdagen erbij.
+    endcomment
     assign added = 0
     for step in (1..21)
       if added >= days

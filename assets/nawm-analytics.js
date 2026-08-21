@@ -69,8 +69,11 @@ onView('[data-nawm-hero]', 'view_hero');
 onView('#offer', 'view_offer');
 onView('#specificaties', 'open_specifications');
 
-/* Productpagina — de eventset uit PDP SPEC §11. */
+/* Productpagina — de eventset uit PDP SPEC §11. Het aanbod heet daar #aanbod;
+   op de landingspagina heet dezelfde sectie #offer. Beide vuren view_offer, en
+   `once` zorgt dat het er één blijft als ze ooit op dezelfde pagina staan. */
 onView('[data-nawm-pdp]', 'view_pdp');
+onView('#aanbod', 'view_offer');
 onView('[data-pdp-specs]', 'open_specs');
 
 /**
