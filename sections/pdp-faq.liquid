@@ -111,7 +111,7 @@
               tonen.
             endcomment
             if key == 'q9'
-              assign answer = blank
+              assign answer = ''
               if settings.order_deadline_time != blank and delivery_date != blank
                 assign answer = 'nawm.pdp.hero.delivery' | t: time: settings.order_deadline_time, date: delivery_date
               elsif settings.delivery_time != blank
@@ -120,9 +120,9 @@
             endif
 
             if key == 'q10' and warranty_years > 0
-              assign answer = 'nawm.pdp.common.warranty_years' | t: years: warranty_years
+              assign answer = 'nawm.pdp.faq.warranty_answer' | t: years: warranty_years
             elsif key == 'q10'
-              assign answer = blank
+              assign answer = ''
             endif
 
             assign verify_field = verify_fields[forloop.index0]

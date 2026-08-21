@@ -504,6 +504,7 @@
       "faq": {
         "eyebrow": "Veelgestelde vragen",
         "heading": "Wat mensen ons vragen voordat ze bestellen",
+        "warranty_answer": "{{ years }} jaar garantie. Mail ons en we regelen het.",
         "items": {
           "q1": {
             "q": "Ik ben een zware slaper. Word ik hier wakker van?",
