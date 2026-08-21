@@ -1,0 +1,249 @@
+/* NAWM productpagina — de primitieven die op meerdere secties terugkomen.
+   Sectie-eigen CSS staat in de sectie zelf. Zie NAWM_PDP_CONVERSIE_SPEC.md.
+
+   Deze file laadt uitsluitend op het sjabloon product.wake-up-light, zodat de
+   landingspagina er niets van meekrijgt. Zie snippets/nawm-head.liquid. */
+
+/* ------------------------------------------------------------------ koopknop */
+
+.pdp-buy {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.pdp-buy__form {
+  display: grid;
+  gap: var(--sp-3);
+  margin: 0;
+}
+
+.pdp-buy__variants {
+  display: grid;
+  gap: var(--sp-1);
+}
+
+.pdp-buy__variant-label {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--fg-soft);
+}
+
+.pdp-buy__variant-select {
+  min-height: 48px;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-data);
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--ff-body);
+  font-size: var(--fs-body);
+}
+
+/* De koopknop is het zwaartepunt van elk blok waar hij in staat. Eén dominante
+   knop per blok — nooit een concurrerende knop ernaast. */
+.pdp-buy__button {
+  min-height: 60px;
+  font-size: 1.125rem;
+}
+
+.pdp-microcopy {
+  margin: 0;
+  text-align: center;
+  text-wrap: pretty;
+}
+
+/* --------------------------------------------------------------- betaallogo's */
+
+.pdp-payments__label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--fg-soft);
+}
+
+.pdp-payments__list {
+  list-style: none;
+  margin: var(--sp-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+}
+
+.pdp-payments__item {
+  display: grid;
+  place-items: center;
+  height: 26px;
+  opacity: .75;
+}
+
+/* iDEAL: eerst en ongeveer 1,4× zo hoog. PDP SPEC §5.1. */
+.pdp-payments__item.is-primary {
+  order: -1;
+  height: 36px;
+  opacity: 1;
+}
+
+.pdp-payments__item svg {
+  height: 100%;
+  width: auto;
+}
+
+/* -------------------------------------------------------------------- sterren */
+
+.pdp-stars {
+  display: inline-block;
+  line-height: 0;
+  color: var(--nawm-amber);
+}
+
+.pdp-stars svg {
+  width: 84px;
+  height: auto;
+}
+
+.ctx-dawn .pdp-stars {
+  color: var(--nawm-ember);
+}
+
+/* ---------------------------------------------------------------- sectiekoppen */
+
+.pdp-head {
+  max-width: 34ch;
+}
+
+.pdp-head--wide {
+  max-width: 52ch;
+}
+
+.pdp-head > h2 + p {
+  margin-block-start: var(--sp-4);
+}
+
+/* --------------------------------------------------------- mobiele koopbalk */
+
+/* De balk verschijnt pas zodra de CTA in de hero uit beeld is en verdwijnt
+   zodra de laatste CTA in beeld komt. Een balk die er meteen staat, leest als
+   een advertentie. Zie assets/pdp-sticky-cta.js en PDP SPEC §4.1. */
+.pdp-sticky {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  max-height: 64px;
+  padding: var(--sp-2) var(--gutter);
+  padding-block-end: calc(var(--sp-2) + env(safe-area-inset-bottom));
+  background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
+  border-block-start: 1px solid var(--nawm-peach);
+  box-shadow: 0 -8px 24px -16px rgb(26 23 16 / .3);
+  transform: translateY(110%);
+  visibility: hidden;
+  transition: transform var(--dur) var(--ease), visibility var(--dur);
+}
+
+.pdp-sticky.is-visible {
+  transform: none;
+  visibility: visible;
+}
+
+.pdp-sticky__meta {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink-day);
+  line-height: 1.25;
+}
+
+.pdp-sticky__name {
+  display: block;
+  font-size: var(--fs-small);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pdp-sticky__price {
+  display: block;
+  font-family: var(--ff-mono);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.pdp-sticky .pdp-buy,
+.pdp-sticky .pdp-buy__form {
+  display: block;
+}
+
+.pdp-sticky .nawm-cta {
+  min-height: 48px;
+  width: auto;
+  padding-inline: var(--sp-4);
+  font-size: 1rem;
+}
+
+/* De balk mag geen inhoud afdekken. De hoogte wordt gereserveerd zodra hij
+   zichtbaar is, zodat er geen layout shift ontstaat bij het verschijnen. */
+body.pdp-sticky-active .content-for-layout {
+  padding-block-end: calc(64px + env(safe-area-inset-bottom));
+}
+
+@media (min-width: 750px) {
+  .pdp-sticky {
+    display: none;
+  }
+
+  body.pdp-sticky-active .content-for-layout {
+    padding-block-end: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------- lijst */
+
+.pdp-checklist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.pdp-checklist li {
+  position: relative;
+  padding-inline-start: calc(var(--sp-4) + var(--sp-1));
+  color: var(--fg-soft);
+}
+
+.pdp-checklist li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: .45em;
+  width: 14px;
+  height: 7px;
+  border-inline-start: 1.5px solid var(--nawm-amber);
+  border-block-end: 1.5px solid var(--nawm-amber);
+  transform: rotate(-45deg);
+}
+
+.ctx-dawn .pdp-checklist li::before {
+  border-color: var(--nawm-ember);
+}
+
+/* De "past minder"-kolom krijgt geen rood en geen kruis. Beide kolommen zijn
+   gelijkwaardig opgemaakt; het verschil zit in de tekst, niet in de kleur.
+   PDP SPEC §3.3. */
+.pdp-checklist--neutral li::before {
+  top: .68em;
+  width: 14px;
+  height: 0;
+  border-block-end: 1.5px solid var(--fg-soft);
+  border-inline-start: 0;
+  transform: none;
+}

@@ -204,23 +204,25 @@ hoeft te scannen.
 ---
 
 <!-- claims-lint:start -->
-_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-20 15:42.  Niet met de hand bijwerken._
+_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-21 10:11.  Niet met de hand bijwerken._
 
-### Openstaande VERIFY-tokens (12)
+### Openstaande VERIFY-tokens (14)
 
 ```
-sections/nawm-faq.liquid:87:                  {% render 'nawm-verify', field: key, note: verify_notes[note_index] %}
+sections/nawm-system.liquid:70:              {% render 'nawm-verify',
+sections/nawm-sunrise-demo.liquid:92:                {% render 'nawm-verify',
+sections/nawm-sunrise-demo.liquid:151:                {% render 'nawm-verify',
+sections/nawm-faq.liquid:88:                  {% render 'nawm-verify', field: key, note: verify_notes[note_index] %}
 sections/nawm-inbox.liquid:95:        {% render 'nawm-verify',
+sections/nawm-specs.liquid:59:                {% render 'nawm-verify',
 sections/nawm-offer.liquid:68:          {% render 'nawm-verify', field: 'shipping_line', note: 'verzendkosten en of ze in de marge zijn verwerkt' %}
 sections/nawm-offer.liquid:75:          {% render 'nawm-verify', field: 'delivery_time', note: 'levertijd' %}
 sections/nawm-offer.liquid:82:          {% render 'nawm-verify', field: 'return_policy_line', note: 'retourtermijn en -voorwaarden' %}
 sections/nawm-offer.liquid:89:          {% render 'nawm-verify', field: 'warranty_line', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
-sections/nawm-specs.liquid:59:                {% render 'nawm-verify',
-sections/nawm-sunrise-demo.liquid:92:                {% render 'nawm-verify',
-sections/nawm-sunrise-demo.liquid:151:                {% render 'nawm-verify',
-sections/nawm-system.liquid:70:              {% render 'nawm-verify',
-snippets/nawm-price.liquid:29:  {%- render 'nawm-verify',
 snippets/nawm-spec-row.liquid:44:      {% render 'nawm-verify', field: field, note: note %}
+snippets/pdp-microcopy.liquid:37:    {% render 'nawm-verify',
+snippets/pdp-microcopy.liquid:46:    {{ ' · ' }}{% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
+snippets/nawm-price.liquid:29:  {%- render 'nawm-verify',
 ```
 
 ### Claims die eigen bewijs vereisen

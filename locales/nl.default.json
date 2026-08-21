@@ -83,20 +83,50 @@
       "eyebrow": "Vanavond gebruiken",
       "heading": "Vier stappen. Vanavond klaar.",
       "steps": {
-        "s1": { "time": "Stap 1", "text": "Kies je vaste wektijd en stel de zonsopgang in." },
-        "s2": { "time": "T–30", "text": "Zet 30 minuten vóór bed het warme nachtlampje aan en parkeer je telefoon." },
-        "s3": { "time": "T–20", "text": "Volg de kaart: voorbereiden, lezen, rustig bewegen en ademen." },
-        "s4": { "time": "T–0", "text": "Laat NAWM de ochtend automatisch opbouwen." }
+        "s1": {
+          "time": "Stap 1",
+          "text": "Kies je vaste wektijd en stel de zonsopgang in."
+        },
+        "s2": {
+          "time": "T–30",
+          "text": "Zet 30 minuten vóór bed het warme nachtlampje aan en parkeer je telefoon."
+        },
+        "s3": {
+          "time": "T–20",
+          "text": "Volg de kaart: voorbereiden, lezen, rustig bewegen en ademen."
+        },
+        "s4": {
+          "time": "T–0",
+          "text": "Laat NAWM de ochtend automatisch opbouwen."
+        }
       },
       "routine_label": "Bekijk de volledige 30-minutenroutine",
       "routine_intro": "De regels hieronder staan letterlijk zo in de Sleep–Wake Guide.",
       "routine": {
-        "r1": { "time": "T–30", "text": "Je avond stopt niet vanzelf. Geef hem een eindpunt." },
-        "r2": { "time": "T–25", "text": "Maak je lichaam kleiner in plaats van je scherm groter." },
-        "r3": { "time": "T–20", "text": "Haal beslissingen uit je ochtend." },
-        "r4": { "time": "T–15", "text": "Lees tot je tempo zakt — niet tot het hoofdstuk af is." },
-        "r5": { "time": "T–5", "text": "Lang uitademen. Niets presteren." },
-        "r6": { "time": "T–0", "text": "Laat de ochtend alvast voor je werken." }
+        "r1": {
+          "time": "T–30",
+          "text": "Je avond stopt niet vanzelf. Geef hem een eindpunt."
+        },
+        "r2": {
+          "time": "T–25",
+          "text": "Maak je lichaam kleiner in plaats van je scherm groter."
+        },
+        "r3": {
+          "time": "T–20",
+          "text": "Haal beslissingen uit je ochtend."
+        },
+        "r4": {
+          "time": "T–15",
+          "text": "Lees tot je tempo zakt — niet tot het hoofdstuk af is."
+        },
+        "r5": {
+          "time": "T–5",
+          "text": "Lang uitademen. Niets presteren."
+        },
+        "r6": {
+          "time": "T–0",
+          "text": "Laat de ochtend alvast voor je werken."
+        }
       },
       "image_alt": "Een hand legt een telefoon met het scherm naar beneden op een houten wandplank"
     },
@@ -176,11 +206,26 @@
       "col_a": "Telefoon als routine",
       "col_b": "NAWM Sleep–Wake routine",
       "rows": {
-        "r1": { "a": "Scherm blijft binnen handbereik", "b": "Telefoon krijgt een vaste parkeerplek" },
-        "r2": { "a": "Geen duidelijk einde aan de avond", "b": "Warm licht markeert het afbouwmoment" },
-        "r3": { "a": "Hard, direct alarmsignaal", "b": "Licht bouwt vooraf op; geluid volgt" },
-        "r4": { "a": "Notificaties als eerste prikkel", "b": "Eigen ochtendinstelling als eerste signaal" },
-        "r5": { "a": "Elke avond improviseren", "b": "Herhaalbare 15- of 30-minutenroutine" }
+        "r1": {
+          "a": "Scherm blijft binnen handbereik",
+          "b": "Telefoon krijgt een vaste parkeerplek"
+        },
+        "r2": {
+          "a": "Geen duidelijk einde aan de avond",
+          "b": "Warm licht markeert het afbouwmoment"
+        },
+        "r3": {
+          "a": "Hard, direct alarmsignaal",
+          "b": "Licht bouwt vooraf op; geluid volgt"
+        },
+        "r4": {
+          "a": "Notificaties als eerste prikkel",
+          "b": "Eigen ochtendinstelling als eerste signaal"
+        },
+        "r5": {
+          "a": "Elke avond improviseren",
+          "b": "Herhaalbare 15- of 30-minutenroutine"
+        }
       }
     },
     "offer": {
@@ -234,13 +279,302 @@
       },
       "practical_heading": "Bestellen en retourneren",
       "practical": {
-        "p1": { "q": "Wanneer wordt mijn bestelling geleverd?" },
-        "p2": { "q": "Hoe werkt retourneren?" },
-        "p3": { "q": "Welke garantie krijg ik?" }
+        "p1": {
+          "q": "Wanneer wordt mijn bestelling geleverd?"
+        },
+        "p2": {
+          "q": "Hoe werkt retourneren?"
+        },
+        "p3": {
+          "q": "Welke garantie krijg ik?"
+        }
       }
     },
     "safety": {
       "body": "Aanhoudende vermoeidheid, frequente hoofdpijn of langdurig sombere gevoelens verdienen beoordeling door je huisarts. NAWM is een consumentenproduct voor routine en wekcomfort en geen medisch hulpmiddel."
+    },
+    "pdp": {
+      "common": {
+        "cta": "In winkelwagen — {{ price }}",
+        "cta_short": "In winkelwagen",
+        "sold_out": "Tijdelijk uitverkocht",
+        "microcopy_delivery": "Vandaag besteld, {{ date }} in huis",
+        "microcopy_returns": "{{ days }} dagen retour",
+        "returns_days": "{{ days }} dagen retour",
+        "warranty_years": "{{ years }} jaar garantie",
+        "support_nl": "Nederlandse klantenservice",
+        "weekdays": "zondag,maandag,dinsdag,woensdag,donderdag,vrijdag,zaterdag",
+        "months": "januari,februari,maart,april,mei,juni,juli,augustus,september,oktober,november,december",
+        "date_pattern": "{{ weekday }} {{ day }} {{ month }}",
+        "date_today": "vandaag",
+        "date_tomorrow": "morgen",
+        "variant_label": "Uitvoering"
+      },
+      "hero": {
+        "eyebrow": "Wake-up light + slaaproutine",
+        "heading": "Word wakker met licht.|Niet met schrikken.",
+        "subheading": "Een zonsopgang van 10 tot 60 minuten bouwt op vóór je wektijd. Je gekozen natuurgeluid zet de laatste stap.",
+        "rating": "{{ score }} · {{ count }} beoordelingen",
+        "rating_aria": "Beoordeling {{ score }} uit {{ count }} beoordelingen. Ga naar de beoordelingen.",
+        "gallery_label": "Productafbeeldingen",
+        "gallery_thumb": "Toon afbeelding {{ index }}",
+        "gallery_position": "Afbeelding {{ index }} van {{ total }}",
+        "usp_label": "Wat je ervoor terugkrijgt",
+        "usp": {
+          "u1": {
+            "benefit": "Wakker worden zonder schrikmoment",
+            "feature": "zonsopgang {{ min }}–{{ max }} minuten, {{ levels }} helderheidsstanden",
+            "proof": "zichtbaar in de demo hieronder"
+          },
+          "u2": {
+            "benefit": "Kies zelf hoe je gewekt wordt",
+            "feature": "natuurgeluiden of FM-radio",
+            "proof": "{{ count }} wekgeluiden in de specificaties"
+          },
+          "u3": {
+            "benefit": "Je slaapkamer blijft donker",
+            "feature": "display dimbaar tot bijna uit",
+            "proof": "zie de nachtfoto"
+          },
+          "u4": {
+            "benefit": "Meteen te gebruiken",
+            "feature": "Nederlandse handleiding, EU-stekker in de doos",
+            "proof": "handleiding hier te downloaden"
+          }
+        },
+        "delivery": "Vandaag vóór {{ time }} besteld, {{ date }} in huis",
+        "stock_low": "Nog {{ count }} op voorraad",
+        "image_alt": {
+          "front": "NAWM Wake Up Light recht van voren, display aan",
+          "angle": "NAWM Wake Up Light schuin van boven, met de knoppen in beeld",
+          "back": "Achterkant van de NAWM Wake Up Light met de aansluitingen en de USB-poort",
+          "dark": "NAWM Wake Up Light in een donkere kamer op de laagste amberstand, display gedimd",
+          "scale": "NAWM Wake Up Light naast een hand, zodat het formaat zichtbaar is"
+        }
+      },
+      "mechanism": {
+        "eyebrow": "Het mechanisme",
+        "heading": "Waarom licht anders wekt dan geluid",
+        "body": "Een alarmtoon doet één ding: hij is er ineens. Licht werkt anders, omdat het al minutenlang bezig is voordat je het merkt. NAWM begint tot een uur vóór je wektijd met een zwak amberlicht en werkt op tot vol daglicht. Het geluid komt pas als laatste stap.",
+        "steps": {
+          "s1": {
+            "time": "06:30",
+            "title": "Het begint donker",
+            "body": "Een zwak amberlicht op stand 1, nauwelijks zichtbaar met je ogen dicht."
+          },
+          "s2": {
+            "time": "06:52",
+            "title": "Het bouwt op",
+            "body": "Twintig helderheidsstanden verlopen geleidelijk naar vol licht."
+          },
+          "s3": {
+            "time": "07:00",
+            "title": "Het geluid volgt",
+            "body": "Jouw gekozen natuurgeluid of de radio, op het volume dat jij instelt."
+          }
+        },
+        "old_way": "Je telefoon: nul seconden van slaap naar alarm.",
+        "new_way": "NAWM: dertig minuten van donker naar wakker."
+      },
+      "fit": {
+        "eyebrow": "Voor wie wel, voor wie niet",
+        "heading": "Eerlijk: voor wie is dit wel en niet?",
+        "yes_heading": "Dit past bij jou als:",
+        "no_heading": "Dit past minder als:",
+        "yes": {
+          "y1": "Je alarm je elke ochtend uit je slaap rukt en je daar chagrijnig van wordt",
+          "y2": "Je ’s avonds moeilijk stopt met scrollen en een vast eindpunt zoekt",
+          "y3": "Je in een kamer slaapt waar het ’s ochtends donker blijft",
+          "y4": "Je een wekker wilt die geen telefoon is"
+        },
+        "no": {
+          "n1": "Je een extreem zware slaper bent die door een hard alarm heen slaapt. Licht alleen wekt jou waarschijnlijk niet — het geluid doet dan het werk, net als bij je oude wekker",
+          "n2": "Je slaapkamer ’s ochtends al vol in de zon staat. Dan doet de natuur het al",
+          "n3": "Je een medisch slaapprobleem hebt. Dit is een consumentenproduct, geen behandeling"
+        },
+        "closing": "Herken je jezelf rechts? Bestel hem dan niet. Dat scheelt jou een retour en ons allebei gedoe."
+      },
+      "evening": {
+        "eyebrow": "Je avond met NAWM",
+        "heading": "Ook als je gaat slapen doet hij zijn werk",
+        "body": "Zet het licht op de laagste amberstand en je hebt een warm nachtlampje in plaats van een fel scherm. Het display dim je apart, tot het je in een donkere kamer niet meer stoort.",
+        "points": {
+          "p1": {
+            "title": "{{ colors }} lichtkleuren, {{ levels }} standen",
+            "title_fallback": "Lichtkleuren en helderheidsstanden",
+            "body": "Kies de kleur en de stand die bij je kamer passen."
+          },
+          "p2": {
+            "title": "Display los dimbaar",
+            "body": "Het display staat los van het licht, zodat je het apart zachter zet."
+          },
+          "p3": {
+            "title": "Sleeptimer",
+            "body": "Het licht gaat vanzelf uit nadat je in slaap valt."
+          }
+        }
+      },
+      "setup": {
+        "eyebrow": "Instellen",
+        "heading": "In tien minuten ingesteld",
+        "steps": {
+          "s1": {
+            "time": "00:00",
+            "title": "Aansluiten",
+            "body": "Stekker in het stopcontact, klaar. Geen app, geen account, geen wifi."
+          },
+          "s2": {
+            "time": "00:02",
+            "title": "Tijd en alarm instellen",
+            "body": "Je wektijd, week- of weekendalarm, en of je één of twee alarmen wilt."
+          },
+          "s3": {
+            "time": "00:05",
+            "title": "Zonsopgang kiezen",
+            "body": "Hoeveel minuten vóór je wektijd het licht begint. Tussen 10 en 60."
+          },
+          "s4": {
+            "time": "00:08",
+            "title": "Geluid en volume kiezen",
+            "body": "Je wekgeluid en hoe hard het uiteindelijk wordt."
+          }
+        },
+        "manual_cta": "Twijfel je of je eruit komt? Lees de handleiding voordat je bestelt →"
+      },
+      "demo": {
+        "eyebrow": "De zonsopgang, zichtbaar",
+        "heading": "Zo loopt het licht op",
+        "body": "Schuif de duur van 10 naar 60 minuten en zie wat het apparaat doet. Rechts staat een opname van hetzelfde model, zodat je het verschil tussen schema en werkelijkheid zelf kunt controleren.",
+        "schematic": "Schematisch",
+        "recording": "Opname van het verkoopmodel",
+        "summary": "Samenvatting van {{ minutes }} echte minuten in 6 seconden.",
+        "video_missing": "De timelapse van het verkoopmodel staat nog niet klaar.",
+        "video_alt": "Timelapse van de zonsopgang op het verkoopmodel"
+      },
+      "proof": {
+        "eyebrow": "Wat kopers zeggen",
+        "heading": "Wat kopers zeggen",
+        "score_line": "{{ score }} uit {{ count }} beoordelingen op {{ source }} · gecontroleerd op {{ date }}",
+        "distribution_label": "Beoordelingsverdeling",
+        "stars": "{{ n }} sterren",
+        "star_count": "{{ count }} beoordelingen",
+        "filter_label": "Filter op onderwerp",
+        "filter_all": "Alles",
+        "empty": "Zodra er beoordelingen met bron, link en datum zijn, staan ze hier. Een beoordeling zonder bron tonen we niet."
+      },
+      "specs": {
+        "eyebrow": "Specificaties",
+        "heading": "Alles wat je wilt weten",
+        "details_label": "Afmetingen, voeding en aansluitingen",
+        "box_heading": "In de doos",
+        "box": {
+          "b1": "NAWM Wake Up Light",
+          "b2": "Nederlandstalige handleiding",
+          "b3": "USB-kabel",
+          "b4": "EU-stekkeradapter"
+        },
+        "radio_row": "FM-radio als wekbron",
+        "manual_link": "Nederlandse handleiding (PDF)"
+      },
+      "offer": {
+        "eyebrow": "Het aanbod",
+        "heading": "Wat je krijgt, en wat er gebeurt als het niks voor je is",
+        "value_heading": "Wat de bestelling omvat",
+        "value": {
+          "product": "NAWM Wake Up Light",
+          "accessories": "Nederlandstalige handleiding + EU-stekker",
+          "shipping": "Verzending binnen Nederland",
+          "returns": "{{ days }} dagen retourrecht",
+          "warranty": "{{ years }} jaar garantie",
+          "included": "inbegrepen"
+        },
+        "price_difference_heading": "Waarom deze prijs",
+        "risk_heading": "En als het niks voor je is",
+        "risk": {
+          "r1": "Mail of bel ons",
+          "r2": "Je stuurt hem terug",
+          "r3": "Geld terug binnen {{ term }}"
+        },
+        "risk_conditions_heading": "De voorwaarden, zonder omweg",
+        "delivery_heading": "Wanneer je hem hebt",
+        "no_surprises_heading": "Geen verrassingen bij het afrekenen",
+        "no_surprises": "De prijs die je hier ziet, is de prijs bij het afrekenen.",
+        "payment_label": "Betaalmethoden"
+      },
+      "faq": {
+        "eyebrow": "Veelgestelde vragen",
+        "heading": "Wat mensen ons vragen voordat ze bestellen",
+        "items": {
+          "q1": {
+            "q": "Ik ben een zware slaper. Word ik hier wakker van?",
+            "a": "Het licht alleen is voor veel mensen genoeg, maar niet voor iedereen. Daarom eindigt de zonsopgang altijd met het geluid dat jij kiest, op het volume dat jij instelt. Slaap je door een gewone wekker heen, dan verandert NAWM daar weinig aan.",
+            "code": "B2"
+          },
+          "q2": {
+            "q": "Wekt dit mijn partner ook?",
+            "a": "Het licht vult de kamer, dus die merkt je partner ook. Het geluid kun je zacht zetten. Slaap je samen en heb je verschillende wektijden, houd daar rekening mee.",
+            "code": "B8"
+          },
+          "q3": {
+            "q": "Blijft mijn alarm bewaard bij stroomuitval?",
+            "a": "",
+            "code": "B9"
+          },
+          "q4": {
+            "q": "Kan het display ’s nachts helemaal uit?",
+            "a": "",
+            "code": "B10"
+          },
+          "q5": {
+            "q": "Kan ik de radio als wekgeluid gebruiken?",
+            "a": "",
+            "code": "B5"
+          },
+          "q6": {
+            "q": "Zijn alle ontspanningsgeluiden ook als alarm te kiezen?",
+            "a": "Nee. Een deel van de geluiden is selecteerbaar als wekgeluid; de rest is bedoeld om bij in slaap te vallen. Het exacte aantal staat in de specificaties.",
+            "code": "B5"
+          },
+          "q7": {
+            "q": "Heb ik een app of wifi nodig?",
+            "a": "Nee. Je stelt alles in op het apparaat zelf. Geen account, geen app, geen verbinding.",
+            "code": "B6"
+          },
+          "q8": {
+            "q": "Werkt hij op batterijen?",
+            "a": "",
+            "code": "B9"
+          },
+          "q9": {
+            "q": "Hoe snel is hij geleverd?",
+            "a": "",
+            "code": "B11"
+          },
+          "q10": {
+            "q": "Wat als hij kapot gaat?",
+            "a": "",
+            "code": "B7"
+          },
+          "q11": {
+            "q": "Is dit een behandeling voor slapeloosheid?",
+            "a": "Nee. NAWM is een consumentenproduct voor routine en wekcomfort, geen medisch hulpmiddel en geen behandeling.",
+            "code": "B3"
+          }
+        }
+      },
+      "close": {
+        "heading": "Morgenochtend begint vanavond.",
+        "line": "{{ days }} dagen retour. Werkt het niet voor je, dan stuur je hem terug.",
+        "line_fallback": "Werkt het niet voor je, dan stuur je hem terug."
+      },
+      "brand": {
+        "heading": "Wie zit hierachter",
+        "city_label": "Vestigingsplaats",
+        "kvk_label": "KvK",
+        "vat_label": "Btw-nummer",
+        "email_label": "E-mail",
+        "response": "Vragen vóór je bestelt? Mail ons — we antwoorden meestal binnen {{ time }}."
+      }
     }
   },
   "blocks": {

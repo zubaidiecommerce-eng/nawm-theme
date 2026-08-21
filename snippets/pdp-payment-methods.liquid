@@ -1,0 +1,35 @@
+{% doc %}
+  De betaallogorij. PDP SPEC §5.1 en §5.2.
+
+  Twee regels, allebei hard:
+
+  · iDEAL staat vooraan en is ongeveer 1,4× zo hoog als de rest. Het is in
+    Nederland veruit de meest gebruikte betaalmethode; die volgorde is dus
+    geen esthetische keuze.
+  · Klarna en verwante gespreid-betalen-methodes worden hier weggefilterd.
+    Dat is het halve werk: staat Klarna nog aan onder Instellingen →
+    Betalingen, dan verschijnt het alsnog in de checkout. Zie docs/OPEN-PDP.md.
+
+  De rij staat onder de CTA in het aanbod en in de afsluiting, nooit in de
+  hero — daar leidt hij af van de knop.
+{% enddoc %}
+
+{%- liquid
+  assign excluded = 'klarna,afterpay,affirm,clearpay,sezzle,zip'
+  assign excluded_list = excluded | split: ','
+-%}
+
+{%- if shop.enabled_payment_types.size > 0 -%}
+  <div class="pdp-payments">
+    <p class="nawm-mono pdp-payments__label">{{ 'nawm.pdp.offer.payment_label' | t }}</p>
+    <ul class="pdp-payments__list">
+      {%- for type in shop.enabled_payment_types -%}
+        {%- unless excluded_list contains type -%}
+          <li class="pdp-payments__item{% if type == 'ideal' %} is-primary{% endif %}">
+            {{ type | payment_type_svg_tag: class: 'pdp-payments__icon' }}
+          </li>
+        {%- endunless -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}

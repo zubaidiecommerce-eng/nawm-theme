@@ -25,4 +25,13 @@
 {{ 'nawm-tokens.css' | asset_url | stylesheet_tag }}
 {{ 'nawm-base.css' | asset_url | stylesheet_tag }}
 
+{%- comment -%}
+  De productpagina heeft een handvol primitieven die de landingspagina niet
+  kent: de koopknop, de betaallogorij, de sterrenrij en de mobiele koopbalk.
+  Die laden alleen daar, zodat de landingspagina er geen byte van meekrijgt.
+{%- endcomment -%}
+{%- if template.suffix == 'wake-up-light' -%}
+  {{ 'nawm-pdp.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
 {% render 'nawm-fonts' %}

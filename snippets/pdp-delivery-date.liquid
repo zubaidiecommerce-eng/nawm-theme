@@ -1,0 +1,86 @@
+{% doc %}
+  De concrete leverdatum. PDP SPEC §3.9 blok 3.
+
+  Een datum ("dinsdag 26 augustus") is aantoonbaar sterker dan een termijn
+  ("2–4 werkdagen"), maar alleen als hij klopt. Daarom wordt hij gerekend uit
+  twee themasettings — de besteldeadline en het aantal werkdagen — en rendert
+  dit snippet niets zodra één van beide ontbreekt. De aanroeper valt dan terug
+  op `settings.delivery_time`, en pas daarna op een VERIFY.
+
+  Weekenden tellen niet mee. De teller begint morgen zodra de besteldeadline
+  van vandaag voorbij is.
+
+  Twee details die er echt toe doen:
+
+  · Er wordt gerekend vanaf lokale middag, niet vanaf middernacht. Bij een
+    zomertijdwissel verschuift een dag met een uur; vanaf middernacht zou dat
+    de datum een dag verkeerd zetten, vanaf de middag nooit.
+  · De uitkomst wordt met de datumsleutel vergeleken, niet met het aantal
+    dagen — "morgen" moet morgen blijven, ook rond een weekend.
+
+  Rendert een kale tekst, dus altijd aanroepen binnen een capture.
+{% enddoc %}
+
+{%- liquid
+  assign days = settings.delivery_business_days | times: 1
+  assign deadline = settings.order_deadline_time
+
+  if days > 0
+    assign day_seconds = 86400
+
+    assign today_key = 'now' | date: '%Y-%m-%d'
+    assign anchor = today_key | date: '%s' | times: 1 | plus: 43200
+
+    comment
+      Is de besteldeadline van vandaag al voorbij, dan gaat het pakket morgen
+      pas weg en begint de teller een dag later.
+    endcomment
+    assign cursor = anchor
+
+    if deadline != blank
+      assign deadline_parts = deadline | split: ':'
+      assign deadline_hours = deadline_parts[0] | times: 60
+      assign deadline_minutes = deadline_parts[1] | default: 0
+      assign deadline_total = deadline_hours | plus: deadline_minutes
+
+      assign now_hours = 'now' | date: '%H' | times: 60
+      assign now_minutes = 'now' | date: '%M'
+      assign now_total = now_hours | plus: now_minutes
+
+      if now_total >= deadline_total
+        assign cursor = cursor | plus: day_seconds
+      endif
+    endif
+
+    assign added = 0
+    for step in (1..21)
+      if added >= days
+        break
+      endif
+      assign cursor = cursor | plus: day_seconds
+      assign weekday_number = cursor | date: '%w' | times: 1
+      if weekday_number > 0 and weekday_number < 6
+        assign added = added | plus: 1
+      endif
+    endfor
+
+    assign result_key = cursor | date: '%Y-%m-%d'
+    assign tomorrow_key = anchor | plus: day_seconds | date: '%Y-%m-%d'
+
+    if result_key == today_key
+      assign formatted = 'nawm.pdp.common.date_today' | t
+    elsif result_key == tomorrow_key
+      assign formatted = 'nawm.pdp.common.date_tomorrow' | t
+    else
+      assign weekdays = 'nawm.pdp.common.weekdays' | t | split: ','
+      assign months = 'nawm.pdp.common.months' | t | split: ','
+      assign weekday_index = cursor | date: '%w' | times: 1
+      assign month_index = cursor | date: '%-m' | times: 1 | minus: 1
+      assign day_number = cursor | date: '%-d'
+      assign formatted = 'nawm.pdp.common.date_pattern'
+        | t: weekday: weekdays[weekday_index], day: day_number, month: months[month_index]
+    endif
+
+    echo formatted
+  endif
+-%}

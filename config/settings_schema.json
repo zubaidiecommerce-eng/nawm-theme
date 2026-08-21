@@ -2233,6 +2233,169 @@
       },
       {
         "type": "header",
+        "content": "Productpagina · reviewverdeling"
+      },
+      {
+        "type": "text",
+        "id": "review_source",
+        "label": "Bron van het reviewcijfer",
+        "info": "Bijvoorbeeld bol.com. Verschijnt in de cijferregel boven de verdeling."
+      },
+      {
+        "type": "text",
+        "id": "review_distribution",
+        "label": "Verdeling 5★ tot 1★",
+        "info": "Vijf aantallen, hoog naar laag, met komma's: 38,12,5,2,3. Leeg laten tot de werkelijke verdeling geteld is."
+      },
+      {
+        "type": "header",
+        "content": "Productpagina · retour en garantie"
+      },
+      {
+        "type": "paragraph",
+        "content": "Deze waarden staan letterlijk onder elke koopknop. Ze moeten kloppen met wat de klantenservice waarmaakt."
+      },
+      {
+        "type": "range",
+        "id": "return_days",
+        "label": "Retourtermijn in dagen",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "default": 0,
+        "info": "0 betekent: nog niet vastgesteld. De pagina toont dan een VERIFY in plaats van een getal."
+      },
+      {
+        "type": "text",
+        "id": "return_shipping_line",
+        "label": "Wie betaalt de retourzending",
+        "info": "Eén zin, zonder omweg. Bijvoorbeeld: je betaalt de retourzending zelf."
+      },
+      {
+        "type": "text",
+        "id": "return_packaging_line",
+        "label": "Voorwaarde over de verpakking",
+        "info": "Bijvoorbeeld: bewaar de doos tot je zeker weet dat je hem houdt."
+      },
+      {
+        "type": "text",
+        "id": "refund_term",
+        "label": "Termijn terugbetaling",
+        "info": "Bijvoorbeeld: 5 werkdagen na ontvangst."
+      },
+      {
+        "type": "range",
+        "id": "warranty_years",
+        "label": "Garantie in jaren",
+        "min": 0,
+        "max": 5,
+        "step": 1,
+        "default": 0,
+        "info": "0 betekent: nog niet vastgesteld."
+      },
+      {
+        "type": "header",
+        "content": "Productpagina · levering"
+      },
+      {
+        "type": "text",
+        "id": "order_deadline_time",
+        "label": "Besteldeadline",
+        "info": "24-uursnotatie, bijvoorbeeld 16:00. Bestellingen daarna gaan de volgende werkdag weg."
+      },
+      {
+        "type": "range",
+        "id": "delivery_business_days",
+        "label": "Levertijd in werkdagen",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "default": 0,
+        "info": "Samen met de besteldeadline rekent de pagina hieruit een concrete leverdatum. 0 betekent: val terug op de tekst bij Levertijd."
+      },
+      {
+        "type": "header",
+        "content": "Productpagina · voorraad"
+      },
+      {
+        "type": "paragraph",
+        "content": "Een voorraadmelding is alleen toegestaan wanneer hij uit de werkelijke voorraad komt. Verzin nooit een aantal."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_stock_notice",
+        "label": "Voorraadmelding tonen",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "stock_threshold",
+        "label": "Drempel",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "default": 10,
+        "info": "De melding verschijnt pas onder dit aantal, en alleen wanneer de voorraad daadwerkelijk bijgehouden wordt.",
+        "visible_if": "{{ settings.show_stock_notice }}"
+      },
+      {
+        "type": "header",
+        "content": "Productpagina · prijsverschil"
+      },
+      {
+        "type": "paragraph",
+        "content": "Staat hetzelfde product elders goedkoper, dan is zwijgen het duurste antwoord. Zet dit blok pas aan als de meerwaarde die je noemt ook echt bestaat."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_price_difference",
+        "label": "Prijsverschilblok tonen",
+        "default": false
+      },
+      {
+        "type": "textarea",
+        "id": "price_difference_text",
+        "label": "Uitleg bij het prijsverschil",
+        "info": "Concreet en controleerbaar. Geen verzonnen bedragen.",
+        "visible_if": "{{ settings.show_price_difference }}"
+      },
+      {
+        "type": "header",
+        "content": "Productpagina · bedrijfsgegevens"
+      },
+      {
+        "type": "paragraph",
+        "content": "Een onbekend merk heeft één ding nodig: bewijs dat er mensen achter zitten. Deze gegevens staan onderaan de productpagina."
+      },
+      {
+        "type": "text",
+        "id": "company_city",
+        "label": "Vestigingsplaats"
+      },
+      {
+        "type": "text",
+        "id": "kvk_number",
+        "label": "KvK-nummer"
+      },
+      {
+        "type": "text",
+        "id": "vat_number",
+        "label": "Btw-nummer"
+      },
+      {
+        "type": "text",
+        "id": "support_email",
+        "label": "E-mailadres klantenservice",
+        "info": "Alleen een adres dat daadwerkelijk gelezen wordt."
+      },
+      {
+        "type": "text",
+        "id": "support_response_time",
+        "label": "Reactietijd",
+        "info": "Bijvoorbeeld: één werkdag. Alleen invullen als je hem waarmaakt."
+      },
+      {
+        "type": "header",
         "content": "Typografie"
       },
       {
