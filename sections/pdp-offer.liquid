@@ -1,0 +1,402 @@
+{% comment %}
+  PDP-sectie: beantwoordt B4 (goedkoper op bol.com), B7 (wat als het niks voor
+  mij is), B11 (wanneer heb ik hem) en B12 (verborgen kosten).
+  Zie NAWM_PDP_CONVERSIE_SPEC.md §3.9.
+
+  Na de hero de belangrijkste sectie van de pagina: vier bezwaren in één blok.
+
+  Vier regels die hier vastliggen:
+
+  · De waardestapel bevat uitsluitend werkelijke onderdelen. Geen verzonnen
+    bedragen naast bundelonderdelen — bij een publiek dat dagelijks door
+    dropshipping-advertenties scrolt werkt dat averechts.
+  · Het retourbeleid staat hier en niet in de footer. Zestig procent van de
+    bezoekers zoekt er actief naar op de productpagina.
+  · De voorwaarden staan er zonder omweg bij: wie de retourzending betaalt en
+    of de verpakking bewaard moet blijven. Een onaangename verrassing bij de
+    retour kost je de review.
+  · Het knoplabel is identiek aan dat in de hero. Een label dat verandert,
+    laat de bezoeker twijfelen of hij nog op hetzelfde pad zit.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.offer.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.offer.heading' | t
+  endif
+
+  assign return_days = settings.return_days | times: 1
+  assign warranty_years = settings.warranty_years | times: 1
+  assign included = 'nawm.pdp.offer.value.included' | t
+
+  capture delivery_date
+    render 'pdp-delivery-date'
+  endcapture
+%}
+
+<section class="nawm-section pdp-offer ctx-dawn" id="aanbod">
+  <div class="nawm-wrap pdp-offer__inner">
+    <div class="pdp-offer__head nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow, class: 'pdp-offer__eyebrow' %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    {%- comment -%} ---------------------------------------- blok 1 · waardestapel {%- endcomment -%}
+    <div class="nawm-card pdp-offer__block nawm-reveal">
+      <h3 class="pdp-offer__block-heading">{{ 'nawm.pdp.offer.value_heading' | t }}</h3>
+      <dl class="pdp-offer__value">
+        <div class="pdp-offer__value-row">
+          <dt>{{ 'nawm.pdp.offer.value.product' | t }}</dt>
+          <dd class="nawm-mono">{% render 'nawm-price', product: pdp_product %}</dd>
+        </div>
+        <div class="pdp-offer__value-row">
+          <dt>{{ 'nawm.pdp.offer.value.accessories' | t }}</dt>
+          <dd class="nawm-mono">{{ included }}</dd>
+        </div>
+        <div class="pdp-offer__value-row">
+          <dt>{{ 'nawm.pdp.offer.value.shipping' | t }}</dt>
+          <dd class="nawm-mono">
+            {%- if settings.shipping_line != blank -%}
+              {{ included }}
+            {%- else -%}
+              {% render 'nawm-verify',
+                field: 'shipping_line',
+                note: 'verzendkosten en of ze in de marge zijn verwerkt'
+              %}
+            {%- endif -%}
+          </dd>
+        </div>
+        <div class="pdp-offer__value-row">
+          <dt>
+            {%- if return_days > 0 -%}
+              {{ 'nawm.pdp.offer.value.returns' | t: days: return_days }}
+            {%- else -%}
+              {% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
+            {%- endif -%}
+          </dt>
+          <dd class="nawm-mono">{{ included }}</dd>
+        </div>
+        <div class="pdp-offer__value-row">
+          <dt>
+            {%- if warranty_years > 0 -%}
+              {{ 'nawm.pdp.offer.value.warranty' | t: years: warranty_years }}
+            {%- else -%}
+              {% render 'nawm-verify', field: 'warranty_years', note: 'garantietermijn' %}
+            {%- endif -%}
+          </dt>
+          <dd class="nawm-mono">{{ included }}</dd>
+        </div>
+      </dl>
+
+      {%- comment -%}
+        Het prijsverschil met de bol-listing. Blijft uit tot het besluit uit
+        §6.1 gevallen is: een meerprijs verantwoorden werkt alleen wanneer de
+        meerwaarde die je noemt ook echt bestaat.
+      {%- endcomment -%}
+      {%- if settings.show_price_difference -%}
+        <div class="pdp-offer__difference">
+          <h4 class="pdp-offer__difference-heading">
+            {{ 'nawm.pdp.offer.price_difference_heading' | t }}
+          </h4>
+          {%- if settings.price_difference_text != blank -%}
+            <p>{{ settings.price_difference_text }}</p>
+          {%- else -%}
+            <p>
+              {% render 'nawm-verify',
+                field: 'price_difference_text',
+                note: 'besluit over het bol.com-prijsverschil en de meerwaarde die dat verantwoordt'
+              %}
+            </p>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ---------------------------------------------- de koopknop {%- endcomment -%}
+    <div class="pdp-offer__cta nawm-reveal">
+      {% render 'pdp-buy', product: pdp_product, id: 'pdp-offer-form' %}
+      {% render 'pdp-payment-methods' %}
+    </div>
+
+    <div class="pdp-offer__blocks">
+      {%- comment -%} ------------------------------------ blok 2 · risico-omkering {%- endcomment -%}
+      <div class="nawm-card pdp-offer__block nawm-reveal">
+        <h3 class="pdp-offer__block-heading">{{ 'nawm.pdp.offer.risk_heading' | t }}</h3>
+
+        <ol class="pdp-offer__steps">
+          <li>{{ 'nawm.pdp.offer.risk.r1' | t }}</li>
+          <li>{{ 'nawm.pdp.offer.risk.r2' | t }}</li>
+          <li>
+            {%- if settings.refund_term != blank -%}
+              {{ 'nawm.pdp.offer.risk.r3' | t: term: settings.refund_term }}
+            {%- else -%}
+              {% render 'nawm-verify',
+                field: 'refund_term',
+                note: 'binnen welke termijn het geld terugstaat'
+              %}
+            {%- endif -%}
+          </li>
+        </ol>
+
+        <h4 class="pdp-offer__conditions-heading">
+          {{ 'nawm.pdp.offer.risk_conditions_heading' | t }}
+        </h4>
+        <ul class="nawm-list pdp-offer__conditions">
+          <li>
+            {%- if return_days > 0 -%}
+              {{ 'nawm.pdp.common.returns_days' | t: days: return_days }}
+            {%- else -%}
+              {% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
+            {%- endif -%}
+          </li>
+          <li>
+            {%- if settings.return_shipping_line != blank -%}
+              {{ settings.return_shipping_line }}
+            {%- else -%}
+              {% render 'nawm-verify',
+                field: 'return_shipping_line',
+                note: 'wie de retourzending betaalt'
+              %}
+            {%- endif -%}
+          </li>
+          <li>
+            {%- if settings.return_packaging_line != blank -%}
+              {{ settings.return_packaging_line }}
+            {%- else -%}
+              {% render 'nawm-verify',
+                field: 'return_packaging_line',
+                note: 'of de verpakking bewaard moet blijven'
+              %}
+            {%- endif -%}
+          </li>
+        </ul>
+      </div>
+
+      {%- comment -%} ------------------------------------------ blok 3 · levering {%- endcomment -%}
+      <div class="nawm-card pdp-offer__block nawm-reveal" style="--reveal-delay: 80ms;">
+        <h3 class="pdp-offer__block-heading">{{ 'nawm.pdp.offer.delivery_heading' | t }}</h3>
+        <p class="pdp-offer__delivery">
+          {%- if settings.order_deadline_time != blank and delivery_date != blank -%}
+            {{
+              'nawm.pdp.hero.delivery'
+              | t: time: settings.order_deadline_time, date: delivery_date
+            }}
+          {%- elsif settings.delivery_time != blank -%}
+            {{ settings.delivery_time }}
+          {%- else -%}
+            {% render 'nawm-verify',
+              field: 'delivery_business_days',
+              note: 'besteldeadline en werkelijke levertijd in werkdagen'
+            %}
+          {%- endif -%}
+        </p>
+      </div>
+
+      {%- comment -%} ------------------------------- blok 4 · geen verrassingen {%- endcomment -%}
+      <div class="nawm-card pdp-offer__block nawm-reveal" style="--reveal-delay: 160ms;">
+        <h3 class="pdp-offer__block-heading">{{ 'nawm.pdp.offer.no_surprises_heading' | t }}</h3>
+        <p>
+          {{ 'nawm.pdp.offer.no_surprises' | t }}
+          {%- if settings.shipping_line != blank -%}
+            {{ ' ' }}{{ settings.shipping_line }}
+          {%- else -%}
+            {{ ' ' }}{% render 'nawm-verify',
+              field: 'shipping_line',
+              note: 'verzendregel — wat de klant bij het afrekenen betaalt'
+            %}
+          {%- endif -%}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pdp-offer__inner {
+    max-width: 52rem;
+    text-align: center;
+  }
+
+  .pdp-offer__eyebrow {
+    margin-inline: auto;
+  }
+
+  .pdp-offer__head h2 {
+    margin-inline: auto;
+    max-width: 22ch;
+  }
+
+  .pdp-offer__block {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    text-align: start;
+  }
+
+  .pdp-offer__block-heading {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--fg-soft);
+  }
+
+  .pdp-offer__value {
+    margin: var(--sp-4) 0 0;
+  }
+
+  .pdp-offer__value-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-2);
+    padding-block: var(--sp-3);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .pdp-offer__value-row:last-child {
+    border-block-end: 0;
+  }
+
+  .pdp-offer__value-row dt {
+    color: var(--fg);
+  }
+
+  .pdp-offer__value-row dd {
+    margin: 0;
+    color: var(--fg-soft);
+  }
+
+  .pdp-offer__difference {
+    margin-block-start: var(--sp-4);
+    padding-block-start: var(--sp-4);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .pdp-offer__difference-heading,
+  .pdp-offer__conditions-heading {
+    margin: 0 0 var(--sp-2);
+    font-family: var(--ff-body);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    color: var(--fg);
+  }
+
+  /* Het visuele zwaartepunt van de sectie. Eén dominante knop — geen tweede
+     knop ernaast die om dezelfde klik vraagt. */
+  .pdp-offer__cta {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    padding: var(--sp-5);
+    border: 1px solid var(--nawm-amber);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-amber) 22%, var(--nawm-dawn));
+  }
+
+  .pdp-offer__cta .pdp-payments {
+    margin-block-start: var(--sp-4);
+    padding-block-start: var(--sp-4);
+    border-block-start: 1px solid color-mix(in oklab, var(--ink-day) 14%, transparent);
+  }
+
+  .pdp-offer__blocks {
+    display: grid;
+    gap: 0;
+  }
+
+  @media (min-width: 900px) {
+    .pdp-offer__blocks {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-4);
+      align-items: start;
+    }
+
+    .pdp-offer__blocks > :first-child {
+      grid-column: 1 / -1;
+    }
+
+    .pdp-offer__blocks .pdp-offer__block + .pdp-offer__block {
+      margin-block-start: 0;
+    }
+  }
+
+  .pdp-offer__steps {
+    list-style: none;
+    counter-reset: step;
+    margin: var(--sp-4) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  .pdp-offer__steps li {
+    counter-increment: step;
+    position: relative;
+    padding-inline-start: calc(var(--sp-5) + var(--sp-1));
+    color: var(--fg);
+  }
+
+  .pdp-offer__steps li::before {
+    content: counter(step);
+    position: absolute;
+    inset-inline-start: 0;
+    top: -.1em;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--nawm-ember);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    color: var(--nawm-ember);
+  }
+
+  .pdp-offer__conditions-heading {
+    margin-block-start: var(--sp-5);
+  }
+
+  .pdp-offer__delivery {
+    margin-block-start: var(--sp-3);
+    font-size: var(--fs-h3);
+    line-height: 1.3;
+    letter-spacing: -.01em;
+    color: var(--fg);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP aanbod",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Beantwoordt B4, B7, B11 en B12. Alle bedragen, termijnen en voorwaarden komen uit de themasettings onder Productpagina, zodat ze overal op de site identiek zijn. Geen verzonnen waarden naast bundelonderdelen."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP aanbod"
+    }
+  ]
+}
+{% endschema %}
