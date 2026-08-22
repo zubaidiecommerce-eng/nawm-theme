@@ -1,0 +1,37 @@
+{% comment %}
+  De productpagina van de NAWM Wake Up Light.
+
+  Waarom dit een .liquid-template is en geen .json:
+
+  Shopify's GitHub-koppeling synchroniseert de secties en de assets van deze
+  repo wél, maar de JSON-templates niet. `templates/product.wake-up-light.json`
+  bleef daardoor hangen op de versie van 20 augustus, en het opvolgerbestand
+  `product.nawm.json` kwam nooit in het thema aan — waarna Shopify terugviel op
+  de standaard productpagina. Een .liquid-template is voor de koppeling een
+  gewoon Liquid-bestand en komt wél door.
+
+  Deze secties zijn statische secties. Ze zijn gewoon aanpasbaar in de
+  theme-editor: ze verschijnen daar onder deze template, alleen kun je hun
+  volgorde niet slepen. Die staat hier, en dat is precies de volgorde uit de
+  spec: begrijpen → geloven → kopen.
+
+  Werkt de JSON-synchronisatie ooit weer, dan kan dit bestand terug naar
+  product.nawm.json. Zie docs/OPEN-PDP.md.
+{% endcomment %}
+
+{% section 'pdp-hero' %}
+{% section 'pdp-mechanism' %}
+{% section 'pdp-fit' %}
+{% section 'pdp-evening' %}
+{% section 'pdp-setup' %}
+{% section 'pdp-demo' %}
+{% section 'pdp-clips' %}
+{% section 'pdp-proof' %}
+{% section 'pdp-specs' %}
+{% section 'pdp-compare' %}
+{% section 'nawm-trust' %}
+{% section 'pdp-offer' %}
+{% section 'pdp-bundle' %}
+{% section 'pdp-faq' %}
+{% section 'pdp-close' %}
+{% section 'pdp-brand' %}

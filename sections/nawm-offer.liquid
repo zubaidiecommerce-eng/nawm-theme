@@ -87,11 +87,7 @@
         soort getal dat je onthoudt, dus het krijgt zijn eigen plek in plaats
         van een regel in een lijst.
       {%- endcomment -%}
-      {%- if per_morning != blank -%}
-        <p class="nawm-offer__per-day nawm-mono">
-          {{ 'nawm.offer.per_morning' | t: amount: per_morning }}
-        </p>
-      {%- endif -%}
+
     </div>
 
     {%- comment -%} ----------------------------------------------- het aanbod {%- endcomment -%}
@@ -110,17 +106,31 @@
         {%- assign box_items = product.metafields.nawm.in_the_box.value -%}
         {%- if box_items != blank -%}
           {%- for item in box_items -%}
-            <li class="nawm-offer__stack-item">
-              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
-                <path d="M3 8.4l3.2 3.2L13 4.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              <span>{{ item }}</span>
+            <li class="nawm-offer__stack-item nawm-lift">
+              <span class="nawm-offer__stack-check" aria-hidden="true">
+                <svg viewBox="0 0 16 16" width="12" height="12" focusable="false">
+                  <path d="M3 8.4l3.2 3.2L13 4.8" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <span class="nawm-offer__stack-text">{{ item }}</span>
             </li>
           {%- endfor -%}
         {%- endif -%}
       </ul>
 
+      {%- comment -%}
+        De prijs per ochtend stond over de onderrand van het beeld en viel daar
+        weg. Hij staat nu pal boven het bedrag zelf, waar hij het werk doet:
+        eerst het kleine getal, dan pas het grote.
+      {%- endcomment -%}
       <div class="nawm-offer__cta nawm-reveal" style="--reveal-delay: 120ms;">
+        {%- if per_morning != blank -%}
+          <p class="nawm-offer__per-day">
+            <span class="nawm-offer__per-day-amount">{{ per_morning }}</span>
+            <span class="nawm-offer__per-day-label">{{ 'nawm.offer.per_morning_label' | t }}</span>
+          </p>
+        {%- endif -%}
+
         <p class="nawm-offer__price">{{ price }}</p>
 
         {%- if settings.shipping_line != blank -%}
@@ -224,16 +234,27 @@
   }
 
   .nawm-offer__per-day {
-    position: absolute;
-    inset-inline-start: var(--sp-4);
-    inset-block-end: var(--sp-4);
-    margin: 0;
-    padding: var(--sp-2) var(--sp-3);
+    margin: 0 0 var(--sp-3);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--sp-2);
+  }
+
+  .nawm-offer__per-day-amount {
+    font-family: var(--ff-mono);
+    font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2rem);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    padding: var(--sp-1) var(--sp-3);
     border-radius: var(--r-pill);
-    background: color-mix(in oklab, var(--nawm-midnight) 82%, transparent);
-    color: var(--ink-night);
-    backdrop-filter: blur(6px);
-    letter-spacing: .06em;
+    background: var(--nawm-midnight);
+    color: var(--nawm-amber);
+  }
+
+  .nawm-offer__per-day-label {
+    font-size: var(--fs-small);
+    color: var(--ink-day-soft);
   }
 
   /* ------------------------------------------------------------- het aanbod */
@@ -246,17 +267,44 @@
     gap: var(--sp-2);
   }
 
+  @media (min-width: 600px) {
+    .nawm-offer__stack {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Elk onderdeel is een eigen vlakje in plaats van een regel met een vinkje.
+     Dat leest als een lijst met inhoud, niet als een opsomming. */
   .nawm-offer__stack-item {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: var(--sp-2);
-    align-items: start;
+    gap: var(--sp-3);
+    align-items: center;
+    padding: var(--sp-3);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
     color: var(--fg);
+    font-size: var(--fs-small);
+    line-height: 1.35;
   }
 
-  .nawm-offer__stack-item svg {
-    margin-block-start: .3em;
+  .nawm-offer__stack-check {
+    display: grid;
+    place-items: center;
+    inline-size: 24px;
+    block-size: 24px;
+    border-radius: 50%;
+    background: color-mix(in oklab, var(--nawm-ember) 16%, transparent);
     color: var(--nawm-ember);
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .nawm-offer__stack-item:hover .nawm-offer__stack-check {
+      background: var(--nawm-ember);
+      color: var(--nawm-dawn);
+    }
   }
 
   /* Het zwaartepunt. Amber vlak, ruime binnenmarge, en niets ernaast dat om
