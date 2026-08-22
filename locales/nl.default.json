@@ -101,7 +101,7 @@
         }
       },
       "routine_label": "Bekijk de volledige 30-minutenroutine",
-      "routine_intro": "De regels hieronder staan letterlijk zo in de Sleep–Wake Guide.",
+      "routine_intro": "Zes momenten in het laatste halfuur vóór bed. Je hoeft ze niet allemaal te doen.",
       "routine": {
         "r1": {
           "time": "30 min vóór bed",
@@ -164,7 +164,6 @@
       "item3": "USB-voedingskabel",
       "item4": "Voedingsadapter met EU-stekker",
       "manual_link": "Lees de Nederlandse handleiding vóór je bestelt",
-      "guide_link": "Bekijk de Sleep–Wake Guide (PDF)",
       "image_alt": "Alle onderdelen uit de doos van bovenaf naast elkaar gelegd"
     },
     "specs": {

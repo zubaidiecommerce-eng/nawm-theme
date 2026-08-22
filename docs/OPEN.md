@@ -204,7 +204,7 @@ hoeft te scannen.
 ---
 
 <!-- claims-lint:start -->
-_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-22 22:39.  Niet met de hand bijwerken._
+_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-22 22:40.  Niet met de hand bijwerken._
 
 ### Openstaande VERIFY-tokens (36)
 
@@ -229,7 +229,7 @@ sections/pdp-brand.liquid:86:            {% render 'nawm-verify',
 sections/nawm-sunrise-demo.liquid:123:                {% render 'nawm-verify',
 sections/nawm-sunrise-demo.liquid:179:                {% render 'nawm-verify',
 sections/nawm-faq.liquid:95:                  {% render 'nawm-verify', field: key, note: verify_notes[note_index] %}
-sections/nawm-inbox.liquid:112:        {% render 'nawm-verify',
+sections/nawm-inbox.liquid:107:        {% render 'nawm-verify',
 sections/nawm-specs.liquid:69:                {% render 'nawm-verify',
 sections/pdp-evening.liquid:101:              {% render 'nawm-verify',
 sections/pdp-evening.liquid:115:              {% render 'nawm-verify',

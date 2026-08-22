@@ -50,7 +50,7 @@
   assign sunrise_max = nawm.sunrise_max_minutes.value
 
   assign box_items = nawm.in_the_box.value
-  assign box_fallback = 'b1,b2,b3,b4,b5,b6,b7,b8' | split: ','
+  assign box_fallback = 'b1,b2,b3,b4' | split: ','
 %}
 
 <section class="nawm-section pdp-specs ctx-dawn" id="specificaties" data-pdp-specs>
@@ -166,11 +166,11 @@
       <div class="pdp-specs__group nawm-reveal">
         <h3 class="pdp-specs__group-heading">{{ 'nawm.pdp.specs.box_heading' | t }}</h3>
         {%- comment -%}
-          Uitsluitend wat er werkelijk in zit. De lijst komt uit het metafield
-          `nawm.in_the_box` en is door Mohammed bevestigd: naast het apparaat,
-          de kabel, de adapter en de handleiding zitten de Sleep–Wake Guide en
-          de drie kaarten er ook bij. Wijzigt de doos, dan wijzigt het
-          metafield — niet deze sectie.
+          Uitsluitend wat er werkelijk in zit, volgens de Verpakkingsinhoud in
+          de handleiding en de doosfoto: het apparaat, de Nederlandstalige
+          handleiding, een USB-voedingskabel en een voedingsadapter. Er zit géén
+          gedrukte gids of kaart bij. Komt die er later, dan wijzigt het
+          metafield `nawm.in_the_box` — niet deze sectie.
         {%- endcomment -%}
         <ul class="nawm-list pdp-specs__box">
           {%- if box_items != blank -%}
