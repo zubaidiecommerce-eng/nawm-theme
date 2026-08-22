@@ -126,6 +126,13 @@
       "settings": {
         "body": ""
       }
+    },
+    "nawm_trust": {
+      "type": "nawm-trust",
+      "settings": {
+        "heading": "",
+        "show_customer_count": true
+      }
     }
   },
   "order": [
@@ -139,6 +146,7 @@
     "nawm_inbox",
     "nawm_specs",
     "nawm_compare",
+    "nawm_trust",
     "nawm_offer",
     "nawm_faq",
     "nawm_safety"

@@ -174,28 +174,9 @@
         </ul>
       </div>
 
-      {%- comment -%}
-        Het retourproces in drie stappen. Zestig procent van de bezoekers zoekt
-        actief naar retourinformatie; die hoort dus hier en niet in de footer.
-      {%- endcomment -%}
-      {%- if settings.refund_term != blank -%}
-        <ol class="nawm-offer__steps nawm-reveal" style="--reveal-delay: 180ms;">
-          <li>{{ 'nawm.pdp.offer.risk.r1' | t }}</li>
-          <li>{{ 'nawm.pdp.offer.risk.r2' | t }}</li>
-          <li>{{ 'nawm.pdp.offer.risk.r3' | t: term: settings.refund_term }}</li>
-        </ol>
-      {%- endif -%}
 
       {% render 'pdp-payment-methods' %}
 
-      <p class="nawm-small nawm-offer__company">
-        {%- if settings.company_name != blank -%}
-          {{ 'nawm.offer.company_label' | t }}: {{ settings.company_name }}
-        {%- endif -%}
-        {%- if settings.contact_url != blank -%}
-          {{ ' · ' }}<a href="{{ settings.contact_url }}">{{ 'nawm.offer.contact_label' | t }}</a>
-        {%- endif -%}
-      </p>
     </div>
   </div>
 </section>

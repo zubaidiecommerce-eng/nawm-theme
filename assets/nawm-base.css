@@ -902,3 +902,187 @@ html.nawm-pdp #header-component .header__logo svg {
 html.nawm-pdp .pdp-evening {
   color: var(--ink-night);
 }
+
+/* ------------------------------------------------------------- featurelist */
+
+/* De opvolger van de kale streepjeslijst. Elke regel is een rij met een eigen
+   marker en een haarlijn eronder — dichter bij een tabel dan bij een bulletlist,
+   en daardoor makkelijker te scannen. Bij hover licht de rij op en vult de
+   marker zich. */
+
+.nawm-featurelist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+
+.nawm-featurelist li {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--sp-3);
+  align-items: start;
+  padding-block: var(--sp-3);
+  border-block-end: 1px solid var(--line);
+  color: var(--fg);
+  transition: background-color var(--dur-fast) var(--ease), padding-inline-start var(--dur) var(--ease);
+}
+
+.nawm-featurelist li:last-child {
+  border-block-end: 0;
+}
+
+/* De marker: een ring die zich bij hover vult. */
+.nawm-featurelist li::before {
+  content: "";
+  inline-size: 9px;
+  block-size: 9px;
+  margin-block-start: .5em;
+  border-radius: 50%;
+  border: 1.5px solid var(--nawm-amber);
+  background: transparent;
+  transition: background-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+
+.ctx-dawn .nawm-featurelist li::before {
+  border-color: var(--nawm-ember);
+}
+
+@media (hover: hover) {
+  .nawm-featurelist li:hover {
+    padding-inline-start: var(--sp-2);
+  }
+
+  .ctx-night .nawm-featurelist li:hover {
+    background: rgb(255 255 255 / .04);
+  }
+
+  .ctx-dawn .nawm-featurelist li:hover {
+    background: color-mix(in oklab, var(--nawm-amber) 10%, transparent);
+  }
+
+  .nawm-featurelist li:hover::before {
+    background: var(--nawm-amber);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--nawm-amber) 22%, transparent);
+  }
+
+  .ctx-dawn .nawm-featurelist li:hover::before {
+    background: var(--nawm-ember);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--nawm-ember) 18%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-featurelist li,
+  .nawm-featurelist li::before {
+    transition: none;
+  }
+
+  .nawm-featurelist li:hover {
+    padding-inline-start: 0;
+  }
+}
+
+/* ------------------------------------------------------------- de koopknop */
+
+/* De knop is het zwaartepunt van elke sectie waar hij in staat, en mag daar ook
+   naar uitzien. Een warme verloop met een lichte bovenrand geeft hem diepte
+   zonder dat hij als een 3D-knop uit 2009 leest; de pijl schuift mee bij hover. */
+.nawm-cta {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--cta-bg) 88%, #fff) 0%,
+    var(--cta-bg) 55%,
+    color-mix(in oklab, var(--cta-bg) 92%, #000) 100%
+  );
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .45);
+  transition:
+    transform var(--dur-fast) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    filter var(--dur-fast) var(--ease);
+}
+
+.nawm-cta::after {
+  content: "";
+  flex: none;
+  inline-size: 18px;
+  block-size: 10px;
+  margin-inline-start: -.15em;
+  background: currentColor;
+  clip-path: polygon(0 45%, 62% 45%, 62% 22%, 100% 50%, 62% 78%, 62% 55%, 0 55%);
+  transition: translate var(--dur) var(--ease);
+}
+
+@media (hover: hover) {
+  .nawm-cta:hover {
+    transform: translateY(-2px);
+    filter: saturate(1.06);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .5), var(--glow-amber);
+  }
+
+  .nawm-cta:hover::after {
+    translate: 4px 0;
+  }
+}
+
+.nawm-cta:active {
+  transform: translateY(0);
+}
+
+/* De ghost-variant is een tegenknop en hoort geen verloop of pijl te hebben. */
+.nawm-cta--ghost {
+  background-image: none;
+  box-shadow: none;
+}
+
+.nawm-cta--ghost::after {
+  display: none;
+}
+
+.nawm-cta[aria-disabled="true"]::after {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-cta,
+  .nawm-cta::after {
+    transition: none;
+  }
+
+  .nawm-cta:hover {
+    transform: none;
+  }
+}
+
+/* Klantfoto op de reviewkaart. Vaste verhouding, zodat een staande en een
+   liggende foto de band niet uit balans trekken. */
+.nawm-review__photo {
+  margin: 0;
+  border-radius: var(--r-data);
+  overflow: hidden;
+  background: color-mix(in oklab, var(--ink-day) 6%, transparent);
+}
+
+.nawm-review__photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease);
+}
+
+@media (hover: hover) {
+  .nawm-review:hover .nawm-review__photo img {
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-review__photo img {
+    transition: none;
+  }
+  .nawm-review:hover .nawm-review__photo img {
+    transform: none;
+  }
+}

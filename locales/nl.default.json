@@ -11,7 +11,7 @@
       "eyebrow": "Je slaapt misschien lang genoeg. Maar word je ook uitgerust wakker?",
       "heading": "Frisser wakker begint|de avond ervoor.",
       "subheading": "Bouw in 30 minuten af zonder eindeloos scrollen en word geleidelijk wakker met licht, natuurgeluiden of radio. Eén systeem voor een rustigere avond en een zachtere start.",
-      "cta": "Start mijn Sleep–Wake routine — {{ price }}",
+      "cta": "Word wakker met licht — {{ price }}",
       "trust": "Inclusief Nederlandse Sleep–Wake Guide · EU-stekker · 30 dagen retour",
       "trial": "{{ nights }} nachten proberen",
       "image_alt": "Nachtkastje met warm amberlicht in een donkere slaapkamer"
@@ -84,19 +84,19 @@
       "heading": "Vier stappen. Vanavond klaar.",
       "steps": {
         "s1": {
-          "time": "Stap 1",
+          "time": "Eenmalig",
           "text": "Kies je vaste wektijd en stel de zonsopgang in."
         },
         "s2": {
-          "time": "T–30",
+          "time": "30 min vóór bed",
           "text": "Zet 30 minuten vóór bed het warme nachtlampje aan en parkeer je telefoon."
         },
         "s3": {
-          "time": "T–20",
+          "time": "20 min vóór bed",
           "text": "Volg de kaart: voorbereiden, lezen, rustig bewegen en ademen."
         },
         "s4": {
-          "time": "T–0",
+          "time": "Bedtijd",
           "text": "Laat NAWM de ochtend automatisch opbouwen."
         }
       },
@@ -104,27 +104,27 @@
       "routine_intro": "De regels hieronder staan letterlijk zo in de Sleep–Wake Guide.",
       "routine": {
         "r1": {
-          "time": "T–30",
+          "time": "30 min vóór bed",
           "text": "Je avond stopt niet vanzelf. Geef hem een eindpunt."
         },
         "r2": {
-          "time": "T–25",
+          "time": "25 min vóór bed",
           "text": "Maak je lichaam kleiner in plaats van je scherm groter."
         },
         "r3": {
-          "time": "T–20",
+          "time": "20 min vóór bed",
           "text": "Haal beslissingen uit je ochtend."
         },
         "r4": {
-          "time": "T–15",
+          "time": "15 min vóór bed",
           "text": "Lees tot je tempo zakt — niet tot het hoofdstuk af is."
         },
         "r5": {
-          "time": "T–5",
+          "time": "5 min vóór bed",
           "text": "Lang uitademen. Niets presteren."
         },
         "r6": {
-          "time": "T–0",
+          "time": "Bedtijd",
           "text": "Laat de ochtend alvast voor je werken."
         }
       },
@@ -164,7 +164,7 @@
       "item3": "NAWM Sleep–Wake Guide — vaste 30-minutenroutine, korte alternatieven en een 14-daagse opbouw",
       "item4": "Instelkaart voor avondlicht, zonsopgangsduur, alarmgeluid, volume, radio en week/weekend-alarm",
       "item5": "QR-code naar de online handleiding en de digitale gids",
-      "manual_link": "Bekijk de Nederlandse handleiding (PDF)",
+      "manual_link": "Lees de Nederlandse handleiding vóór je bestelt",
       "guide_link": "Bekijk de Sleep–Wake Guide (PDF)",
       "image_alt": "Alle onderdelen uit de doos van bovenaf naast elkaar gelegd"
     },
@@ -205,31 +205,32 @@
     },
     "compare": {
       "eyebrow": "Vergelijking",
-      "heading": "Twee manieren om je avond en ochtend in te richten.",
-      "col_a": "Telefoon als routine",
-      "col_b": "NAWM Sleep–Wake routine",
+      "heading": "Je telefoon houdt je wakker. NAWM haalt je eruit.",
+      "col_a": "Je telefoon als wekker",
+      "col_b": "De NAWM Sleep–Wake routine",
       "rows": {
         "r1": {
-          "a": "Scherm blijft binnen handbereik",
-          "b": "Telefoon krijgt een vaste parkeerplek"
+          "a": "Het scherm blijft binnen handbereik, dus je avond heeft geen einde.",
+          "b": "De telefoon krijgt een vaste parkeerplek buiten je bereik."
         },
         "r2": {
-          "a": "Geen duidelijk einde aan de avond",
-          "b": "Warm licht markeert het afbouwmoment"
+          "a": "Niets markeert het moment waarop je gaat afbouwen.",
+          "b": "Warm amberlicht zet dat moment voor je neer, elke avond hetzelfde."
         },
         "r3": {
-          "a": "Hard, direct alarmsignaal",
-          "b": "Licht bouwt vooraf op; geluid volgt"
+          "a": "Een harde toon rukt je in één seconde uit je slaap.",
+          "b": "Het licht bouwt tot een uur vooraf op; het geluid komt als laatste."
         },
         "r4": {
-          "a": "Notificaties als eerste prikkel",
-          "b": "Eigen ochtendinstelling als eerste signaal"
+          "a": "Je eerste prikkel van de dag is een melding van iemand anders.",
+          "b": "Je eerste prikkel is de instelling die jij zelf koos."
         },
         "r5": {
-          "a": "Elke avond improviseren",
-          "b": "Herhaalbare 15- of 30-minutenroutine"
+          "a": "Elke avond opnieuw improviseren, en elke ochtend snoozen.",
+          "b": "Eén keer instellen. Daarna doet het apparaat het werk."
         }
-      }
+      },
+      "intro": "Bijna iedereen doet het eerste. Het kost je het laatste halfuur van je avond en het eerste van je ochtend — elke dag opnieuw."
     },
     "offer": {
       "eyebrow": "Het aanbod",
@@ -247,7 +248,7 @@
     },
     "faq": {
       "eyebrow": "Veelgestelde vragen",
-      "heading": "Wat je nog wilt weten.",
+      "heading": "Wat mensen ons vragen voordat ze bestellen",
       "items": {
         "q1": {
           "q": "Helpt NAWM mij gegarandeerd om sneller in slaap te vallen?",
@@ -293,7 +294,9 @@
         "p3": {
           "q": "Welke garantie krijg ik?"
         }
-      }
+      },
+      "intro": "Staat je vraag er niet bij? Mail ons — we antwoorden meestal binnen een werkdag.",
+      "help_label": "Stel je vraag"
     },
     "safety": {
       "body": "Aanhoudende vermoeidheid, frequente hoofdpijn of langdurig sombere gevoelens verdienen beoordeling door je huisarts. NAWM is een consumentenproduct voor routine en wekcomfort en geen medisch hulpmiddel."
@@ -444,7 +447,7 @@
             "body": "Je wekgeluid en hoe hard het uiteindelijk wordt."
           }
         },
-        "manual_cta": "Twijfel je of je eruit komt? Lees de handleiding voordat je bestelt →"
+        "manual_cta": "Twijfel je of je eruit komt? Lees de handleiding vóór je bestelt"
       },
       "demo": {
         "eyebrow": "De zonsopgang, zichtbaar",
@@ -575,7 +578,9 @@
             "a": "Nee. NAWM is een consumentenproduct voor routine en wekcomfort, geen medisch hulpmiddel en geen behandeling.",
             "code": "B3"
           }
-        }
+        },
+        "intro": "Staat je vraag er niet bij? Mail ons — we antwoorden meestal binnen een werkdag.",
+        "help_label": "Stel je vraag"
       },
       "close": {
         "heading": "Morgenochtend begint vanavond.",
@@ -628,6 +633,18 @@
             "b": "Nederlandse handleiding vooraf te lezen, en klantenservice die in het Nederlands antwoordt."
           }
         }
+      },
+      "bundle": {
+        "eyebrow": "Meer dan één",
+        "heading": "Twee wekkers, twee mensen die beter opstaan",
+        "body": "De korting wordt bij het afrekenen vanzelf verrekend. Je hoeft geen code in te vullen.",
+        "qty_label": "Aantal",
+        "tier_one": "1 stuk",
+        "tier": "{{ count }} stuks",
+        "tier_off": "{{ percentage }}% korting",
+        "tier_each": "{{ amount }} per stuk",
+        "tier_full": "geen korting",
+        "free_shipping": "gratis verzending"
       }
     },
     "announcement": {
@@ -667,6 +684,15 @@
       "success_heading": "Je handleiding staat open.",
       "success_body": "Hij staat ook in je inbox, zodat je hem later terugvindt.",
       "success_cta": "Handleiding openen"
+    },
+    "trust": {
+      "heading": "Waarom je hier veilig bestelt",
+      "customers": "Meer dan 1.000 klanten gingen je voor op bol.com",
+      "returns": "{{ days }} dagen retour — retourzending is voor onze rekening",
+      "warranty": "{{ years }} jaar garantie",
+      "support": "Nederlandse klantenservice, antwoord binnen {{ time }}",
+      "payment": "Betalen met iDEAL via de beveiligde kassa van Shopify",
+      "company": "Ingeschreven bij de KvK onder {{ kvk }}"
     }
   },
   "blocks": {

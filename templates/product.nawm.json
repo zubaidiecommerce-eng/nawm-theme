@@ -145,6 +145,24 @@
         "eyebrow": "",
         "heading": ""
       }
+    },
+    "pdp_bundle": {
+      "type": "pdp-bundle",
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "discount_two": 10,
+        "discount_three": 15,
+        "discount_four": 20,
+        "free_shipping_threshold": 100
+      }
+    },
+    "nawm_trust": {
+      "type": "nawm-trust",
+      "settings": {
+        "heading": "",
+        "show_customer_count": true
+      }
     }
   },
   "order": [
@@ -158,7 +176,9 @@
     "pdp_proof",
     "pdp_specs",
     "pdp_compare",
+    "nawm_trust",
     "pdp_offer",
+    "pdp_bundle",
     "pdp_faq",
     "pdp_close",
     "pdp_brand"

@@ -84,9 +84,4 @@ if (gate && typeof gate.showModal === 'function' && links.length > 0) {
     }
   });
 
-  /* Wie de omweg neemt, krijgt hem ook: daarna niet opnieuw vragen. */
-  gate.querySelector('[data-gate-skip]')?.addEventListener('click', () => {
-    unlock();
-    gate.close();
-  });
 }

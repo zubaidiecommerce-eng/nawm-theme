@@ -23,6 +23,7 @@
   assign title = review.titel.value | default: review.titel
   assign theme_label = review.thema.value | default: review.thema
   assign stars = review.sterren.value | default: review.sterren
+  assign photo = review.foto.value
 
   comment
     Vooraf samenstellen: Shopify past filters niet toe op argumenten van een
@@ -53,6 +54,27 @@
     {%- endif -%}
 
     <blockquote class="nawm-review__quote" cite="{{ source_url }}">{{ quote }}</blockquote>
+
+    {%- comment -%}
+      De klantfoto staat tussen het citaat en de bronregel: een foto van iemand
+      met het apparaat op zijn nachtkastje is geloofwaardiger dan welke tekst
+      dan ook, maar hij hoort ná het citaat te komen — anders leest de kaart als
+      een advertentie in plaats van als een beoordeling.
+    {%- endcomment -%}
+    {%- if photo != blank -%}
+      <div class="nawm-review__photo">
+        {{
+          photo
+          | image_url: width: 720
+          | image_tag:
+            widths: '320,480,720',
+            sizes: '(min-width: 900px) 22rem, 80vw',
+            alt: '',
+            loading: 'lazy',
+            decoding: 'async'
+        }}
+      </div>
+    {%- endif -%}
 
     <figcaption class="nawm-review__meta nawm-mono">
       {%- if name != blank -%}{{ name }} · {% endif -%}
