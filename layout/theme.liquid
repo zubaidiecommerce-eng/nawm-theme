@@ -10,7 +10,14 @@
   if template.name == 'index'
     assign nawm_page = true
   endif
-  if template.suffix == 'wake-up-light'
+  comment
+    Twee suffixen. `nawm` is de huidige; `wake-up-light` blijft staan omdat het
+    live thema dat bestand sinds 20 augustus niet meer van GitHub ophaalt —
+    Shopify beschouwt een JSON-template dat ooit in de theme-editor is
+    aangeraakt als eigendom van de editor en overschrijft het niet meer. Een
+    nieuw bestand heeft dat probleem niet. Zie docs/OPEN-PDP.md.
+  endcomment
+  if template.suffix == 'nawm' or template.suffix == 'wake-up-light'
     assign nawm_page = true
     assign nawm_pdp = true
   endif

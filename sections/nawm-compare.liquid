@@ -37,6 +37,7 @@
     <div class="nawm-compare__head nawm-reveal">
       {% render 'nawm-eyebrow', text: eyebrow %}
       <h2>{{ heading }}</h2>
+      <p class="nawm-lede nawm-compare__intro">{{ 'nawm.compare.intro' | t }}</p>
     </div>
 
     <div class="nawm-compare__panel nawm-reveal">
@@ -80,6 +81,11 @@
 </section>
 
 {% stylesheet %}
+  .nawm-compare .nawm-compare__intro {
+    margin-block-start: var(--sp-4);
+    max-width: 56ch;
+  }
+
   .nawm-compare__panel {
     margin-block-start: clamp(2.5rem, 6vw, 4rem);
   }

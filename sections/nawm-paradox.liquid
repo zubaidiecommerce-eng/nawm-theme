@@ -37,9 +37,13 @@
     margin-inline: auto;
   }
 
-  .nawm-paradox__body {
+  /* `.nawm-section p` in nawm-base.css is (0,1,1) en won het van deze regel op
+     (0,1,0), waardoor `margin: auto` sneuvelde en de alinea links bleef
+     plakken. De sectieklasse ervoor haalt hem over die drempel. */
+  .nawm-paradox .nawm-paradox__body {
     max-width: 56ch;
     margin: var(--sp-5) auto 0;
+    text-wrap: pretty;
   }
 {% endstylesheet %}
 

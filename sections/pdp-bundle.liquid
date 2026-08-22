@@ -1,0 +1,286 @@
+{% comment %}
+  PDP-sectie: de staffelkorting.
+
+  Drie treden — 2, 3 en 4 stuks — met de werkelijke stukprijs erbij. De
+  kortingen zelf zijn automatische kortingen in Shopify; deze sectie toont ze
+  alleen. Dat is de enige eerlijke volgorde: als de kassa de korting niet geeft,
+  hoort de pagina hem niet te beloven.
+
+  De percentages staan als sectie-instelling en niet in de Liquid, zodat ze in
+  één keer met de kortingen in de admin meeveranderen. Wijzigt Mohammed daar een
+  percentage, dan moet het hier ook. Dat staat in de tekst bij de instelling.
+
+  Er wordt niets geforceerd: één stuk is een volwaardige keuze en staat vooraan.
+  Geen "meest gekozen"-label op een tree waar we geen verkoopdata over hebben.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+
+  if pdp_product.id == blank and settings.nawm_product_handle != blank
+    assign pdp_product = all_products[settings.nawm_product_handle]
+  endif
+
+  assign variant = pdp_product.selected_or_first_available_variant
+  assign unit_price = variant.price | default: pdp_product.price
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.bundle.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.bundle.heading' | t
+  endif
+
+  assign quantities = '1,2,3,4' | split: ','
+  assign percentages = '0' | append: ',' | append: section.settings.discount_two | append: ',' | append: section.settings.discount_three | append: ',' | append: section.settings.discount_four
+  assign percentage_list = percentages | split: ','
+
+  assign free_from_cents = section.settings.free_shipping_threshold | times: 100
+%}
+
+{%- if unit_price > 0 -%}
+  <section class="nawm-section pdp-bundle ctx-dawn" id="staffel">
+    <div class="nawm-wrap">
+      <div class="pdp-head pdp-head--wide nawm-reveal">
+        {% render 'nawm-eyebrow', text: eyebrow %}
+        <h2>{{ heading }}</h2>
+        <p class="nawm-body">{{ 'nawm.pdp.bundle.body' | t }}</p>
+      </div>
+
+      <form
+        class="pdp-bundle__form"
+        method="post"
+        action="{{ routes.cart_add_url }}"
+        accept-charset="UTF-8"
+        enctype="multipart/form-data"
+      >
+        <input type="hidden" name="form_type" value="product">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="id" value="{{ variant.id }}">
+
+        <fieldset class="pdp-bundle__tiers">
+          <legend class="nawm-visually-hidden">{{ 'nawm.pdp.bundle.qty_label' | t }}</legend>
+
+          {%- for quantity in quantities -%}
+            {%- liquid
+              assign count = quantity | times: 1
+              assign percentage = percentage_list[forloop.index0] | times: 1
+
+              assign gross = unit_price | times: count
+              assign discount = gross | times: percentage | divided_by: 100
+              assign total = gross | minus: discount
+              assign each = total | divided_by: count
+
+              if count == 1
+                assign tier_label = 'nawm.pdp.bundle.tier_one' | t
+              else
+                assign tier_label = 'nawm.pdp.bundle.tier' | t: count: count
+              endif
+
+              assign free_shipping = false
+              if free_from_cents > 0 and total >= free_from_cents
+                assign free_shipping = true
+              endif
+            -%}
+            <label class="pdp-bundle__tier nawm-lift">
+              <input
+                type="radio"
+                name="quantity"
+                value="{{ count }}"
+                class="pdp-bundle__radio"
+                {% if forloop.first %}checked{% endif %}
+              >
+
+              <span class="pdp-bundle__tier-body">
+                <span class="pdp-bundle__tier-head">
+                  <span class="pdp-bundle__tier-count">{{ tier_label }}</span>
+                  {%- if percentage > 0 -%}
+                    <span class="pdp-bundle__tier-badge">
+                      {{- 'nawm.pdp.bundle.tier_off' | t: percentage: percentage -}}
+                    </span>
+                  {%- endif -%}
+                </span>
+
+                <span class="pdp-bundle__tier-total nawm-mono">{{ total | money }}</span>
+
+                <span class="pdp-bundle__tier-meta nawm-mono">
+                  {{- 'nawm.pdp.bundle.tier_each' | t: amount: each | money -}}
+                  {%- if free_shipping -%}
+                    {{ ' · ' }}{{ 'nawm.pdp.bundle.free_shipping' | t }}
+                  {%- endif -%}
+                </span>
+              </span>
+            </label>
+          {%- endfor -%}
+        </fieldset>
+
+        {%- if pdp_product.available -%}
+          <button type="submit" name="add" class="nawm-cta nawm-cta--full pdp-bundle__submit" data-nawm-event="add_to_cart">
+            {{ 'nawm.pdp.common.cta_short' | t }}
+          </button>
+        {%- else -%}
+          <span class="nawm-cta nawm-cta--full" aria-disabled="true">{{ 'nawm.pdp.common.sold_out' | t }}</span>
+        {%- endif -%}
+
+        {% render 'pdp-microcopy' %}
+      </form>
+    </div>
+  </section>
+{%- endif -%}
+
+{% stylesheet %}
+  .pdp-bundle__form {
+    margin: clamp(2rem, 5vw, 3rem) auto 0;
+    max-width: 44rem;
+  }
+
+  .pdp-bundle__tiers {
+    margin: 0 0 var(--sp-5);
+    padding: 0;
+    border: 0;
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  @media (min-width: 750px) {
+    .pdp-bundle__tiers {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .pdp-bundle__tier {
+    position: relative;
+    display: block;
+    padding: var(--sp-4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
+    cursor: pointer;
+  }
+
+  /* Het keuzerondje zelf is verborgen; de hele kaart is het klikvlak. De
+     focusring komt terug op de kaart, zodat toetsenbordbediening zichtbaar
+     blijft. */
+  .pdp-bundle__radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .pdp-bundle__tier:has(.pdp-bundle__radio:focus-visible) {
+    outline: 2px solid var(--nawm-amber);
+    outline-offset: 3px;
+  }
+
+  .pdp-bundle__tier:has(.pdp-bundle__radio:checked) {
+    border-color: var(--nawm-amber);
+    background: color-mix(in oklab, var(--nawm-amber) 16%, var(--nawm-dawn));
+    box-shadow: inset 0 0 0 1px var(--nawm-amber);
+  }
+
+  .pdp-bundle__tier-body {
+    display: grid;
+    gap: var(--sp-1);
+  }
+
+  .pdp-bundle__tier-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .pdp-bundle__tier-count {
+    font-weight: 500;
+    color: var(--fg);
+  }
+
+  .pdp-bundle__tier-badge {
+    padding: 2px var(--sp-2);
+    border-radius: var(--r-pill);
+    background: var(--nawm-ember);
+    color: var(--nawm-dawn);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: .04em;
+  }
+
+  .pdp-bundle__tier-total {
+    font-size: 1.375rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
+  }
+
+  .pdp-bundle__tier-meta {
+    color: var(--fg-soft);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP staffel",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Deze percentages moeten gelijk staan aan de automatische kortingen onder Kortingen in de admin. Wijzig je er daar één, wijzig hem hier ook — anders belooft de pagina iets wat de kassa niet doet."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "range",
+      "id": "discount_two",
+      "label": "Korting bij 2 stuks",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "discount_three",
+      "label": "Korting bij 3 stuks",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "%",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "discount_four",
+      "label": "Korting bij 4 stuks",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "number",
+      "id": "free_shipping_threshold",
+      "label": "Gratis verzending vanaf",
+      "info": "Bedrag in hele euro's. Bij dat bedrag verschijnt het label bij de betreffende trede."
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP staffel"
+    }
+  ]
+}
+{% endschema %}

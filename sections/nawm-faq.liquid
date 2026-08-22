@@ -37,6 +37,7 @@
     <div class="nawm-faq__head nawm-reveal">
       {% render 'nawm-eyebrow', text: eyebrow %}
       <h2>{{ heading }}</h2>
+      <p class="nawm-lede nawm-faq__intro">{{ 'nawm.faq.intro' | t }}</p>
     </div>
 
     <div class="nawm-faq__list">
@@ -145,6 +146,20 @@
         {%- endif -%}
       {%- endfor -%}
     </div>
+
+    {%- comment -%}
+      Wie na alle vragen nog iets kwijt wil, hoort niet te hoeven zoeken naar
+      een contactadres. Dit blok sluit de sectie af met de enige actie die dan
+      nog telt.
+    {%- endcomment -%}
+    {%- if settings.support_email != blank -%}
+      <div class="nawm-faq__help nawm-reveal">
+        <p class="nawm-faq__help-text">{{ 'nawm.faq.intro' | t }}</p>
+        <a class="nawm-cta nawm-cta--ghost" href="mailto:{{ settings.support_email }}">
+          {{ 'nawm.faq.help_label' | t }}
+        </a>
+      </div>
+    {%- endif -%}
   </div>
 </section>
 
@@ -155,6 +170,39 @@
 {%- endif -%}
 
 {% stylesheet %}
+  .nawm-faq .nawm-faq__intro {
+    margin-block-start: var(--sp-4);
+    max-width: 56ch;
+  }
+
+  /* De lijst krijgt een eigen vlak in plaats van kale regels op de achtergrond;
+     dat scheelt de sectie zijn lege gevoel zonder er decoratie bij te verzinnen. */
+  .nawm-faq__list {
+    padding-inline: clamp(1rem, 3vw, 2rem);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
+  }
+
+  .nawm-faq__help {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    padding: var(--sp-5);
+    border: 1px dashed var(--line);
+    border-radius: var(--r-card);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+  }
+
+  .nawm-faq__help-text {
+    margin: 0;
+    max-width: 44ch;
+    font-size: var(--fs-small);
+    color: var(--fg-soft);
+  }
+
   .nawm-faq__inner {
     max-width: 68ch;
   }

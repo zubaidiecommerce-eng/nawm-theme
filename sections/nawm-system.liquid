@@ -51,7 +51,7 @@
     <div class="nawm-system__grid">
       <div class="nawm-system__column nawm-system__column--evening nawm-reveal">
         <h3 class="nawm-system__column-heading">{{ 'nawm.system.evening.heading' | t }}</h3>
-        <ul class="nawm-list">
+        <ul class="nawm-featurelist">
           <li>{{ 'nawm.system.evening.item1' | t }}</li>
           <li>{{ 'nawm.system.evening.item2' | t }}</li>
           <li>{{ 'nawm.system.evening.item3' | t }}</li>
@@ -70,7 +70,7 @@
 
       <div class="nawm-system__column nawm-system__column--morning nawm-reveal" style="--reveal-delay: 200ms;">
         <h3 class="nawm-system__column-heading">{{ 'nawm.system.morning.heading' | t }}</h3>
-        <ul class="nawm-list">
+        <ul class="nawm-featurelist">
           <li>{{ 'nawm.system.morning.item1' | t }}</li>
           <li>
             {%- if radio.value == true -%}
@@ -164,10 +164,10 @@
     .nawm-system__column--morning {
       text-align: end;
     }
-    .nawm-system__column--morning .nawm-list li {
+    .nawm-system__column--morning .nawm-featurelist li {
       padding-inline: 0 var(--sp-4);
     }
-    .nawm-system__column--morning .nawm-list li::before {
+    .nawm-system__column--morning .nawm-featurelist li::before {
       inset-inline: auto 0;
     }
   }

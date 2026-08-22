@@ -9,6 +9,7 @@
   · de bezoeker ziet vooraf wat hij krijgt en wat het kost (zijn adres)
   · het venster is te sluiten, en dan blijft de link gewoon staan voor de
     volgende keer — geen doodlopende weg
+  · zonder JavaScript opent de link rechtstreeks de PDF, zodat niemand strandt
   · wie zijn adres al eens gaf, komt er nooit meer langs
 
   Zonder JavaScript opent de link rechtstreeks de PDF. Dat is bewust: een
@@ -67,15 +68,6 @@
 
       <p class="nawm-popup__fine">{{ 'nawm.gate.fine_print' | t }}</p>
 
-      {%- comment -%}
-        De uitweg. Zonder deze link is dit een muur in plaats van een ruil.
-      {%- endcomment -%}
-      <p class="nawm-gate__skip">
-        <a href="{{ manual.value.url }}" target="_blank" rel="noopener" data-gate-skip>
-          {{- 'nawm.gate.skip' | t -}}
-          <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
-        </a>
-      </p>
     </div>
 
     <div class="nawm-popup__body" data-gate-state="success" hidden>

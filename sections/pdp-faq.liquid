@@ -72,6 +72,7 @@
     <div class="pdp-head pdp-head--wide nawm-reveal">
       {% render 'nawm-eyebrow', text: eyebrow %}
       <h2>{{ heading }}</h2>
+      <p class="nawm-lede pdp-faq__intro">{{ 'nawm.pdp.faq.intro' | t }}</p>
     </div>
 
     <div class="pdp-faq__list">
@@ -201,6 +202,20 @@
     <div class="pdp-faq__cta nawm-reveal">
       {% render 'pdp-buy', product: pdp_product, id: 'pdp-faq-form' %}
     </div>
+
+    {%- comment -%}
+      Wie na alle vragen nog iets kwijt wil, hoort niet te hoeven zoeken naar
+      een contactadres. Dit blok sluit de sectie af met de enige actie die dan
+      nog telt.
+    {%- endcomment -%}
+    {%- if settings.support_email != blank -%}
+      <div class="pdp-faq__help nawm-reveal">
+        <p class="pdp-faq__help-text">{{ 'nawm.pdp.faq.intro' | t }}</p>
+        <a class="nawm-cta nawm-cta--ghost" href="mailto:{{ settings.support_email }}">
+          {{ 'nawm.pdp.faq.help_label' | t }}
+        </a>
+      </div>
+    {%- endif -%}
   </div>
 </section>
 
@@ -211,6 +226,39 @@
 {%- endif -%}
 
 {% stylesheet %}
+  .pdp-faq .pdp-faq__intro {
+    margin-block-start: var(--sp-4);
+    max-width: 56ch;
+  }
+
+  /* De lijst krijgt een eigen vlak in plaats van kale regels op de achtergrond;
+     dat scheelt de sectie zijn lege gevoel zonder er decoratie bij te verzinnen. */
+  .pdp-faq__list {
+    padding-inline: clamp(1rem, 3vw, 2rem);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
+  }
+
+  .pdp-faq__help {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    padding: var(--sp-5);
+    border: 1px dashed var(--line);
+    border-radius: var(--r-card);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+  }
+
+  .pdp-faq__help-text {
+    margin: 0;
+    max-width: 44ch;
+    font-size: var(--fs-small);
+    color: var(--fg-soft);
+  }
+
   .pdp-faq__inner {
     max-width: 68ch;
   }
