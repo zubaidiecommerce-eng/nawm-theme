@@ -37,6 +37,14 @@
       assign filled = filled | plus: 1
     endif
   endfor
+
+  comment
+    Deze sectie staat als statische sectie in de template, en die krijgt geen
+    blokken uit de preset mee. Zolang er nog niets is toegevoegd, tonen we het
+    ingestelde aantal lege vakken — dan is meteen zichtbaar hoeveel animaties
+    er komen en waar ze landen, in plaats van een gat in de pagina.
+  endcomment
+  assign empty_slots = section.settings.slot_count | times: 1
 %}
 
 {%- if filled > 0 -%}
@@ -50,8 +58,8 @@
       <h2>{{ heading }}</h2>
     </div>
 
-    {%- if section.blocks.size > 0 -%}
-      <ul class="pdp-clips__grid" style="--clip-ratio: {{ section.settings.ratio | default: '9 / 16' }};">
+    <ul class="pdp-clips__grid" style="--clip-ratio: {{ section.settings.ratio | default: '9 / 16' }};">
+      {%- if section.blocks.size > 0 -%}
         {%- for block in section.blocks -%}
           <li class="pdp-clips__item nawm-lift nawm-reveal" style="--reveal-delay: {{ forloop.index0 | times: 60 }}ms;" {{ block.shopify_attributes }}>
             {%- if block.settings.video != blank -%}
@@ -116,8 +124,16 @@
             {%- endif -%}
           </li>
         {%- endfor -%}
-      </ul>
-    {%- endif -%}
+      {%- else -%}
+        {%- for slot in (1..empty_slots) -%}
+          <li class="pdp-clips__item nawm-lift nawm-reveal" style="--reveal-delay: {{ forloop.index0 | times: 60 }}ms;">
+            <div class="pdp-clips__frame pdp-clips__frame--empty">
+              <p class="nawm-mono">{{ 'nawm.pdp.clips.empty_slot' | t }} {{ forloop.index }}</p>
+            </div>
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
   </div>
 </section>
 
@@ -234,6 +250,16 @@
       "type": "textarea",
       "id": "heading",
       "label": "Kop"
+    },
+    {
+      "type": "range",
+      "id": "slot_count",
+      "label": "Aantal lege vakken",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "info": "Zolang je nog geen clips hebt toegevoegd, staan hier zoveel lege vakken. Voeg je een clip toe, dan verdwijnen de lege vakken vanzelf."
     },
     {
       "type": "select",

@@ -1086,3 +1086,21 @@ html.nawm-pdp .pdp-evening {
     transform: none;
   }
 }
+
+/* De handleidingknop is een van de sterkste vertrouwenssignalen van de pagina
+   en hoort dus als knop te staan, gecentreerd en met lucht eromheen — niet als
+   linkje onder een lijst. */
+.nawm-inbox__docs--cta {
+  margin-block-start: clamp(2rem, 5vw, 3rem);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sp-3);
+  text-align: center;
+}
+
+.nawm-inbox__docs--cta .nawm-cta {
+  min-height: 60px;
+  padding-inline: var(--sp-6);
+  font-size: 1.0625rem;
+}

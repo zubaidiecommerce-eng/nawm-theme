@@ -90,11 +90,11 @@
     </ol>
 
     {%- if manual != blank or guide != blank -%}
-      <p class="nawm-inbox__docs">
+      <p class="nawm-inbox__docs nawm-inbox__docs--cta">
         {%- if manual != blank -%}
           <a
             href="{{ manual | file_url }}"
-            class="nawm-inbox__doc"
+            class="nawm-cta nawm-inbox__doc"
             data-nawm-event="open_manual"
             data-nawm-manual
             target="_blank"

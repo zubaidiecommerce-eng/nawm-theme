@@ -244,7 +244,8 @@
       "company_label": "Verkoper",
       "contact_label": "Contact",
       "per_morning": "{{ amount }} per ochtend in het eerste jaar",
-      "image_alt": "De NAWM Wake Up Light op een nachtkastje, met het licht op een warme stand"
+      "image_alt": "De NAWM Wake Up Light op een nachtkastje, met het licht op een warme stand",
+      "per_morning_label": "per ochtend in het eerste jaar"
     },
     "faq": {
       "eyebrow": "Veelgestelde vragen",
@@ -691,8 +692,9 @@
       "returns": "{{ days }} dagen retour — retourzending is voor onze rekening",
       "warranty": "{{ years }} jaar garantie",
       "support": "Nederlandse klantenservice, antwoord binnen {{ time }}",
-      "payment": "Betalen met iDEAL via de beveiligde kassa van Shopify",
-      "company": "Ingeschreven bij de KvK onder {{ kvk }}"
+      "payment": "Veilig betalen met geverifieerde betaalmethodes",
+      "dutch": "Nederlands bedrijf, Nederlandse handleiding, Nederlandse voorwaarden",
+      "manual": "Lees de volledige handleiding vóór je bestelt"
     }
   },
   "blocks": {

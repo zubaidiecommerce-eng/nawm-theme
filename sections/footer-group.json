@@ -128,11 +128,36 @@
             "padding-inline-end": 0
           },
           "blocks": {}
+        },
+        "menu_nawm": {
+          "type": "menu",
+          "settings": {
+            "menu": "footer"
+          }
+        },
+        "company_nawm": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>Al Zubaidi E-commerce</strong><br>Rietbeemd 89, 4907 EC<br>KvK 99294656 &middot; Btw NL005379424B91<br><a href=\"mailto:zubaidiecommerce@gmail.com\">zubaidiecommerce@gmail.com</a> &middot; antwoord binnen 24 uur</p>",
+            "alignment": "left",
+            "font": "var(--font-body--family)",
+            "font_size": "0.8125rem",
+            "line_height": "normal",
+            "width": "100%",
+            "max_width": "normal"
+          }
+        },
+        "payment_nawm": {
+          "type": "payment-icons",
+          "settings": {}
         }
       },
       "block_order": [
         "group_H6VpwJ",
-        "email_signup_crihX7"
+        "email_signup_crihX7",
+        "menu_nawm",
+        "company_nawm",
+        "payment_nawm"
       ],
       "name": "t:names.footer",
       "settings": {
