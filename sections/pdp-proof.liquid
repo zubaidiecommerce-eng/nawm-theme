@@ -2,25 +2,32 @@
   PDP-sectie: beantwoordt B3 (nooit van dit merk gehoord — is dit troep?).
   Zie NAWM_PDP_CONVERSIE_SPEC.md §3.7.
 
-  Bovenaan de verdeling, niet alleen het gemiddelde. Een verdeling is
-  controleerbaar en daarmee geloofwaardiger dan één cijfer.
+  Deze sectie is herschreven na een storing: Shopify weigerde het bestand bij
+  het synchroniseren, waardoor de productpagina live een Liquid-fout toonde en
+  nul beoordelingen had. De oorzaak was een geneste `{{ }}` binnen een
+  filterargument — theme-check accepteert dat, de server van Shopify niet.
+  Bouw hier dus nooit een Liquid-expressie in een string.
 
-  Drie regels die hier in code vastliggen en niet in de redactie:
+  Drie lagen, van hard naar zacht:
+    1. het cijfer met sterren en de verdeling — controleerbaar, dus eerst
+    2. filterchips op thema, opgebouwd uit de thema's die er werkelijk zijn
+    3. de beoordelingen zelf
 
-  1. Een review zonder bron-url en datum rendert niet. Die guard zit in
-     snippets/nawm-review-card.liquid.
-  2. Kritische reviews blijven staan. Er wordt hier nergens op sterren
-     gefilterd — een profiel dat alleen uit vijf sterren bestaat, verlaagt de
-     geloofwaardigheid van álle reviews eromheen.
-  3. Reviews die een bezwaar uit §2 wegnemen, komen eerst. Een review die zegt
-     "ik werd er wél wakker van, ook als lichte slaper" is meer waard dan drie
-     die zeggen "mooi product, snelle levering".
-
-  Geen klantenaantal: dat mag alleen met een controleerbaar getal uit eigen
-  verkoopdata, en dat is er nog niet.
+  De guard zit in snippets/nawm-review-card.liquid: een beoordeling zonder
+  bron-url en datum rendert niet. Kritische beoordelingen blijven staan — een
+  profiel dat alleen uit vijf sterren bestaat, verlaagt de geloofwaardigheid van
+  alle beoordelingen eromheen.
 {% endcomment %}
 
 {% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+  if pdp_product.id == blank and settings.nawm_product_handle != blank
+    assign pdp_product = all_products[settings.nawm_product_handle]
+  endif
+
   assign reviews = shop.metaobjects.nawm_review.values
 
   assign eyebrow = section.settings.eyebrow
@@ -33,11 +40,11 @@
     assign heading = 'nawm.pdp.proof.heading' | t
   endif
 
-  comment
-    De verdeling staat als vijf getallen in één themasetting, hoog naar laag.
-    De balken schalen op het hoogste aantal, niet op het totaal: anders is een
-    verdeling met één dominante ster visueel onleesbaar.
-  endcomment
+  assign has_score = false
+  if settings.review_score != blank and settings.review_count != blank and settings.review_checked_on != blank
+    assign has_score = true
+  endif
+
   assign distribution = settings.review_distribution | split: ','
   assign distribution_max = 0
   for value in distribution
@@ -46,9 +53,26 @@
       assign distribution_max = number
     endif
   endfor
+
+  assign visible = 0
+  assign themes = ''
+  for review in reviews
+    if review.bron_url != blank and review.datum != blank and review.citaat != blank
+      assign visible = visible | plus: 1
+      assign theme_label = review.thema.value | default: review.thema
+      if theme_label != blank
+        unless themes contains theme_label
+          assign themes = themes | append: theme_label | append: '|'
+        endunless
+      endif
+    endif
+  endfor
+  assign theme_list = themes | split: '|'
 %}
 
-<script src="{{ 'pdp-review-filter.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- if visible > 0 -%}
+  <script src="{{ 'pdp-review-filter.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}
 
 <section class="nawm-section pdp-proof ctx-dawn" id="beoordelingen">
   <div class="nawm-wrap">
@@ -57,114 +81,53 @@
       <h2>{{ heading }}</h2>
     </div>
 
-    {%- comment -%} --------------------------------------------- cijferregel {%- endcomment -%}
-    {%- if settings.review_score != blank
-      and settings.review_count != blank
-      and settings.review_checked_on != blank
-    -%}
-      <p class="nawm-mono pdp-proof__score-line nawm-reveal">
-        {{
-          'nawm.pdp.proof.score_line'
-          | t:
-            score: settings.review_score,
-            count: settings.review_count,
-            source: settings.review_source,
-            date: settings.review_checked_on
-        }}
-      </p>
-    {%- else -%}
-      <p class="nawm-small pdp-proof__score-line">
-        {% render 'nawm-verify',
-          field: 'review_score',
-          note: 'score, aantal, bron en controledatum — samen invullen of geen van drie tonen'
-        %}
-      </p>
-    {%- endif -%}
+    {%- if has_score -%}
+      <div class="pdp-proof__summary nawm-reveal">
+        <div class="pdp-proof__score-block">
+          <p class="pdp-proof__score-number">{{ settings.review_score }}</p>
+          <div class="pdp-proof__score-meta">
+            {% render 'pdp-stars', score: settings.review_score, id: 'pdp-average' %}
+            <p class="nawm-mono pdp-proof__score-line">
+              {{-
+                'nawm.pdp.proof.score_line'
+                | t:
+                  score: settings.review_score,
+                  count: settings.review_count,
+                  source: settings.review_source,
+                  date: settings.review_checked_on
+              -}}
+            </p>
+          </div>
+        </div>
 
-    {%- comment -%} ----------------------------------------------- verdeling {%- endcomment -%}
-    {%- if distribution.size == 5 and distribution_max > 0 -%}
-      <div class="pdp-proof__distribution nawm-reveal">
-        <h3 class="nawm-visually-hidden">{{ 'nawm.pdp.proof.distribution_label' | t }}</h3>
-        <ul class="pdp-proof__bars">
-          {%- for value in distribution -%}
-            {%- liquid
-              assign stars = 5 | minus: forloop.index0
-              assign count = value | strip | times: 1
-              assign width = count | times: 100 | divided_by: distribution_max
-            -%}
-            <li class="pdp-proof__bar-row">
-              <span class="nawm-mono pdp-proof__bar-label">
-                {{- 'nawm.pdp.proof.stars' | t: n: stars -}}
-              </span>
-              <span class="pdp-proof__bar" aria-hidden="true">
-                <span class="pdp-proof__bar-fill" style="inline-size: {{ width }}%;"></span>
-              </span>
-              <span class="nawm-mono pdp-proof__bar-count">{{ count }}</span>
-            </li>
-          {%- endfor -%}
-        </ul>
+        {%- if distribution.size == 5 and distribution_max > 0 -%}
+          <div class="pdp-proof__distribution">
+            <h3 class="nawm-visually-hidden">{{ 'nawm.pdp.proof.distribution_label' | t }}</h3>
+            <ul class="pdp-proof__bars">
+              {%- for value in distribution -%}
+                {%- liquid
+                  assign star_level = 5 | minus: forloop.index0
+                  assign count = value | strip | times: 1
+                  assign width = count | times: 100 | divided_by: distribution_max
+                -%}
+                <li class="pdp-proof__bar-row">
+                  <span class="nawm-mono pdp-proof__bar-label">
+                    {{- 'nawm.proof.stars_short' | t: n: star_level -}}
+                  </span>
+                  <span class="pdp-proof__bar" aria-hidden="true">
+                    <span class="pdp-proof__bar-fill" style="inline-size: {{ width }}%;"></span>
+                  </span>
+                  <span class="nawm-mono pdp-proof__bar-count">{{ count }}</span>
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
       </div>
-    {%- else -%}
-      <p class="nawm-small pdp-proof__distribution">
-        {% render 'nawm-verify',
-          field: 'review_distribution',
-          note: 'werkelijke verdeling 5★ tot 1★, geteld bij de bron'
-        %}
-      </p>
     {%- endif -%}
 
-    {%- comment -%} ------------------------------------------- de beoordelingen {%- endcomment -%}
-    <div class="pdp-proof__reviews" data-pdp-reviews>
-      {%- liquid
-        comment
-          Twee doorlopen: eerst de reviews die een bezwaar wegnemen, daarna de
-          rest. Zo staat het antwoord op de zwaarste twijfel vooraan zonder dat
-          er iets verborgen wordt.
-        endcomment
-        assign themes = ''
-        assign rendered = 0
-      -%}
-
-      {%- capture cards -%}
-        {%- for pass in (1..2) -%}
-          {%- for review in reviews -%}
-            {%- liquid
-              assign code = review.bezwaar_code.value | default: review.bezwaar_code
-              assign theme_label = review.thema.value | default: review.thema
-              assign source_url = review.bron_url.value | default: review.bron_url
-              assign date = review.datum.value | default: review.datum
-              assign quote = review.citaat.value | default: review.citaat
-
-              assign wanted = false
-              if pass == 1 and code != blank
-                assign wanted = true
-              elsif pass == 2 and code == blank
-                assign wanted = true
-              endif
-
-              if quote == blank or source_url == blank or date == blank
-                assign wanted = false
-              endif
-            -%}
-            {%- if wanted -%}
-              <li class="pdp-proof__card" data-review-theme="{{ theme_label | escape }}">
-                {% render 'nawm-review-card', review: review %}
-              </li>
-              {%- liquid
-                assign rendered = rendered | plus: 1
-                if theme_label != blank
-                  unless themes contains theme_label
-                    assign themes = themes | append: theme_label | append: '|'
-                  endunless
-                endif
-              -%}
-            {%- endif -%}
-          {%- endfor -%}
-        {%- endfor -%}
-      {%- endcapture -%}
-
-      {%- if rendered > 0 -%}
-        {%- assign theme_list = themes | split: '|' -%}
+    {%- if visible > 0 -%}
+      <div class="pdp-proof__reviews" data-pdp-reviews>
         {%- if theme_list.size > 1 -%}
           <div class="pdp-proof__filters" role="group" aria-label="{{ 'nawm.pdp.proof.filter_label' | t }}">
             <button type="button" class="nawm-chip" data-review-filter="" aria-pressed="true">
@@ -182,31 +145,86 @@
             {%- endfor -%}
           </div>
 
+          {%- comment -%}
+            De teller voor schermlezers. De tekst wordt door JavaScript gevuld;
+            het sjabloon staat in een los data-attribuut zonder Liquid erin.
+          {%- endcomment -%}
           <p
             class="nawm-visually-hidden"
             role="status"
             data-review-status
-            data-template="{{ 'nawm.pdp.proof.star_count' | t: count: '{{ count }}' }}"
+            data-template="{{ 'nawm.pdp.proof.star_count' | t: count: '#' }}"
           ></p>
         {%- endif -%}
 
-        <ul class="pdp-proof__list">{{ cards }}</ul>
-      {%- else -%}
-        <p class="nawm-body pdp-proof__empty">{{ 'nawm.pdp.proof.empty' | t }}</p>
-      {%- endif -%}
+        <ul class="pdp-proof__list">
+          {%- for review in reviews -%}
+            {%- liquid
+              assign quote = review.citaat.value | default: review.citaat
+              assign source_url = review.bron_url.value | default: review.bron_url
+              assign date = review.datum.value | default: review.datum
+              assign theme_label = review.thema.value | default: review.thema
+            -%}
+            {%- if quote != blank and source_url != blank and date != blank -%}
+              <li class="pdp-proof__card" data-review-theme="{{ theme_label | escape }}">
+                {% render 'nawm-review-card', review: review, uid: forloop.index %}
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- else -%}
+      <p class="nawm-body pdp-proof__empty">{{ 'nawm.pdp.proof.empty' | t }}</p>
+    {%- endif -%}
+
+    <div class="pdp-proof__cta nawm-reveal">
+      {% render 'pdp-buy', product: pdp_product, id: 'pdp-proof-form' %}
     </div>
   </div>
 </section>
 
 {% stylesheet %}
+  .pdp-proof__summary {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+  }
+
+  @media (min-width: 750px) {
+    .pdp-proof__summary {
+      grid-template-columns: auto 1fr;
+      gap: clamp(2rem, 5vw, 4rem);
+    }
+  }
+
+  .pdp-proof__score-block {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+
+  .pdp-proof__score-number {
+    font-family: var(--ff-display);
+    font-variation-settings: "opsz" 96, "SOFT" 0, "WONK" 0;
+    font-weight: 300;
+    font-size: clamp(3rem, 2rem + 4vw, 4.5rem);
+    line-height: .9;
+    letter-spacing: -.03em;
+    color: var(--fg);
+  }
+
+  .pdp-proof__score-meta {
+    display: grid;
+    gap: var(--sp-2);
+  }
+
   .pdp-proof__score-line {
-    margin-block-start: clamp(1.5rem, 4vw, 2rem);
     color: var(--fg-soft);
-    letter-spacing: .06em;
+    max-width: 36ch;
   }
 
   .pdp-proof__distribution {
-    margin-block-start: var(--sp-4);
     max-width: 26rem;
   }
 
@@ -220,13 +238,18 @@
 
   .pdp-proof__bar-row {
     display: grid;
-    grid-template-columns: 5.5rem 1fr 3rem;
+    grid-template-columns: 2.5rem 1fr 2.5rem;
     align-items: center;
     gap: var(--sp-2);
   }
 
-  .pdp-proof__bar-label {
+  .pdp-proof__bar-label,
+  .pdp-proof__bar-count {
     color: var(--fg-soft);
+  }
+
+  .pdp-proof__bar-count {
+    text-align: end;
   }
 
   .pdp-proof__bar {
@@ -243,13 +266,7 @@
     background: var(--nawm-amber);
   }
 
-  .pdp-proof__bar-count {
-    text-align: end;
-    color: var(--fg-soft);
-  }
-
-  /* Zonder JS filtert er niets, en dan hoort er ook geen filterbalk te staan.
-     pdp-review-filter.js zet .has-filters zodra hij de chips overneemt. */
+  /* Zonder JS filtert er niets, en dan hoort er ook geen filterbalk te staan. */
   .pdp-proof__filters {
     display: none;
     margin-block-start: clamp(2rem, 5vw, 3rem);
@@ -268,7 +285,7 @@
     margin-inline: calc(var(--gutter) * -1);
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: min(78%, 22rem);
+    grid-auto-columns: min(80%, 22rem);
     gap: var(--sp-4);
     overflow-x: auto;
     overscroll-behavior-inline: contain;
@@ -277,6 +294,7 @@
 
   .pdp-proof__card {
     scroll-snap-align: start;
+    display: flex;
   }
 
   @media (min-width: 900px) {
@@ -302,26 +320,14 @@
     gap: var(--sp-3);
   }
 
-  .pdp-proof__card .nawm-review__theme {
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: .14em;
-    color: var(--nawm-ember);
-  }
-
-  .pdp-proof__card .nawm-review__quote {
-    margin: 0;
-    font-size: var(--fs-body);
-    line-height: 1.5;
-    color: var(--fg);
-  }
-
-  .pdp-proof__card .nawm-review__meta {
-    color: var(--fg-soft);
-  }
-
   .pdp-proof__empty {
     margin-block-start: clamp(2rem, 5vw, 3rem);
+  }
+
+  .pdp-proof__cta {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    margin-inline: auto;
+    max-width: 30rem;
   }
 {% endstylesheet %}
 
@@ -331,7 +337,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Beantwoordt bezwaar B3. Beoordelingen komen uit metaobject nawm_review; zonder bron-url en datum rendert een beoordeling niet. Score, aantal, bron, controledatum en verdeling staan in de themasettings."
+      "content": "Beoordelingen komen uit metaobject nawm_review. Zonder bron-url en datum rendert een beoordeling niet. Score, aantal, bron, controledatum en verdeling staan in de themasettings."
     },
     {
       "type": "text",
