@@ -70,8 +70,7 @@
       "type": "nawm-proof",
       "settings": {
         "eyebrow": "",
-        "heading": "",
-        "image": "shopify://shop_images/ochtend-raam.jpg"
+        "heading": ""
       }
     },
     "nawm_inbox": {
@@ -106,12 +105,19 @@
         "heading": ""
       }
     },
+    "nawm_trust": {
+      "type": "nawm-trust",
+      "settings": {
+        "heading": "",
+        "show_customer_count": true
+      }
+    },
     "nawm_offer": {
       "type": "nawm-offer",
       "settings": {
+        "image": "shopify://shop_images/hero-nachtkastje-mobile.jpg",
         "eyebrow": "",
-        "heading": "",
-        "image": "shopify://shop_images/hero-nachtkastje-mobile.jpg"
+        "heading": ""
       }
     },
     "nawm_faq": {
@@ -125,13 +131,6 @@
       "type": "nawm-safety",
       "settings": {
         "body": ""
-      }
-    },
-    "nawm_trust": {
-      "type": "nawm-trust",
-      "settings": {
-        "heading": "",
-        "show_customer_count": true
       }
     }
   },
