@@ -1,16 +1,23 @@
 {% comment %}
   Sectie 7 — Social proof. BUILD SPEC §5.7.
 
-  Bevestiging door echte klanten. Reviews komen uit metaobject `nawm_review`;
-  de guard zit in snippets/nawm-review-card.liquid en niet in de redactie: een
-  review zonder bron-url en datum rendert niet.
+  Drie lagen, van hard naar zacht:
+
+    1. het cijfer met sterren en de verdeling — controleerbaar, en daarom het
+       eerste wat je ziet
+    2. de beoordelingen zelf, in een band die horizontaal meeloopt
+    3. de bron met datum, zodat elk cijfer terug te voeren is
+
+  De guard zit in snippets/nawm-review-card.liquid en niet in de redactie: een
+  beoordeling zonder bron-url en datum rendert niet.
 
   Het reviewcijfer is datumgebonden. Zonder controledatum toont de cijferregel
-  niets — een score zonder datum veroudert stilletjes en dat is precies wat de
-  blauwdruk wil voorkomen.
+  niets — een score zonder datum veroudert stilletjes.
 
-  Geen carrousel met autoplay: op mobiel is dit een scroll-snap lijst die de
-  bezoeker zelf bedient.
+  Over de bewegende band: hij loopt langzaam, staat stil bij hover, bij focus
+  en bij prefers-reduced-motion, en is altijd met de hand te scrollen. Bij
+  minder dan drie beoordelingen beweegt er niets, want dan is het geen band
+  maar een rijtje.
 {% endcomment %}
 
 {% liquid
@@ -30,9 +37,34 @@
   if settings.review_score != blank and settings.review_count != blank and settings.review_checked_on != blank
     assign has_score = true
   endif
+
+  comment
+    De verdeling staat als vijf getallen in één themasetting, hoog naar laag.
+    De balken schalen op het hoogste aantal en niet op het totaal, anders is
+    een verdeling met één dominante ster visueel onleesbaar.
+  endcomment
+  assign distribution = settings.review_distribution | split: ','
+  assign distribution_max = 0
+  for value in distribution
+    assign number = value | strip | times: 1
+    if number > distribution_max
+      assign distribution_max = number
+    endif
+  endfor
+
+  assign visible = 0
+  for review in reviews
+    if review.bron_url != blank and review.datum != blank and review.citaat != blank
+      assign visible = visible | plus: 1
+    endif
+  endfor
 %}
 
-<section class="nawm-section nawm-proof ctx-dawn">
+{%- if visible > 2 -%}
+  <script src="{{ 'nawm-marquee.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}
+
+<section class="nawm-section nawm-proof ctx-dawn" id="beoordelingen">
   {%- if section.settings.image != blank -%}
     <div class="nawm-proof__band">
       {% render 'nawm-figure',
@@ -50,33 +82,75 @@
     <div class="nawm-proof__head nawm-reveal">
       {% render 'nawm-eyebrow', text: eyebrow %}
       <h2>{{ heading }}</h2>
-
-      {%- if has_score -%}
-        <p class="nawm-mono nawm-proof__score">
-          {{-
-            'nawm.proof.score_line'
-            | t: score: settings.review_score, count: settings.review_count, date: settings.review_checked_on
-          -}}
-        </p>
-      {%- endif -%}
     </div>
 
-    {%- assign rendered = 0 -%}
-    <div class="nawm-proof__list">
-      {%- for review in reviews -%}
-        {%- if review.bron_url != blank and review.datum != blank -%}
-          {%- assign rendered = rendered | plus: 1 -%}
-          <div class="nawm-card nawm-proof__item nawm-reveal" style="--reveal-delay: {{ forloop.index0 | times: 80 }}ms;">
-            {% render 'nawm-review-card', review: review %}
+    {%- if has_score -%}
+      <div class="nawm-proof__summary nawm-reveal">
+        <div class="nawm-proof__score-block">
+          <p class="nawm-proof__score-number">{{ settings.review_score }}</p>
+          <div class="nawm-proof__score-meta">
+            {% render 'pdp-stars', score: settings.review_score, id: 'proof-average' %}
+            <p class="nawm-mono nawm-proof__score-line">
+              {{-
+                'nawm.proof.score_line'
+                | t: score: settings.review_score, count: settings.review_count, source: settings.review_source, date: settings.review_checked_on
+              -}}
+            </p>
+          </div>
+        </div>
+
+        {%- if distribution.size == 5 and distribution_max > 0 -%}
+          <div class="nawm-proof__distribution">
+            <h3 class="nawm-visually-hidden">{{ 'nawm.proof.distribution_label' | t }}</h3>
+            <ul class="nawm-proof__bars">
+              {%- for value in distribution -%}
+                {%- liquid
+                  assign star_level = 5 | minus: forloop.index0
+                  assign count = value | strip | times: 1
+                  assign width = count | times: 100 | divided_by: distribution_max
+                -%}
+                <li class="nawm-proof__bar-row">
+                  <span class="nawm-mono nawm-proof__bar-label">
+                    {{- 'nawm.proof.stars_short' | t: n: star_level -}}
+                  </span>
+                  <span class="nawm-proof__bar" aria-hidden="true">
+                    <span class="nawm-proof__bar-fill" style="inline-size: {{ width }}%;"></span>
+                  </span>
+                  <span class="nawm-mono nawm-proof__bar-count">{{ count }}</span>
+                </li>
+              {%- endfor -%}
+            </ul>
           </div>
         {%- endif -%}
-      {%- endfor -%}
-    </div>
-
-    {%- if rendered == 0 -%}
-      <p class="nawm-small nawm-proof__empty">{{ 'nawm.proof.empty' | t }}</p>
+      </div>
     {%- endif -%}
   </div>
+
+  {%- if visible > 0 -%}
+    {%- comment -%}
+      De band loopt buiten de wrap, van rand tot rand. Dat is het hele idee:
+      hij loopt door, dus hij mag niet in een kader staan.
+    {%- endcomment -%}
+    <div
+      class="nawm-proof__marquee{% if visible > 2 %} is-animated{% endif %}"
+      data-nawm-marquee
+      data-count="{{ visible }}"
+    >
+      <ul class="nawm-proof__track" data-marquee-track>
+        {%- for review in reviews -%}
+          {%- if review.bron_url != blank and review.datum != blank and review.citaat != blank -%}
+            <li class="nawm-proof__item">
+              {% render 'nawm-review-card', review: review, uid: forloop.index %}
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- else -%}
+    <div class="nawm-wrap">
+      <p class="nawm-small nawm-proof__empty">{{ 'nawm.proof.empty' | t }}</p>
+    </div>
+  {%- endif -%}
 </section>
 
 {% stylesheet %}
@@ -84,79 +158,219 @@
     margin-block-end: clamp(3rem, 8vw, 5rem);
   }
 
-  .nawm-proof__score {
-    margin-block-start: var(--sp-4);
+  /* ------------------------------------------------------- cijfer en verdeling */
+
+  .nawm-proof__summary {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: center;
+  }
+
+  @media (min-width: 750px) {
+    .nawm-proof__summary {
+      grid-template-columns: auto 1fr;
+      gap: clamp(2rem, 5vw, 4rem);
+    }
+  }
+
+  .nawm-proof__score-block {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+
+  .nawm-proof__score-number {
+    font-family: var(--ff-display);
+    font-variation-settings: "opsz" 96, "SOFT" 0, "WONK" 0;
+    font-weight: 300;
+    font-size: clamp(3rem, 2rem + 4vw, 4.5rem);
+    line-height: .9;
+    letter-spacing: -.03em;
+    color: var(--fg);
+  }
+
+  .nawm-proof__score-meta {
+    display: grid;
+    gap: var(--sp-2);
+  }
+
+  .nawm-proof__score-line {
+    color: var(--fg-soft);
+    max-width: 34ch;
+  }
+
+  .nawm-proof__distribution {
+    max-width: 26rem;
+  }
+
+  .nawm-proof__bars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-1);
+  }
+
+  .nawm-proof__bar-row {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr 2.5rem;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .nawm-proof__bar-label,
+  .nawm-proof__bar-count {
     color: var(--fg-soft);
   }
 
-  .nawm-proof__list {
+  .nawm-proof__bar-count {
+    text-align: end;
+  }
+
+  .nawm-proof__bar {
+    display: block;
+    height: 8px;
+    border-radius: var(--r-data);
+    background: color-mix(in oklab, var(--ink-day) 10%, transparent);
+    overflow: hidden;
+  }
+
+  .nawm-proof__bar-fill {
+    display: block;
+    height: 100%;
+    background: var(--nawm-amber);
+  }
+
+  /* ------------------------------------------------------------ bewegende band */
+
+  .nawm-proof__marquee {
     margin-block-start: clamp(2.5rem, 6vw, 4rem);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    /* De randen vervagen, zodat de band doorloopt in plaats van af te kappen. */
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+  }
+
+  .nawm-proof__track {
+    list-style: none;
+    margin: 0;
+    padding: var(--sp-1) var(--gutter) var(--sp-4);
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: min(78%, 20rem);
+    grid-auto-columns: min(82%, 23rem);
     gap: var(--sp-4);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding-block-end: var(--sp-3);
-    margin-inline: calc(var(--gutter) * -1);
-    padding-inline: var(--gutter);
-    scrollbar-width: thin;
+    width: max-content;
   }
 
   .nawm-proof__item {
-    scroll-snap-align: start;
+    scroll-snap-align: center;
     display: flex;
   }
 
-  .nawm-proof__empty {
-    margin-block-start: var(--sp-5);
+  /* De animatie zit op de track en niet op de scroller, zodat de bezoeker met
+     de hand kan blijven scrollen terwijl hij loopt. nawm-marquee.js zet
+     --marquee-distance en --marquee-duration op basis van de werkelijke
+     breedte; zonder JS staat de band stil en scroll je hem zelf. */
+  .nawm-proof__marquee.is-animated.is-running .nawm-proof__track {
+    animation: nawm-marquee var(--marquee-duration, 60s) linear infinite;
   }
 
-  .nawm-review {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-3);
+  .nawm-proof__marquee.is-animated:hover .nawm-proof__track,
+  .nawm-proof__marquee.is-animated:focus-within .nawm-proof__track {
+    animation-play-state: paused;
+  }
+
+  @keyframes nawm-marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(var(--marquee-distance, 0px) * -1)); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nawm-proof__marquee.is-animated.is-running .nawm-proof__track {
+      animation: none;
+    }
+  }
+
+  /* ----------------------------------------------------------------- de kaart */
+
+  .nawm-proof__item .nawm-review {
     margin: 0;
+    padding: var(--sp-4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
+    box-shadow: 0 1px 2px rgb(26 23 16 / .05), 0 12px 28px -20px rgb(26 23 16 / .25);
+    display: grid;
+    align-content: start;
+    gap: var(--sp-3);
+  }
+
+  .nawm-review__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+  }
+
+  .nawm-review__stars {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nawm-review__stars .pdp-stars svg {
+    width: 76px;
   }
 
   .nawm-review__theme {
     text-transform: uppercase;
-    letter-spacing: .14em;
+    letter-spacing: .12em;
     color: var(--nawm-ember);
+  }
+
+  .nawm-review__title {
+    margin: 0;
+    font-weight: 600;
+    color: var(--fg);
   }
 
   .nawm-review__quote {
     margin: 0;
-    font-size: 1.0625rem;
-    line-height: 1.5;
+    font-size: var(--fs-small);
+    line-height: 1.55;
     color: var(--fg);
+    /* Lange citaten worden afgekapt op de kaart; de bron staat eronder. */
+    display: -webkit-box;
+    -webkit-line-clamp: 9;
+    line-clamp: 9;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .nawm-review__meta {
-    margin-block-start: auto;
     color: var(--fg-soft);
   }
 
-  @media (min-width: 1024px) {
-    .nawm-proof__list {
-      grid-auto-flow: row;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      grid-auto-columns: auto;
-      overflow: visible;
-      margin-inline: 0;
-      padding-inline: 0;
-      gap: var(--sp-5);
-    }
+  .nawm-proof__empty {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
   }
 {% endstylesheet %}
 
 {% schema %}
 {
-  "name": "NAWM · Social proof",
+  "name": "NAWM · Beoordelingen",
   "settings": [
     {
       "type": "paragraph",
-      "content": "Reviews komen uit metaobject nawm_review. Een citaat zonder bron-url en datum wordt niet getoond. Het cijfer, het aantal en de controledatum staan in de themasettings."
+      "content": "Beoordelingen komen uit metaobject nawm_review. Zonder bron-url en datum rendert een beoordeling niet. Score, aantal, bron, controledatum en verdeling staan in de themasettings. Vanaf drie beoordelingen gaat de band vanzelf lopen."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Sfeerbeeld boven de sectie"
     },
     {
       "type": "text",
@@ -167,24 +381,11 @@
       "type": "textarea",
       "id": "heading",
       "label": "Kop"
-    },
-    {
-      "type": "header",
-      "content": "Beeld"
-    },
-    {
-      "type": "paragraph",
-      "content": "De overgang naar de ochtend — zie §9.3, prompt 6."
-    },
-    {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Beeld (16:9)"
     }
   ],
   "presets": [
     {
-      "name": "NAWM · Social proof"
+      "name": "NAWM · Beoordelingen"
     }
   ]
 }

@@ -1,0 +1,307 @@
+{% comment %}
+  PDP-sectie: korte productvideo's. Ondersteunt B1 (werkt dit echt) en B6
+  (is dit ingewikkeld) met beeld in plaats van tekst.
+
+  Vakken die je in de theme-editor vult: elk blok is één clip van een paar
+  seconden. Zes tegelijk is het maximum — daarboven kijkt niemand meer.
+
+  Waarom dit zo gebouwd is:
+
+  · `preload="none"` en een posterbeeld. Zes video's die zichzelf inladen
+    kosten meer dan de hele rest van de pagina samen.
+  · Geen autoplay met geluid, ooit. Wie wil kijken, drukt.
+  · Een clip die stilstaat en herhaalt (muted, loop, playsinline) mag wel
+    automatisch spelen zodra hij in beeld komt — maar alleen als de bezoeker
+    geen reduced-motion heeft staan. Dat is een keuze per blok.
+  · Elke clip heeft een zichtbaar label. Een video zonder bijschrift laat de
+    kijker raden waar hij naar kijkt.
+
+  Net als bij de demo geldt: een gerenderde animatie tonen alsof het een opname
+  van het verkoopmodel is, mag niet. Zet het label eerlijk.
+{% endcomment %}
+
+{% liquid
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.clips.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.clips.heading' | t
+  endif
+
+  assign filled = 0
+  for block in section.blocks
+    if block.settings.video != blank
+      assign filled = filled | plus: 1
+    endif
+  endfor
+%}
+
+{%- if filled > 0 -%}
+  <script src="{{ 'nawm-clips.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}
+
+<section class="nawm-section pdp-clips ctx-dawn" id="clips">
+  <div class="nawm-wrap">
+    <div class="pdp-head pdp-head--wide nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="pdp-clips__grid" style="--clip-ratio: {{ section.settings.ratio | default: '9 / 16' }};">
+        {%- for block in section.blocks -%}
+          <li class="pdp-clips__item nawm-reveal" style="--reveal-delay: {{ forloop.index0 | times: 60 }}ms;" {{ block.shopify_attributes }}>
+            {%- if block.settings.video != blank -%}
+              <div class="pdp-clips__frame">
+                <video
+                  class="pdp-clips__player"
+                  preload="none"
+                  playsinline
+                  {% if block.settings.autoplay %}
+                    muted
+                    loop
+                    data-clip-autoplay
+                  {% else %}
+                    controls
+                  {% endif %}
+                  {% if block.settings.poster != blank %}
+                    poster="{{ block.settings.poster | image_url: width: 720 }}"
+                  {% endif %}
+                  width="{{ block.settings.video.sources[0].width | default: 720 }}"
+                  height="{{ block.settings.video.sources[0].height | default: 1280 }}"
+                  {% if block.settings.label != blank %}
+                    aria-label="{{ block.settings.label | escape }}"
+                  {% endif %}
+                >
+                  {%- for source in block.settings.video.sources -%}
+                    <source src="{{ source.url }}" type="{{ source.mime_type }}">
+                  {%- endfor -%}
+                  {%- if block.settings.captions != blank -%}
+                    <track
+                      kind="captions"
+                      srclang="nl"
+                      label="Nederlands"
+                      src="{{ block.settings.captions | asset_url }}"
+                      default
+                    >
+                  {%- endif -%}
+                </video>
+
+                {%- comment -%}
+                  Bij een clip die vanzelf loopt hoort een knop om hem stil te
+                  zetten. Beweging die je niet kunt stoppen, is een
+                  toegankelijkheidsprobleem — geen stijlkeuze.
+                {%- endcomment -%}
+                {%- if block.settings.autoplay -%}
+                  <button type="button" class="pdp-clips__toggle" data-clip-toggle>
+                    <span data-clip-toggle-label>{{ 'nawm.pdp.clips.pause' | t }}</span>
+                  </button>
+                {%- endif -%}
+              </div>
+            {%- else -%}
+              <div class="pdp-clips__frame pdp-clips__frame--empty">
+                <p class="nawm-mono">{{ 'nawm.pdp.clips.empty_slot' | t }}</p>
+              </div>
+            {%- endif -%}
+
+            {%- if block.settings.label != blank -%}
+              <p class="pdp-clips__label">{{ block.settings.label }}</p>
+            {%- endif -%}
+
+            {%- if block.settings.note != blank -%}
+              <p class="nawm-mono pdp-clips__note">{{ block.settings.note }}</p>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .pdp-clips__grid {
+    list-style: none;
+    margin: clamp(2rem, 5vw, 3rem) 0 0;
+    padding: 0 var(--gutter) var(--sp-3);
+    margin-inline: calc(var(--gutter) * -1);
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(62%, 15rem);
+    gap: var(--sp-4);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+
+  @media (min-width: 750px) {
+    .pdp-clips__grid {
+      grid-auto-flow: row;
+      grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+      grid-auto-columns: auto;
+      overflow: visible;
+      padding-inline: 0;
+      margin-inline: 0;
+    }
+  }
+
+  .pdp-clips__item {
+    scroll-snap-align: start;
+  }
+
+  .pdp-clips__frame {
+    position: relative;
+    aspect-ratio: var(--clip-ratio, 9 / 16);
+    border-radius: var(--r-card);
+    overflow: hidden;
+    background: var(--nawm-midnight);
+    border: 1px solid var(--line);
+  }
+
+  .pdp-clips__player {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .pdp-clips__frame--empty {
+    display: grid;
+    place-items: center;
+    border-style: dashed;
+    background: color-mix(in oklab, var(--nawm-dawn) 92%, var(--nawm-peach));
+  }
+
+  .pdp-clips__frame--empty p {
+    margin: 0;
+    padding: var(--sp-3);
+    text-align: center;
+    color: var(--fg-soft);
+    letter-spacing: .08em;
+  }
+
+  .pdp-clips__toggle {
+    position: absolute;
+    inset-block-end: var(--sp-2);
+    inset-inline-end: var(--sp-2);
+    min-height: 36px;
+    padding: 0 var(--sp-3);
+    border: 1px solid rgb(255 255 255 / .35);
+    border-radius: var(--r-pill);
+    background: rgb(11 18 32 / .62);
+    color: var(--ink-night);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: .06em;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+  }
+
+  .pdp-clips__toggle:hover {
+    background: rgb(11 18 32 / .82);
+  }
+
+  .pdp-clips__label {
+    margin-block-start: var(--sp-3);
+    font-weight: 500;
+    color: var(--fg);
+  }
+
+  .pdp-clips__note {
+    margin-block-start: var(--sp-1);
+    color: var(--fg-soft);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP clips",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Korte clips van het product. Elk vak is één video van een paar seconden. Label ze eerlijk: een gerenderde animatie mag nooit als opname van het verkoopmodel gepresenteerd worden."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "Beeldverhouding",
+      "options": [
+        { "value": "9 / 16", "label": "Staand (9:16)" },
+        { "value": "4 / 5", "label": "Portret (4:5)" },
+        { "value": "1 / 1", "label": "Vierkant (1:1)" },
+        { "value": "16 / 9", "label": "Liggend (16:9)" }
+      ],
+      "default": "9 / 16"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "clip",
+      "name": "Clip",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video",
+          "info": "Kort houden: 3 tot 10 seconden."
+        },
+        {
+          "type": "image_picker",
+          "id": "poster",
+          "label": "Posterbeeld",
+          "info": "Het stilstaande beeld vóór het afspelen. Zonder poster ziet de bezoeker een zwart vlak."
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Bijschrift",
+          "info": "Wat zie je hier? Bijvoorbeeld: het display dimmen van vol naar bijna uit."
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Kleine regel eronder",
+          "info": "Optioneel. Bijvoorbeeld: opname van het verkoopmodel."
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay",
+          "label": "Vanzelf afspelen, zonder geluid",
+          "default": true,
+          "info": "Loopt in een lus zodra de clip in beeld komt, met een pauzeknop erbij. Staat uit bij bezoekers die minder beweging willen. Zet dit uit voor clips met gesproken tekst."
+        },
+        {
+          "type": "text",
+          "id": "captions",
+          "label": "Ondertitelbestand",
+          "info": "Bestandsnaam van het .vtt-bestand in assets/. Verplicht zodra er gesproken tekst in zit."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP clips",
+      "blocks": [
+        { "type": "clip" },
+        { "type": "clip" },
+        { "type": "clip" }
+      ]
+    }
+  ]
+}
+{% endschema %}

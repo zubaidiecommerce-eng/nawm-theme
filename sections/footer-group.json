@@ -52,7 +52,7 @@
             "text_LWt8Pz": {
               "type": "text",
               "settings": {
-                "text": "<h2>Join our email list</h2>",
+                "text": "<h2>Krijg 5% korting op je eerste bestelling</h2>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -76,7 +76,7 @@
             "text_f9CFLH": {
               "type": "text",
               "settings": {
-                "text": "<p>Get exclusive deals and early access to new products.</p>",
+                "text": "<p>Schrijf je in voor de nieuwsbrief en je kortingscode komt direct binnen. Verder mailen we alleen als er iets te melden is.</p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
@@ -119,7 +119,7 @@
             "input_type_preset": "paragraph",
             "style_class": "button-unstyled",
             "display_type": "arrow",
-            "label": "Sign up",
+            "label": "Stuur mijn kortingscode",
             "integrated_button": true,
             "button_type_preset": "paragraph",
             "padding-block-start": 0,

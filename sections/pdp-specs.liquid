@@ -24,6 +24,16 @@
     assign pdp_product = settings.nawm_product
   endif
 
+  comment
+    Vangnet voor de productkoppeling. Een `product`-themasetting levert normaal
+    een productobject op, maar staat hij leeg of verkeerd ingevuld, dan valt
+    alles wat eraan hangt stil: prijs, specificaties en de knoptekst. De handle
+    is de tweede weg naar hetzelfde product en kost niets.
+  endcomment
+  if pdp_product.id == blank and settings.nawm_product_handle != blank
+    assign pdp_product = all_products[settings.nawm_product_handle]
+  endif
+
   assign nawm = pdp_product.metafields.nawm
 
   assign eyebrow = section.settings.eyebrow
@@ -40,7 +50,7 @@
   assign sunrise_max = nawm.sunrise_max_minutes.value
 
   assign box_items = nawm.in_the_box.value
-  assign box_fallback = 'b1,b2,b3,b4' | split: ','
+  assign box_fallback = 'b1,b2,b3,b4,b5,b6,b7,b8' | split: ','
 %}
 
 <section class="nawm-section pdp-specs ctx-dawn" id="specificaties" data-pdp-specs>
@@ -119,6 +129,7 @@
             label_key: 'nawm.specs.rows.wake_sounds_list',
             metafield: nawm.wake_sounds_list,
             field: 'wake_sounds_list',
+            optional: true,
             kind: 'list',
             note: 'welke geluiden selecteerbaar zijn als wekgeluid'
           %}
@@ -155,9 +166,11 @@
       <div class="pdp-specs__group nawm-reveal">
         <h3 class="pdp-specs__group-heading">{{ 'nawm.pdp.specs.box_heading' | t }}</h3>
         {%- comment -%}
-          Uitsluitend wat er werkelijk in zit. De landingspagina noemt vijf
-          gedrukte onderdelen; op basis van de doosfoto klopt dat niet. Komt de
-          Sleep–Wake Guide er later bij, dan pas je deze lijst aan — niet eerder.
+          Uitsluitend wat er werkelijk in zit. De lijst komt uit het metafield
+          `nawm.in_the_box` en is door Mohammed bevestigd: naast het apparaat,
+          de kabel, de adapter en de handleiding zitten de Sleep–Wake Guide en
+          de drie kaarten er ook bij. Wijzigt de doos, dan wijzigt het
+          metafield — niet deze sectie.
         {%- endcomment -%}
         <ul class="nawm-list pdp-specs__box">
           {%- if box_items != blank -%}
@@ -202,12 +215,14 @@
             label_key: 'nawm.specs.rows.battery_backup',
             metafield: nawm.battery_backup,
             field: 'battery_backup',
+            optional: true,
             note: 'blijven tijd en alarm bewaard bij stroomuitval, en hoelang'
           %}
           {% render 'nawm-spec-row',
             label_key: 'nawm.specs.rows.has_usb_port',
             metafield: nawm.has_usb_port,
             field: 'has_usb_port',
+            optional: true,
             kind: 'bool',
             note: 'USB-poort en of die een telefoon kan opladen'
           %}
