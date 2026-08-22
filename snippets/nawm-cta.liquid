@@ -20,6 +20,17 @@
 {% enddoc %}
 
 {%- liquid
+  comment
+    Zonder bestemming wees deze knop naar #offer — een anker naar zichzelf,
+    waarbij er dus niets gebeurde. Nu valt hij terug op de productpagina.
+    Zie de audit, punt P0-10.
+  endcomment
+  assign fallback_product = settings.nawm_product
+  if fallback_product.id == blank and settings.nawm_product_handle != blank
+    assign fallback_product = all_products[settings.nawm_product_handle]
+  endif
+  assign fallback_url = fallback_product.url | default: routes.all_products_collection_url
+
   assign cta_text = label
   if label_key != blank
     assign cta_text = label_key | t
@@ -57,7 +68,7 @@
 {%- else -%}
   <a
     class="{{ classes }}"
-    href="{{ url | default: '#offer' }}"
+    href="{{ url | default: fallback_url }}"
     {% if id != blank %}
       id="{{ id }}"
     {% endif %}

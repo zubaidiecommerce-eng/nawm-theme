@@ -30,12 +30,25 @@
     <h2 class="nawm-visually-hidden">{{ heading }}</h2>
 
     <ul class="nawm-trust__list">
-      {%- if section.settings.show_customer_count -%}
+      {%- comment -%}
+        Geen klantenaantal: dat was niet te controleren en valt onder Google's
+        Misrepresentation-beleid. Wat er staat komt uit de bol-listing en is met
+        één klik na te rekenen.
+      {%- endcomment -%}
+      {%- if section.settings.show_customer_count
+        and settings.review_score != blank
+        and settings.review_count != blank
+      -%}
         <li class="nawm-trust__item nawm-lift nawm-reveal">
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
             <path d="M9 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 5.2a3.5 3.5 0 010 6.6M17.5 14.2c2.4.6 4 2.6 4 5.8" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
-          <span>{{ 'nawm.trust.customers' | t }}</span>
+          <span>
+            {{-
+              'nawm.trust.customers'
+              | t: score: settings.review_score, count: settings.review_count, source: settings.review_source
+            -}}
+          </span>
         </li>
       {%- endif -%}
 
@@ -148,9 +161,9 @@
     {
       "type": "checkbox",
       "id": "show_customer_count",
-      "label": "Klantenaantal tonen",
+      "label": "Reviewcijfer tonen",
       "default": true,
-      "info": "Alleen aanzetten zolang het aantal in de copy klopt met de werkelijke verkopen."
+      "info": "Toont score, aantal en bron uit de themasettings. Staat een van de drie leeg, dan blijft het blok weg."
     }
   ],
   "presets": [

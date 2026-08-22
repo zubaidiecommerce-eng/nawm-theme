@@ -32,12 +32,7 @@
       {%- if section.settings.body != blank -%}
         {{ section.settings.body }}
       {%- else -%}
-        <p>
-          {% render 'nawm-verify',
-            field: 'brand_story',
-            note: 'twee concrete zinnen over waarom dit product bestaat — door Mohammed zelf te schrijven'
-          %}
-        </p>
+        {{ 'nawm.pdp.brand.body' | t }}
       {%- endif -%}
     </div>
 

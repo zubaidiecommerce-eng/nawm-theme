@@ -30,8 +30,10 @@
   kent: de koopknop, de betaallogorij, de sterrenrij en de mobiele koopbalk.
   Die laden alleen daar, zodat de landingspagina er geen byte van meekrijgt.
 {%- endcomment -%}
-{%- if template.suffix == 'nawm' or template.suffix == 'wake-up-light' -%}
-  {{ 'nawm-pdp.css' | asset_url | stylesheet_tag }}
-{%- endif -%}
+{%- comment -%}
+  De betaallogorij en de sterrenrij staan inmiddels ook op de landingspagina,
+  dus deze stylesheet laadt op beide NAWM-sjablonen.
+{%- endcomment -%}
+{{ 'nawm-pdp.css' | asset_url | stylesheet_tag }}
 
 {% render 'nawm-fonts' %}

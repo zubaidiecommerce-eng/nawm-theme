@@ -34,7 +34,7 @@ if (root) {
 
       /* Het aantal wordt aangekondigd, want voor wie niet ziet dat kaarten
          verdwijnen is een filter zonder terugkoppeling stil kapot. */
-      if (status) status.textContent = status.dataset.template.replace('{{ count }}', String(shown));
+      if (status) status.textContent = status.dataset.template.replace('#', String(shown));
     };
 
     for (const chip of chips) {

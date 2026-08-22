@@ -72,6 +72,17 @@
     assign slide_count = 6
   endif
 
+  comment
+    De twee animaties in de galerij tellen mee als slide, anders klopt de
+    indicator niet met wat je kunt scrollen.
+  endcomment
+  if section.settings.clip_closeup != blank
+    assign slide_count = slide_count | plus: 1
+  endif
+  if section.settings.clip_room != blank
+    assign slide_count = slide_count | plus: 1
+  endif
+
   assign return_days = settings.return_days | times: 1
   assign warranty_years = settings.warranty_years | times: 1
 
@@ -85,8 +96,6 @@
     render 'pdp-delivery-date'
   endcapture
 %}
-
-{% render 'nawm-manual-gate', manual: manual %}
 
 <script src="{{ 'pdp-gallery.js' | asset_url }}" type="module" fetchpriority="low"></script>
 <script src="{{ 'pdp-sticky-cta.js' | asset_url }}" type="module" fetchpriority="low"></script>
@@ -106,6 +115,24 @@
         tabindex="0"
         aria-label="{{ 'nawm.pdp.hero.gallery_label' | t }}"
       >
+        {%- comment -%}
+          Animatie 4 — het apparaat van dichtbij — staat als tweede slide.
+          Waargenomen kwaliteit verkoopt bij een merk dat niemand kent, en een
+          trage close-up doet daar meer tegen bezwaar B3 dan drie alinea's.
+        {%- endcomment -%}
+        {%- if section.settings.clip_closeup != blank -%}
+          <div class="pdp-gallery__slide" data-gallery-slide tabindex="-1">
+            {% render 'nawm-clip',
+              video: section.settings.clip_closeup,
+              poster: section.settings.clip_closeup_poster,
+              ratio: '1 / 1',
+              kind: 'recording',
+              caption_key: 'nawm.pdp.animations.closeup',
+              class: 'pdp-gallery__clip'
+            %}
+          </div>
+        {%- endif -%}
+
         {%- if images.size > 0 -%}
           {%- for image in images limit: 6 -%}
             {%- comment -%}
@@ -139,6 +166,24 @@
             </div>
           {%- endfor -%}
         {%- endif -%}
+
+        {%- comment -%}
+          Animatie 1 — de kamer wordt wakker — sluit de galerij af. Bezwaar B1:
+          werkt dit echt? Dit is het laatste dat je ziet voordat je naar de
+          knop kijkt.
+        {%- endcomment -%}
+        {%- if section.settings.clip_room != blank -%}
+          <div class="pdp-gallery__slide" data-gallery-slide tabindex="-1">
+            {% render 'nawm-clip',
+              video: section.settings.clip_room,
+              poster: section.settings.clip_room_poster,
+              ratio: '16 / 9',
+              kind: 'recording',
+              caption_key: 'nawm.pdp.animations.room_wakes',
+              class: 'pdp-gallery__clip'
+            %}
+          </div>
+        {%- endif -%}
       </div>
 
       {%- if slide_count > 1 -%}
@@ -155,7 +200,25 @@
                 data-gallery-thumb
                 aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
               >
-                {%- if images.size > 0 -%}
+                {%- comment -%}
+          Animatie 4 — het apparaat van dichtbij — staat als tweede slide.
+          Waargenomen kwaliteit verkoopt bij een merk dat niemand kent, en een
+          trage close-up doet daar meer tegen bezwaar B3 dan drie alinea's.
+        {%- endcomment -%}
+        {%- if section.settings.clip_closeup != blank -%}
+          <div class="pdp-gallery__slide" data-gallery-slide tabindex="-1">
+            {% render 'nawm-clip',
+              video: section.settings.clip_closeup,
+              poster: section.settings.clip_closeup_poster,
+              ratio: '1 / 1',
+              kind: 'recording',
+              caption_key: 'nawm.pdp.animations.closeup',
+              class: 'pdp-gallery__clip'
+            %}
+          </div>
+        {%- endif -%}
+
+        {%- if images.size > 0 -%}
                   {{
                     images[forloop.index0]
                     | image_url: width: 160
@@ -253,7 +316,6 @@
                 class="pdp-hero__usp-proof"
                 href="{{ manual.value.url }}"
                 data-nawm-event="open_manual"
-                data-nawm-manual
                 target="_blank"
                 rel="noopener"
               >
@@ -662,6 +724,36 @@
       "id": "subheading",
       "label": "Subkop",
       "info": "Maximaal twee regels."
+    },
+    {
+      "type": "header",
+      "content": "Animaties in de galerij"
+    },
+    {
+      "type": "paragraph",
+      "content": "Twee van de vier animaties staan in de galerij. Label ze eerlijk: een gerenderde animatie mag nooit als opname van het verkoopmodel gepresenteerd worden."
+    },
+    {
+      "type": "video",
+      "id": "clip_closeup",
+      "label": "2 · Het apparaat, van dichtbij",
+      "info": "Tweede slide, vierkant. Trage close-up waarin materiaal en afwerking zichtbaar zijn. Beantwoordt bezwaar B3."
+    },
+    {
+      "type": "image_picker",
+      "id": "clip_closeup_poster",
+      "label": "Posterbeeld close-up"
+    },
+    {
+      "type": "video",
+      "id": "clip_room",
+      "label": "1 · De kamer wordt wakker",
+      "info": "Laatste slide, 16:9. Het licht dat de kamer vult. Beantwoordt bezwaar B1."
+    },
+    {
+      "type": "image_picker",
+      "id": "clip_room_poster",
+      "label": "Posterbeeld kamer"
     }
   ],
   "presets": [

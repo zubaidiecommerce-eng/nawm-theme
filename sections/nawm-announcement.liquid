@@ -16,8 +16,6 @@
 {% endcomment %}
 
 {% liquid
-  assign free_from = section.settings.free_shipping_threshold | times: 1
-
   capture delivery_date
     render 'pdp-delivery-date'
   endcapture
@@ -25,16 +23,20 @@
   assign messages = ''
 
   if delivery_date != blank
-    assign line = 'nawm.announcement.delivery' | t: date: delivery_date
+    assign line = 'nawm.announcement.delivery' | t: time: settings.order_deadline_time, date: delivery_date
     assign messages = messages | append: line | append: '|'
   elsif settings.delivery_time != blank
     assign messages = messages | append: settings.delivery_time | append: '|'
   endif
 
-  if free_from > 0
-    assign threshold = free_from | times: 100 | money_without_trailing_zeros
-    assign line = 'nawm.announcement.free_shipping' | t: amount: threshold
-    assign messages = messages | append: line | append: '|'
+  comment
+    De verzendkosten staan hier zoals ze op de bon komen. "Gratis vanaf 100
+    euro" stond er eerder, maar bij een product van 59,95 betekende dat voor
+    vrijwel elke bestelling: niet gratis. Drie keer "gratis" lezen en dan 4,95
+    betalen is precies de verrassing die B12 moet voorkomen.
+  endcomment
+  if settings.shipping_line != blank
+    assign messages = messages | append: settings.shipping_line | append: '|'
   endif
 
   assign return_days = settings.return_days | times: 1
@@ -167,12 +169,6 @@
     {
       "type": "paragraph",
       "content": "De leverdatum en de retourtermijn komen uit de themasettings, zodat de balk nooit iets anders belooft dan de knop. Laat een veld leeg om die boodschap weg te laten."
-    },
-    {
-      "type": "number",
-      "id": "free_shipping_threshold",
-      "label": "Gratis verzending vanaf",
-      "info": "Bedrag in hele euro's. Leeg of 0 laat de boodschap weg."
     },
     {
       "type": "text",

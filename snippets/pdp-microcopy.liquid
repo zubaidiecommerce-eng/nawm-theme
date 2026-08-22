@@ -17,10 +17,10 @@
   endcapture
 
   if delivery == blank
-    assign delivery = settings.delivery_time
-    assign delivery_line = delivery
+    assign delivery_line = settings.delivery_time
   else
-    assign delivery_line = 'nawm.pdp.common.microcopy_delivery' | t: date: delivery
+    assign deadline = settings.order_deadline_time
+    assign delivery_line = 'nawm.pdp.common.microcopy_delivery' | t: time: deadline, date: delivery
   endif
 
   assign return_days = settings.return_days | times: 1

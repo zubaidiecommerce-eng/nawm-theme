@@ -67,6 +67,23 @@
       Twee regels tegenover elkaar. Het contrast doet het argument, dus er
       hoort geen derde regel bij en geen toelichting onder.
     {%- endcomment -%}
+    {%- comment -%}
+      Animatie 3 — koud scherm tegenover warm licht. De enige van de vier
+      zonder product in beeld, en juist daarom volledig veilig: hij toont een
+      probleem, geen functie.
+    {%- endcomment -%}
+    {%- if section.settings.clip_contrast != blank -%}
+      <div class="pdp-mechanism__clip nawm-reveal">
+        {% render 'nawm-clip',
+          video: section.settings.clip_contrast,
+          poster: section.settings.clip_contrast_poster,
+          ratio: '4 / 5',
+          kind: 'render',
+          caption_key: 'nawm.pdp.animations.cold_warm'
+        %}
+      </div>
+    {%- endif -%}
+
     <div class="pdp-mechanism__contrast nawm-reveal">
       <p class="pdp-mechanism__old">{{ 'nawm.pdp.mechanism.old_way' | t }}</p>
       <p class="pdp-mechanism__new">{{ 'nawm.pdp.mechanism.new_way' | t }}</p>
@@ -157,6 +174,11 @@
     }
   }
 
+  .pdp-mechanism__clip {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    max-width: 22rem;
+  }
+
   .pdp-mechanism__contrast {
     margin-block-start: clamp(2.5rem, 6vw, 4rem);
     padding-block-start: var(--sp-4);
@@ -203,6 +225,17 @@
       "type": "textarea",
       "id": "body",
       "label": "Tekst"
+    },
+    {
+      "type": "video",
+      "id": "clip_contrast",
+      "label": "3 · Koud scherm, warm licht",
+      "info": "4:5. Het probleem in beeld, zonder product. Beantwoordt bezwaar B1."
+    },
+    {
+      "type": "image_picker",
+      "id": "clip_contrast_poster",
+      "label": "Posterbeeld"
     }
   ],
   "presets": [

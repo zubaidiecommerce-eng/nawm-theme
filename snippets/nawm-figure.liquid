@@ -87,7 +87,12 @@
           decoding: 'async'
       }}
     {%- endif -%}
-  {%- else -%}
+  {%- elsif request.design_mode -%}
+    {%- comment -%}
+      Alleen in de theme-editor. Op de live pagina hoort een ontbrekend beeld
+      helemaal niets te tonen — "IMG:avond-donkere-kamer" als platte tekst is
+      een ontwikkelplaceholder, geen inhoud.
+    {%- endcomment -%}
     <div
       class="nawm-figure__placeholder"
       role="img"

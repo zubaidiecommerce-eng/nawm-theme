@@ -148,7 +148,7 @@
 
         {%- if delivery_date != blank -%}
           <p class="nawm-small nawm-offer__delivery">
-            {{ 'nawm.announcement.delivery' | t: date: delivery_date }}
+            {{ 'nawm.announcement.delivery' | t: time: settings.order_deadline_time, date: delivery_date }}
           </p>
         {%- elsif settings.delivery_time != blank -%}
           <p class="nawm-small nawm-offer__delivery">{{ settings.delivery_time }}</p>

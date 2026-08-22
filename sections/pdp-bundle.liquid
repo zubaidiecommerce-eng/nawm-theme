@@ -37,8 +37,13 @@
     assign heading = 'nawm.pdp.bundle.heading' | t
   endif
 
-  assign quantities = '1,2,3,4' | split: ','
-  assign percentages = '0' | append: ',' | append: section.settings.discount_two | append: ',' | append: section.settings.discount_three | append: ',' | append: section.settings.discount_four
+  assign quantities = '1,2' | split: ','
+  comment
+    Eén en twee stuks. Drie en vier stonden er eerder, maar niemand koopt vier
+    wekkers — dat zag er berekend uit en verzwakte het prijsanker. Zie PDP SPEC
+    §7 en de audit, punt P1-7.
+  endcomment
+  assign percentages = '0' | append: ',' | append: section.settings.discount_two
   assign percentage_list = percentages | split: ','
 
   assign free_from_cents = section.settings.free_shipping_threshold | times: 100
@@ -137,7 +142,7 @@
 {% stylesheet %}
   .pdp-bundle__form {
     margin: clamp(2rem, 5vw, 3rem) auto 0;
-    max-width: 44rem;
+    max-width: 34rem;
   }
 
   .pdp-bundle__tiers {
@@ -150,7 +155,7 @@
 
   @media (min-width: 750px) {
     .pdp-bundle__tiers {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
@@ -249,26 +254,6 @@
       "step": 1,
       "unit": "%",
       "default": 10
-    },
-    {
-      "type": "range",
-      "id": "discount_three",
-      "label": "Korting bij 3 stuks",
-      "min": 0,
-      "max": 40,
-      "step": 1,
-      "unit": "%",
-      "default": 15
-    },
-    {
-      "type": "range",
-      "id": "discount_four",
-      "label": "Korting bij 4 stuks",
-      "min": 0,
-      "max": 40,
-      "step": 1,
-      "unit": "%",
-      "default": 20
     },
     {
       "type": "number",

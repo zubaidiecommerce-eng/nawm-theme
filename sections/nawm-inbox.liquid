@@ -36,10 +36,8 @@
     assign heading = 'nawm.inbox.heading' | t
   endif
 
-  assign items = 'item1,item2,item3,item4,item5' | split: ','
+  assign items = 'item1,item2,item3,item4' | split: ','
 %}
-
-{% render 'nawm-manual-gate', manual: product.metafields.nawm.manual_pdf %}
 
 <section class="nawm-section nawm-inbox ctx-dawn">
   <div class="nawm-wrap">
@@ -103,17 +101,12 @@
             {{- 'nawm.inbox.manual_link' | t -}}
           </a>
         {%- endif -%}
-        {%- if guide != blank -%}
-          <a href="{{ guide | file_url }}" class="nawm-inbox__doc" data-nawm-event="open_guide">
-            {{- 'nawm.inbox.guide_link' | t -}}
-          </a>
-        {%- endif -%}
       </p>
     {%- else -%}
       <p class="nawm-small nawm-inbox__docs">
         {% render 'nawm-verify',
           field: 'manual_pdf',
-          note: 'Nederlandse handleiding en Sleep–Wake Guide als PDF — verplicht vóór livegang'
+          note: 'Nederlandstalige handleiding als PDF — verplicht vóór livegang'
         %}
       </p>
     {%- endif -%}
