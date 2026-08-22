@@ -70,20 +70,20 @@
           </div>
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.brightness_levels' | t,
+            label_key: 'nawm.specs.rows.brightness_levels',
             metafield: nawm.brightness_levels,
             field: 'brightness_levels',
             note: 'aantal helderheidsstanden'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.light_colors' | t,
+            label_key: 'nawm.specs.rows.light_colors',
             metafield: nawm.light_colors,
             field: 'light_colors',
             kind: 'list',
             note: 'lichtkleuren bevestigen op het verkoopmodel'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.display_dimmable' | t,
+            label_key: 'nawm.specs.rows.display_dimmable',
             metafield: nawm.display_dimmable,
             field: 'display_dimmable',
             kind: 'bool',
@@ -97,30 +97,42 @@
         <h3 class="pdp-specs__group-heading">{{ 'nawm.specs.groups.sound' | t }}</h3>
         <dl class="pdp-specs__list">
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.relax_sounds_count' | t,
+            label_key: 'nawm.specs.rows.relax_sounds_count',
             metafield: nawm.relax_sounds_count,
             field: 'relax_sounds_count',
             note: 'aantal ontspanningsgeluiden — geteld op het verkoopmodel'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.wake_sounds_count' | t,
+            label_key: 'nawm.specs.rows.wake_sounds_count',
             metafield: nawm.wake_sounds_count,
             field: 'wake_sounds_count',
             note: 'hoeveel daarvan als wekgeluid selecteerbaar zijn — apart tellen'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.pdp.specs.radio_row' | t,
+            label_key: 'nawm.pdp.specs.radio_row',
             metafield: nawm.has_fm_radio,
             field: 'has_fm_radio',
             kind: 'bool',
             note: 'FM-radio als wekbron, functioneel getest op het verkoopmodel'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.wake_sounds_list' | t,
+            label_key: 'nawm.specs.rows.wake_sounds_list',
             metafield: nawm.wake_sounds_list,
             field: 'wake_sounds_list',
             kind: 'list',
             note: 'welke geluiden selecteerbaar zijn als wekgeluid'
+          %}
+          {%- comment -%}
+            De volledige tracklijst uit de handleiding. Die staat er met naam en
+            toenaam bij, zodat "22 geluiden" geen getal blijft dat je moet
+            geloven.
+          {%- endcomment -%}
+          {% render 'nawm-spec-row',
+            label_key: 'nawm.pdp.specs.relax_sounds_row',
+            metafield: nawm.relax_sounds_list,
+            field: 'relax_sounds_list',
+            kind: 'list',
+            note: 'volledige tracklijst met natuurgeluiden'
           %}
         </dl>
         <p class="nawm-small pdp-specs__note">{{ 'nawm.specs.disambiguation' | t }}</p>
@@ -131,7 +143,7 @@
         <h3 class="pdp-specs__group-heading">{{ 'nawm.specs.groups.alarms' | t }}</h3>
         <dl class="pdp-specs__list">
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.alarms' | t,
+            label_key: 'nawm.specs.rows.alarms',
             metafield: nawm.alarms,
             field: 'alarms',
             note: 'alarmopties zoals ze op het apparaat heten'
@@ -168,46 +180,52 @@
       <div class="pdp-specs__details-body">
         <dl class="pdp-specs__list">
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.dimensions_mm' | t,
+            label_key: 'nawm.specs.rows.dimensions_mm',
             metafield: nawm.dimensions_mm,
             field: 'dimensions_mm',
             note: 'afmetingen in millimeters, gemeten aan het verkoopmodel'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.weight_g' | t,
+            label_key: 'nawm.specs.rows.weight_g',
             metafield: nawm.weight_g,
             field: 'weight_g',
             suffix: 'g',
             note: 'gewicht in gram'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.power' | t,
+            label_key: 'nawm.specs.rows.power',
             metafield: nawm.power,
             field: 'power',
             note: 'voeding: netstroom, adapter, kabellengte'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.battery_backup' | t,
+            label_key: 'nawm.specs.rows.battery_backup',
             metafield: nawm.battery_backup,
             field: 'battery_backup',
             note: 'blijven tijd en alarm bewaard bij stroomuitval, en hoelang'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.has_usb_port' | t,
+            label_key: 'nawm.specs.rows.has_usb_port',
             metafield: nawm.has_usb_port,
             field: 'has_usb_port',
             kind: 'bool',
             note: 'USB-poort en of die een telefoon kan opladen'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.has_bluetooth' | t,
+            label_key: 'nawm.pdp.specs.connections_row',
+            metafield: nawm.connections,
+            field: 'connections',
+            note: 'aansluitingen op de achterkant van het apparaat'
+          %}
+          {% render 'nawm-spec-row',
+            label_key: 'nawm.specs.rows.has_bluetooth',
             metafield: nawm.has_bluetooth,
             field: 'has_bluetooth',
             kind: 'bool',
             note: 'bluetooth op het verkoopmodel'
           %}
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.ean' | t,
+            label_key: 'nawm.specs.rows.ean',
             metafield: nawm.ean,
             field: 'ean',
             note: 'EAN van het verkoopmodel'

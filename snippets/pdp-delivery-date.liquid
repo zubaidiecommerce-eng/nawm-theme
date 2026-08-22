@@ -100,8 +100,9 @@
       assign weekday_index = cursor | date: '%w' | times: 1
       assign month_index = cursor | date: '%-m' | times: 1 | minus: 1
       assign day_number = cursor | date: '%-d'
-      assign formatted = 'nawm.pdp.common.date_pattern'
-        | t: weekday: weekdays[weekday_index], day: day_number, month: months[month_index]
+      assign weekday_name = weekdays[weekday_index]
+      assign month_name = months[month_index]
+      assign formatted = 'nawm.pdp.common.date_pattern' | t: weekday: weekday_name, day: day_number, month: month_name
     endif
 
     echo formatted

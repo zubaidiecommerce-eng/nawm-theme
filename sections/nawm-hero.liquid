@@ -57,7 +57,7 @@
       {% render 'nawm-figure',
         image: section.settings.image,
         image_mobile: section.settings.image_mobile,
-        alt: 'nawm.hero.image_alt' | t,
+        alt_key: 'nawm.hero.image_alt',
         slug: 'hero-nachtkastje',
         sizes: '(min-width: 1024px) 45vw, 100vw',
         eager: true,
@@ -79,10 +79,8 @@
       <p class="nawm-lede nawm-hero__sub">{{ subheading }}</p>
 
       <div class="nawm-hero__action">
-        {% render 'nawm-cta',
-          label: cta_label,
-          url: section.settings.cta_url | default: '#offer'
-        %}
+        {%- assign cta_url = section.settings.cta_url | default: '#offer' -%}
+        {% render 'nawm-cta', label: cta_label, url: cta_url %}
 
         <p class="nawm-mono nawm-hero__trust">
           {{- trust -}}

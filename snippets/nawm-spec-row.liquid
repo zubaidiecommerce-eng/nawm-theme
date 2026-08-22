@@ -8,7 +8,13 @@
   op false staat is in Liquid gelijk aan blank, en zou anders ten onrechte als
   "nog te verifiëren" doorgaan in plaats van als "nee".
 
-  @param {string} label - Zichtbaar label, uit locales/nl.default.json.
+  Het label komt als locale-sleutel binnen en wordt hier vertaald. Dat moet ook:
+  Shopify past filters niet toe op argumenten van een `render`-tag, dus
+  `label: 'sleutel' | t` zou de ruwe sleutel doorgeven in plaats van het label.
+  Zie de theme-check-regel UnsupportedFilterArguments.
+
+  @param {string} [label_key] - Locale-sleutel van het label. Voorkeur.
+  @param {string} [label] - Al vertaald label. Alleen voor tekst die niet uit locales komt.
   @param {object} [metafield] - Het metafield zelf, niet .value.
   @param {string} field - Sleutel voor docs/OPEN.md, bijvoorbeeld 'weight_g'.
   @param {string} [kind] - 'text' (standaard), 'bool' of 'list'.
@@ -21,10 +27,15 @@
   if metafield.type != blank
     assign exists = true
   endif
+
+  assign row_label = label
+  if label_key != blank
+    assign row_label = label_key | t
+  endif
 -%}
 
 <div class="nawm-specs__row">
-  <dt class="nawm-specs__label">{{ label }}</dt>
+  <dt class="nawm-specs__label">{{ row_label }}</dt>
   <dd class="nawm-specs__value nawm-mono">
     {%- if exists -%}
       {%- case kind -%}

@@ -10,7 +10,13 @@
 
   @param {object} [image] - Shopify image object.
   @param {object} [image_mobile] - Alternatief beeld onder 749px.
-  @param {string} alt - Nederlandse, beschrijvende alt-tekst. Nooit keyword-stuffed.
+  Geef de alt-tekst als locale-sleutel door via `alt_key`, niet als
+  `alt: 'sleutel' | t`. Shopify past filters niet toe op argumenten van een
+  `render`-tag, dus dat laatste zet de ruwe sleutel in het alt-attribuut. Zie
+  de theme-check-regel UnsupportedFilterArguments.
+
+  @param {string} [alt_key] - Locale-sleutel van de alt-tekst. Voorkeur.
+  @param {string} [alt] - Al vertaalde alt-tekst. Nooit keyword-stuffed.
   @param {string} [slug] - Naam uit §9.3, bijvoorbeeld 'hero-nachtkastje'.
   @param {string} [sizes] - sizes-attribuut. Standaard 100vw.
   @param {boolean} [eager] - Alleen voor het LCP-beeld.
@@ -20,6 +26,11 @@
 {% enddoc %}
 
 {%- liquid
+  assign alt_text = alt
+  if alt_key != blank
+    assign alt_text = alt_key | t
+  endif
+
   assign widths = '400,640,828,1080,1440,1920'
   assign width_list = widths | split: ','
   assign sizes_attr = sizes | default: '100vw'
@@ -57,7 +68,7 @@
           | image_tag:
             widths: widths,
             sizes: sizes_attr,
-            alt: alt,
+            alt: alt_text,
             loading: loading_attr,
             fetchpriority: fetch_attr,
             decoding: 'async'
@@ -70,7 +81,7 @@
         | image_tag:
           widths: widths,
           sizes: sizes_attr,
-          alt: alt,
+          alt: alt_text,
           loading: loading_attr,
           fetchpriority: fetch_attr,
           decoding: 'async'
@@ -80,7 +91,7 @@
     <div
       class="nawm-figure__placeholder"
       role="img"
-      aria-label="{{ alt | default: 'Beeld volgt nog' | escape }}"
+      aria-label="{{ alt_text | default: 'Beeld volgt nog' | escape }}"
       {% if ratio != blank %}
         style="--ph-ratio: {{ ratio }};"
       {% endif %}

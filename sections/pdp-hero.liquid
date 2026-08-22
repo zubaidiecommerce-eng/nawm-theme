@@ -97,10 +97,15 @@
       >
         {%- if images.size > 0 -%}
           {%- for image in images limit: 6 -%}
+            {%- comment -%}
+              De alt-tekst wordt vooraf samengesteld: Shopify past filters niet
+              toe op argumenten van een render-tag.
+            {%- endcomment -%}
+            {%- assign image_alt = image.alt | default: pdp_product.title -%}
             <div class="pdp-gallery__slide" data-gallery-slide tabindex="-1">
               {% render 'nawm-figure',
                 image: image,
-                alt: image.alt | default: pdp_product.title,
+                alt: image_alt,
                 sizes: '(min-width: 1024px) 46vw, 100vw',
                 eager: forloop.first,
                 class: 'pdp-gallery__figure'

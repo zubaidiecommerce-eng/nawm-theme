@@ -12,7 +12,7 @@
       "heading": "Frisser wakker begint|de avond ervoor.",
       "subheading": "Bouw in 30 minuten af zonder eindeloos scrollen en word geleidelijk wakker met licht, natuurgeluiden of radio. Eén systeem voor een rustigere avond en een zachtere start.",
       "cta": "Start mijn Sleep–Wake routine — {{ price }}",
-      "trust": "Inclusief Nederlandse Sleep–Wake Guide · EU-stekker · verzending inbegrepen",
+      "trust": "Inclusief Nederlandse Sleep–Wake Guide · EU-stekker · 30 dagen retour",
       "trial": "{{ nights }} nachten proberen",
       "image_alt": "Nachtkastje met warm amberlicht in een donkere slaapkamer"
     },
@@ -329,7 +329,7 @@
           "u2": {
             "benefit": "Kies zelf hoe je gewekt wordt",
             "feature": "natuurgeluiden of FM-radio",
-            "proof": "{{ count }} wekgeluiden in de specificaties"
+            "proof": "welke geluiden precies, zie de specificaties"
           },
           "u3": {
             "benefit": "Je slaapkamer blijft donker",
@@ -449,7 +449,9 @@
         "recording": "Opname van het verkoopmodel",
         "summary": "Samenvatting van {{ minutes }} echte minuten in 6 seconden.",
         "video_missing": "De timelapse van het verkoopmodel staat nog niet klaar.",
-        "video_alt": "Timelapse van de zonsopgang op het verkoopmodel"
+        "video_alt": "Timelapse van de zonsopgang op het verkoopmodel",
+        "sounds_label": "Natuurgeluiden",
+        "sounds_note": "Welke hiervan je als wekgeluid kunt kiezen, staat bij de specificaties."
       },
       "proof": {
         "eyebrow": "Wat kopers zeggen",
@@ -469,12 +471,14 @@
         "box_heading": "In de doos",
         "box": {
           "b1": "NAWM Wake Up Light",
-          "b2": "Nederlandstalige handleiding",
-          "b3": "USB-kabel",
-          "b4": "EU-stekkeradapter"
+          "b2": "USB-voedingskabel",
+          "b3": "Voedingsadapter met EU-stekker",
+          "b4": "Nederlandstalige gebruikershandleiding"
         },
         "radio_row": "FM-radio als wekbron",
-        "manual_link": "Nederlandse handleiding (PDF)"
+        "manual_link": "Nederlandse handleiding (PDF)",
+        "relax_sounds_row": "De geluiden",
+        "connections_row": "Aansluitingen"
       },
       "offer": {
         "eyebrow": "Het aanbod",
@@ -498,7 +502,7 @@
         "risk_conditions_heading": "De voorwaarden, zonder omweg",
         "delivery_heading": "Wanneer je hem hebt",
         "no_surprises_heading": "Geen verrassingen bij het afrekenen",
-        "no_surprises": "De prijs die je hier ziet, is de prijs bij het afrekenen.",
+        "no_surprises": "De prijs die je hier ziet, is de prijs bij het afrekenen. Verzendkosten staan hieronder en er komt daarna niets meer bij.",
         "payment_label": "Betaalmethoden"
       },
       "faq": {
@@ -523,17 +527,17 @@
           },
           "q4": {
             "q": "Kan het display ’s nachts helemaal uit?",
-            "a": "",
+            "a": "Ja. Het display dim je los van het licht, en je kunt het helemaal uit zetten. Je houdt dan een donkere kamer zonder oplichtende cijfers.",
             "code": "B10"
           },
           "q5": {
             "q": "Kan ik de radio als wekgeluid gebruiken?",
-            "a": "",
+            "a": "Ja. Naast de natuurgeluiden kun je de FM-radio als wekbron kiezen. De zender en het volume stel je in op het apparaat zelf.",
             "code": "B5"
           },
           "q6": {
             "q": "Zijn alle ontspanningsgeluiden ook als alarm te kiezen?",
-            "a": "Nee. Een deel van de geluiden is selecteerbaar als wekgeluid; de rest is bedoeld om bij in slaap te vallen. Het exacte aantal staat in de specificaties.",
+            "a": "Nee. Een deel van de geluiden is selecteerbaar als wekgeluid; de rest is bedoeld om bij in slaap te vallen. Het exacte aantal staat bij de specificaties.",
             "code": "B5"
           },
           "q7": {
@@ -543,7 +547,7 @@
           },
           "q8": {
             "q": "Werkt hij op batterijen?",
-            "a": "",
+            "a": "Nee. Hij werkt op netstroom via de meegeleverde adapter — 6 V DC, 1000 mA. Er zit geen batterijvoeding voor normaal gebruik in.",
             "code": "B9"
           },
           "q9": {
