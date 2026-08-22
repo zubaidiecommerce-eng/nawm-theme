@@ -20,6 +20,18 @@
 
 {%- if has_value -%}
   {{ value }}{% if suffix != blank %} {{ suffix }}{% endif %}
-{%- else -%}
+{%- elsif request.design_mode -%}
+  {%- comment -%}
+    In de theme-editor licht het token fel magenta op, zodat het opvalt.
+  {%- endcomment -%}
   <span class="verify" data-verify-field="{{ field }}">VERIFY: {{ note | default: field }}</span>
+{%- else -%}
+  {%- comment -%}
+    Op de live storefront rendert een openstaand VERIFY niets. Een bezoeker
+    hoort niet te lezen dat een tekst nog geschreven moet worden; dat is erger
+    dan een gat. Het token blijft wel als HTML-commentaar staan en
+    nawm-verify.js logt het als fout in de console, zodat het niet stilletjes
+    verdwijnt. Zie BUILD SPEC §0.4.
+  {%- endcomment -%}
+  <!-- NAWM VERIFY openstaand: {{ field }} -->
 {%- endif -%}

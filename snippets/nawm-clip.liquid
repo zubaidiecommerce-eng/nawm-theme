@@ -1,0 +1,71 @@
+{% doc %}
+  Eén korte animatie of opname, met een eerlijk label.
+
+  Het label is niet decoratief. Een gerenderde animatie tonen alsof het een
+  opname van het verkoopmodel is, is op een verkooppagina een misleidende
+  voorstelling van zaken — zie PDP SPEC §3.6. Daarom staat er bij elke clip
+  of het een animatie is of een opname.
+
+  Ontbreekt de video, dan rendert dit snippet niets. Geen "komt nog"-tekst: een
+  blok dat uitlegt dat er iets ontbreekt, hoort niet op een verkooppagina.
+
+  @param {object} video - Het video-object uit de sectie-instelling.
+  @param {object} [poster] - Stilstaand beeld vóór het afspelen.
+  @param {string} [ratio] - CSS aspect-ratio, bijvoorbeeld '4 / 5'.
+  @param {string} [caption_key] - Locale-sleutel van het bijschrift. Voorkeur:
+    Shopify past filters niet toe op argumenten van een render-tag, dus
+    `caption: 'sleutel' | t` zet de ruwe sleutel op de pagina — en Shopify
+    weigert het bestand soms zelfs bij het synchroniseren.
+  @param {string} [caption] - Al vertaald bijschrift.
+  @param {string} [kind] - 'render' (animatie) of 'recording' (opname).
+  @param {string} [captions] - Bestandsnaam van het .vtt-bestand in assets/.
+  @param {string} [class] - Extra klassen.
+{% enddoc %}
+
+{%- if video != blank -%}
+  {%- liquid
+    assign label_key = 'nawm.pdp.animations.label_render'
+    if kind == 'recording'
+      assign label_key = 'nawm.pdp.animations.label_recording'
+    endif
+
+    assign clip_caption = caption
+    if caption_key != blank
+      assign clip_caption = caption_key | t
+    endif
+  -%}
+  <figure class="nawm-clip {{ class }}" style="--clip-ratio: {{ ratio | default: '4 / 5' }};">
+    <div class="nawm-clip__frame">
+      <video
+        class="nawm-clip__player"
+        preload="none"
+        playsinline
+        muted
+        loop
+        data-clip-autoplay
+        {% if poster != blank %}
+          poster="{{ poster | image_url: width: 1080 }}"
+        {% endif %}
+        width="{{ video.sources[0].width | default: 1080 }}"
+        height="{{ video.sources[0].height | default: 1350 }}"
+      >
+        {%- for source in video.sources -%}
+          <source src="{{ source.url }}" type="{{ source.mime_type }}">
+        {%- endfor -%}
+        {%- if captions != blank -%}
+          <track kind="captions" srclang="nl" label="Nederlands" src="{{ captions | asset_url }}" default>
+        {%- endif -%}
+      </video>
+
+      <button type="button" class="nawm-clip__toggle" data-clip-toggle>
+        <span data-clip-toggle-label>{{ 'nawm.pdp.clips.pause' | t }}</span>
+      </button>
+
+      <p class="nawm-mono nawm-clip__kind">{{ label_key | t }}</p>
+    </div>
+
+    {%- if clip_caption != blank -%}
+      <figcaption class="nawm-clip__caption">{{ clip_caption }}</figcaption>
+    {%- endif -%}
+  </figure>
+{%- endif -%}

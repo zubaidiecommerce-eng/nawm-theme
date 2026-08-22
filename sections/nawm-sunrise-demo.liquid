@@ -39,6 +39,16 @@
   endif
   assign wake = section.settings.wake_time | default: '07:00'
 
+  comment
+    De helderheid hoort mee te lopen met de schuifstand. Stond er hardcoded 1
+    in de HTML, dan las de bezoeker bij 30 minuten "helderheid 1 van 20" zolang
+    het script nog niet had gedraaid — en helemaal als het niet laadt. Hier
+    alvast uitrekenen met dezelfde formule als render() in nawm-sunrise.js:
+    1 + (minuten - 10) / 50 * 19, afgerond.
+  endcomment
+  assign span = section.settings.default_minutes | minus: 10 | times: 19
+  assign start_level = span | divided_by: 50 | plus: 1
+
   assign eyebrow = section.settings.eyebrow
   if eyebrow == blank
     assign eyebrow = 'nawm.sunrise.eyebrow' | t
@@ -85,7 +95,7 @@
             {{ 'nawm.common.minutes' | t }}
             ·
             {{ 'nawm.sunrise.level_label' | t }}
-            <span data-level>1</span>
+            <span data-level>{{ start_level }}</span>
             {{ 'nawm.sunrise.level_of' | t }}
           </p>
 
@@ -173,7 +183,6 @@
               </p>
             {%- endif -%}
           {%- else -%}
-            <p class="nawm-small">{{ 'nawm.sunrise.video_missing' | t }}</p>
           {%- endif -%}
         </div>
       </div>

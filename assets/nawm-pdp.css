@@ -248,3 +248,66 @@ body.pdp-sticky-active .content-for-layout {
   border-inline-start: 0;
   transform: none;
 }
+
+/* ------------------------------------------------------------------- clips */
+
+.nawm-clip {
+  margin: 0;
+}
+
+.nawm-clip__frame {
+  position: relative;
+  aspect-ratio: var(--clip-ratio, 4 / 5);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  background: var(--nawm-midnight);
+  border: 1px solid var(--line);
+}
+
+.nawm-clip__player {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Het label zegt of je naar een animatie of naar een opname kijkt. Dat is geen
+   nette toevoeging maar de kern van de afspraak in PDP SPEC §3.6. */
+.nawm-clip__kind {
+  position: absolute;
+  inset-block-start: var(--sp-2);
+  inset-inline-start: var(--sp-2);
+  margin: 0;
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-pill);
+  background: rgb(11 18 32 / .68);
+  color: var(--ink-night);
+  letter-spacing: .08em;
+  backdrop-filter: blur(4px);
+}
+
+.nawm-clip__toggle {
+  position: absolute;
+  inset-block-end: var(--sp-2);
+  inset-inline-end: var(--sp-2);
+  min-height: 34px;
+  padding: 0 var(--sp-3);
+  border: 1px solid rgb(255 255 255 / .35);
+  border-radius: var(--r-pill);
+  background: rgb(11 18 32 / .62);
+  color: var(--ink-night);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.nawm-clip__toggle:hover {
+  background: rgb(11 18 32 / .82);
+}
+
+.nawm-clip__caption {
+  margin-block-start: var(--sp-2);
+  font-size: var(--fs-small);
+  color: var(--fg-soft);
+}

@@ -45,6 +45,16 @@
 
   assign wake = section.settings.wake_time | default: '07:00'
 
+  comment
+    De helderheid hoort mee te lopen met de schuifstand. Stond er hardcoded 1
+    in de HTML, dan las de bezoeker bij 30 minuten "helderheid 1 van 20" zolang
+    het script nog niet had gedraaid — en helemaal als het niet laadt. Hier
+    alvast uitrekenen met dezelfde formule als render() in nawm-sunrise.js:
+    1 + (minuten - 10) / 50 * 19, afgerond.
+  endcomment
+  assign span = section.settings.default_minutes | minus: 10 | times: 19
+  assign start_level = span | divided_by: 50 | plus: 1
+
   assign eyebrow = section.settings.eyebrow
   if eyebrow == blank
     assign eyebrow = 'nawm.pdp.demo.eyebrow' | t
@@ -99,7 +109,7 @@
               {{ 'nawm.common.minutes' | t }}
               ·
               {{ 'nawm.sunrise.level_label' | t }}
-              <span data-level>1</span>
+              <span data-level>{{ start_level }}</span>
               {{ 'nawm.sunrise.level_of' | t }}
             </p>
 
@@ -150,11 +160,14 @@
         </nawm-sunrise>
       </div>
 
-      {%- comment -%} ---------------------------------------------- de video {%- endcomment -%}
+      {%- comment -%}
+        De video. Ontbreekt hij, dan verdwijnt het hele paneel — een blok dat
+        uitlegt dat er iets nog niet klaar is, hoort niet op een verkooppagina.
+        Zie de audit, punt P1-8.
+      {%- endcomment -%}
+      {%- if section.settings.video != blank -%}
       <div class="pdp-demo__panel">
         <p class="nawm-mono pdp-demo__tag">{{ 'nawm.pdp.demo.recording' | t }}</p>
-
-        {%- if section.settings.video != blank -%}
           <video
             class="pdp-demo__player"
             controls
@@ -189,12 +202,8 @@
               %}
             </p>
           {%- endif -%}
-        {%- else -%}
-          <div class="pdp-demo__placeholder">
-            <p class="nawm-small">{{ 'nawm.pdp.demo.video_missing' | t }}</p>
-          </div>
-        {%- endif -%}
-      </div>
+              </div>
+      {%- endif -%}
     </div>
 
     <div class="pdp-demo__cta nawm-reveal">

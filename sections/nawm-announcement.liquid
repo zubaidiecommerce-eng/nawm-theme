@@ -23,7 +23,7 @@
   assign messages = ''
 
   if delivery_date != blank
-    assign line = 'nawm.announcement.delivery' | t: date: delivery_date
+    assign line = 'nawm.announcement.delivery' | t: time: settings.order_deadline_time, date: delivery_date
     assign messages = messages | append: line | append: '|'
   elsif settings.delivery_time != blank
     assign messages = messages | append: settings.delivery_time | append: '|'

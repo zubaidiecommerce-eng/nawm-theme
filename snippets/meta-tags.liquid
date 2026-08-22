@@ -19,6 +19,19 @@
 >
 
 {%- liquid
+  comment
+    De homepagina had geen eigen titel of beschrijving: Shopify vult daar
+    shop.name in, dus stond er overal alleen "NAWM". Dat kost organisch verkeer
+    en maakt elke gedeelde link onaantrekkelijk. Zie de audit, punt P0-8.
+
+    Alleen de homepagina wordt hier overschreven; product- en paginatitels
+    komen uit de SEO-velden in de admin, waar ze horen.
+  endcomment
+  if template.name == 'index'
+    assign page_title = 'nawm.seo.home_title' | t
+    assign page_description = 'nawm.seo.home_description' | t
+  endif
+
   assign og_title = page_title | default: shop.name
   assign og_url = canonical_url | default: request.origin
   assign og_type = 'website'
