@@ -41,7 +41,7 @@
         <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.light' | t }}</h3>
         <dl class="nawm-specs__list">
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.brightness_levels' | t,
+            label_key: 'nawm.specs.rows.brightness_levels',
             metafield: mf.brightness_levels,
             field: 'brightness_levels',
             note: 'aantal helderheidsniveaus — bevestigen op het verkoopmodel'
@@ -65,7 +65,7 @@
           </div>
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.light_colors' | t,
+            label_key: 'nawm.specs.rows.light_colors',
             metafield: mf.light_colors,
             field: 'light_colors',
             kind: 'list',
@@ -73,7 +73,7 @@
           %}
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.display_dimmable' | t,
+            label_key: 'nawm.specs.rows.display_dimmable',
             metafield: mf.display_dimmable,
             field: 'display_dimmable',
             kind: 'bool',
@@ -87,21 +87,21 @@
         <p class="nawm-small nawm-specs__note">{{ 'nawm.specs.disambiguation' | t }}</p>
         <dl class="nawm-specs__list">
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.relax_sounds_count' | t,
+            label_key: 'nawm.specs.rows.relax_sounds_count',
             metafield: mf.relax_sounds_count,
             field: 'relax_sounds_count',
             note: 'aantal ontspanningsgeluiden — listing noemt 25, tellen op het verkoopmodel'
           %}
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.wake_sounds_count' | t,
+            label_key: 'nawm.specs.rows.wake_sounds_count',
             metafield: mf.wake_sounds_count,
             field: 'wake_sounds_count',
             note: 'aantal selecteerbare wekgeluiden — bronnen noemen 22 én zeven, tellen op het verkoopmodel'
           %}
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.wake_sounds_list' | t,
+            label_key: 'nawm.specs.rows.wake_sounds_list',
             metafield: mf.wake_sounds_list,
             field: 'wake_sounds_list',
             kind: 'list',
@@ -114,7 +114,7 @@
         <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.alarms' | t }}</h3>
         <dl class="nawm-specs__list">
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.alarms' | t,
+            label_key: 'nawm.specs.rows.alarms',
             metafield: mf.alarms,
             field: 'alarms',
             note: 'alarmen, week/weekend, snooze en sleeptimer'
@@ -126,7 +126,7 @@
         <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.connectivity' | t }}</h3>
         <dl class="nawm-specs__list">
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.has_fm_radio' | t,
+            label_key: 'nawm.specs.rows.has_fm_radio',
             metafield: mf.has_fm_radio,
             field: 'has_fm_radio',
             kind: 'bool',
@@ -134,7 +134,7 @@
           %}
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.has_bluetooth' | t,
+            label_key: 'nawm.specs.rows.has_bluetooth',
             metafield: mf.has_bluetooth,
             field: 'has_bluetooth',
             kind: 'bool',
@@ -142,7 +142,7 @@
           %}
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.has_usb_port' | t,
+            label_key: 'nawm.specs.rows.has_usb_port',
             metafield: mf.has_usb_port,
             field: 'has_usb_port',
             kind: 'bool',
@@ -155,14 +155,14 @@
         <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.power' | t }}</h3>
         <dl class="nawm-specs__list">
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.power' | t,
+            label_key: 'nawm.specs.rows.power',
             metafield: mf.power,
             field: 'power',
             note: 'voeding'
           %}
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.battery_backup' | t,
+            label_key: 'nawm.specs.rows.battery_backup',
             metafield: mf.battery_backup,
             field: 'battery_backup',
             note: 'back-upgedrag bij stroomuitval — blijven tijd en alarm bewaard, en hoelang'
@@ -174,14 +174,14 @@
         <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.physical' | t }}</h3>
         <dl class="nawm-specs__list">
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.dimensions_mm' | t,
+            label_key: 'nawm.specs.rows.dimensions_mm',
             metafield: mf.dimensions_mm,
             field: 'dimensions_mm',
             note: 'afmetingen — meten op het verkoopmodel'
           %}
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.weight_g' | t,
+            label_key: 'nawm.specs.rows.weight_g',
             metafield: mf.weight_g,
             field: 'weight_g',
             suffix: 'g',
@@ -189,14 +189,14 @@
           %}
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.ean' | t,
+            label_key: 'nawm.specs.rows.ean',
             metafield: mf.ean,
             field: 'ean',
             note: 'EAN — moet identiek zijn aan verpakking en bol-listing'
           %}
 
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.warranty' | t,
+            label_key: 'nawm.specs.rows.warranty',
             metafield: mf.warranty,
             field: 'warranty',
             note: 'garantietermijn — verpakking en leverancier'
@@ -208,7 +208,7 @@
         <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.box' | t }}</h3>
         <dl class="nawm-specs__list">
           {% render 'nawm-spec-row',
-            label: 'nawm.specs.rows.in_the_box' | t,
+            label_key: 'nawm.specs.rows.in_the_box',
             metafield: mf.in_the_box,
             field: 'in_the_box',
             kind: 'list',

@@ -63,11 +63,17 @@
           <dt>{{ 'nawm.pdp.offer.value.accessories' | t }}</dt>
           <dd class="nawm-mono">{{ included }}</dd>
         </div>
+        {%- comment -%}
+          Verzending is niet inbegrepen. Hier staat daarom de verzendregel zelf
+          en niet het woord "inbegrepen": een waardestapel die iets gratis noemt
+          wat op de bon verschijnt, is precies de verrassing die B12 moet
+          voorkomen.
+        {%- endcomment -%}
         <div class="pdp-offer__value-row">
           <dt>{{ 'nawm.pdp.offer.value.shipping' | t }}</dt>
           <dd class="nawm-mono">
             {%- if settings.shipping_line != blank -%}
-              {{ included }}
+              {{ settings.shipping_line }}
             {%- else -%}
               {% render 'nawm-verify',
                 field: 'shipping_line',

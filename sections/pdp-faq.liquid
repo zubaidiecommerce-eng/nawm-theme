@@ -71,6 +71,17 @@
             assign question = faq.vraag.value | default: faq.vraag
             assign answer = faq.antwoord.value | default: faq.antwoord
             assign code = faq.bezwaar_code.value | default: faq.bezwaar_code
+
+            comment
+              De veldsleutel in de metaobjectdefinitie heet `in_json_id` terwijl
+              het label `in_json_ld` zegt. Beide worden gelezen, zodat een
+              hernoemde of opnieuw aangemaakte definitie ook blijft werken. Een
+              leeg veld betekent: wél opnemen.
+            endcomment
+            assign in_structured_data = true
+            if faq.in_json_ld.value == false or faq.in_json_id.value == false
+              assign in_structured_data = false
+            endif
           -%}
           {%- if question != blank and answer != blank -%}
             <details
@@ -83,14 +94,14 @@
               <div class="pdp-faq__answer">{{ answer }}</div>
             </details>
 
-            {%- unless faq.in_json_ld == false or faq.in_json_ld.value == false -%}
+            {%- if in_structured_data -%}
               {%- capture jsonld -%}
                 {{- jsonld -}}
                 {%- unless entries == 0 -%},{%- endunless -%}
                 {"@type":"Question","name":{{ question | strip_html | json }},"acceptedAnswer":{"@type":"Answer","text":{{ answer | strip_html | json }}}}
               {%- endcapture -%}
               {%- assign entries = entries | plus: 1 -%}
-            {%- endunless -%}
+            {%- endif -%}
           {%- endif -%}
         {%- endfor -%}
       {%- else -%}

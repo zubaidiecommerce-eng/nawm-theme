@@ -1,68 +1,198 @@
 # Openstaand voor de productpagina
 
-Alles wat de productpagina nog nodig heeft voordat hij live kan. Dit is de lijst
-uit `NAWM_PDP_CONVERSIE_SPEC.md` §12, aangevuld met wat tijdens het bouwen
-bovenkwam.
+Bijgewerkt op 22 augustus 2026, nadat de handleiding, de bol-listing en de
+handelsvoorwaarden zijn verwerkt.
 
-**Niets hiervan raden.** Elk onbekend getal staat in de theme als een
-`VERIFY`-token: fel magenta in de theme-editor, en op de live storefront een
-banner plus een console-error. Zolang er tokens open staan, is de pagina niet
-klaar voor publicatie.
+**Bron van waarheid, in deze volgorde:** de handleiding
+(`Final_WUP_handleiding.pdf`) → de bol-listing → alles daarbuiten. Waar de
+handleiding en de listing elkaar tegenspreken, wint de handleiding.
 
-Draai `bash scripts/claims-lint.sh --strict` om te zien of er nog tokens open
-staan. Zonder `--strict` telt hij ze en blokkeert hij niets.
+Draai `bash scripts/claims-lint.sh --strict` om te zien of er nog
+`VERIFY`-tokens open staan.
 
 ---
 
-## 1. Blokkerend voor livegang
+## 1. Wat er sinds de vorige ronde is ingevuld
 
-| # | Wat | Waar het vandaan moet komen | Blokkeert |
-|---|---|---|---|
-| 1 | Aantal ontspanningsgeluiden | Fysieke test verkoopmodel → metafield `nawm.relax_sounds_count` | §3.8 |
-| 2 | Hoeveel daarvan als wekgeluid selecteerbaar zijn | Fysieke test → `nawm.wake_sounds_count` en `nawm.wake_sounds_list` | §3.1, §3.6, §3.8, §3.10 |
-| 3 | FM-radio als wekbron, functioneel getest | Fysieke test → `nawm.has_fm_radio` | §3.1, §3.8, §3.10 |
-| 4 | Definitieve webshopprijs en het besluit over het bol.com-verschil | Beslissing Mohammed → productprijs of themasetting `price_manual` | §3.1, §3.9, §6.1 |
-| 5 | Retourtermijn in dagen | Beslissing → themasetting `return_days` | §3.1, §3.9, §3.11, §4.3 |
-| 6 | Wie de retourzending betaalt | Beslissing → `return_shipping_line` | §3.9 |
-| 7 | Of de verpakking bewaard moet blijven | Beslissing → `return_packaging_line` | §3.9 |
-| 8 | Termijn waarbinnen het geld terugstaat | Beslissing → `refund_term` | §3.9 |
-| 9 | Garantietermijn in jaren | Verpakking + bol-listing → `warranty_years` | §3.1, §3.9, §3.10 |
-| 10 | Besteldeadline en levertijd in werkdagen | Vervoerder → `order_deadline_time` en `delivery_business_days` | §3.1, §3.9, §3.10, §4.3 |
-| 11 | Verzendregel — wat de klant werkelijk betaalt | Marge-berekening → `shipping_line` | §3.9 |
-| 12 | Voeding en back-upgedrag bij stroomuitval | Fysieke test → `nawm.power`, `nawm.battery_backup` | §3.8, §3.10 |
-| 13 | Kan het display volledig uit of alleen dimmen | Fysieke test → `nawm.display_dimmable` **plus een foto** | §3.4, §3.10 |
-| 14 | Afmetingen, gewicht, materiaal, kabellengte | Meten → `nawm.dimensions_mm`, `nawm.weight_g`, `nawm.power` | §3.8 |
-| 15 | Lichtkleuren bevestigen op het verkoopmodel | Fysieke test → `nawm.light_colors` | §3.4, §3.8 |
-| 16 | Helderheidsstanden bevestigen | Fysieke test → `nawm.brightness_levels` | §3.1, §3.8 |
-| 17 | Nederlandstalige handleiding als PDF | Upload via Content → Bestanden → `nawm.manual_pdf` | §3.1, §3.5, §3.8 |
-| 18 | Reviewcitaten met bron, url en datum | Metaobject `nawm_review` | §3.7 |
-| 19 | Score, aantal, bron en controledatum | Themasettings `review_score`, `review_count`, `review_source`, `review_checked_on` | §3.1, §3.7 |
-| 20 | Werkelijke verdeling 5★ tot 1★ | Tellen bij de bron → `review_distribution` | §3.7 |
-| 21 | KvK, btw-nummer, vestigingsplaats, e-mailadres | Inschrijving → themasettings | §3.12 |
-| 22 | Reactietijd klantenservice | Alleen invullen als je hem waarmaakt → `support_response_time` | §3.12 |
-| 23 | Twee zinnen over waarom dit product bestaat | Mohammed zelf → sectie-instelling bij *PDP bedrijfsinfo* | §3.12 |
-| 24 | Nederlandse ondertiteling (.vtt) bij de timelapse | Bij de video → `assets/` | §3.6, §10.3 |
+Alles hieronder staat nu in de winkel of in de theme en heeft geen VERIFY meer.
 
----
-
-## 2. Buiten de theme — dit kan Claude Code niet doen
-
-| # | Wat | Waar |
+| Wat | Waarde | Bron |
 |---|---|---|
-| 1 | **Klarna uitvinken** bij Shopify Payments | Instellingen → Betalingen |
-| 2 | Een eventueel losse Klarna-app verwijderen | Apps |
-| 3 | Controleren dat gastafrekenen aanstaat (klantaccounts optioneel) | Instellingen → Checkout |
-| 4 | Het product koppelen aan het sjabloon **wake-up-light** | Product → Sjabloon |
-| 5 | De metafielddefinities in de namespace `nawm` aanmaken | Instellingen → Aangepaste gegevens → Producten |
-| 6 | De metaobjectdefinities `nawm_review` en `nawm_faq` aanmaken | Instellingen → Aangepaste gegevens |
-| 7 | Beeld 1 t/m 8 uit de beeldbrief uploaden | Content → Bestanden |
+| Prijs | € 59,95 | product |
+| Helderheidsstanden | 20 | handleiding |
+| Zonsopgangduur | 10–60 minuten | listing + beoordeling |
+| Natuurgeluiden | 22, met de volledige tracklijst op naam | handleiding, hoofdstuk 7 |
+| Lichtkleuren | 8 — amber, blauw, roze, groen, oranje, wit, rood, geel | listing |
+| Alarmen | twee · per alarm elke dag, weekdag of weekend · snooze · sleeptimer | handleiding |
+| Display dimbaar | ja, tot volledig uit | jouw test + beoordeling |
+| FM-radio | ja | handleiding |
+| Bluetooth | ja | handleiding |
+| Voeding | netstroom via adapter · 6 V DC, 1000 mA · standby < 0,5 W | handleiding |
+| Aansluitingen | USB-ingang · USB-C-ingang · Bluetooth · FM-radio | handleiding |
+| Afmetingen | 16 × 18 cm (b × h) | listing |
+| Gewicht | 450 g | listing |
+| EAN | 8721161165378 | listing |
+| Garantie | 1 jaar | jij + listing |
+| In de doos | wake-up light · USB-voedingskabel · voedingsadapter met EU-stekker · handleiding | handleiding, Verpakkingsinhoud |
+| Retourtermijn | 30 dagen | jij |
+| Retourzending | wij betalen | jij |
+| Verpakking | moet bewaard blijven | jij |
+| Terugbetaling | binnen 14 dagen | jij |
+| Besteldeadline | 23:59, levertijd 2 werkdagen | jij |
+| Verzending | € 4,95 · gratis vanaf twee exemplaren | jij |
+| KvK · btw · adres · e-mail · reactietijd | ingevuld | jij |
+| Handleiding als PDF | geüpload en gekoppeld aan `nawm.manual_pdf` | jij |
 
-De theme toont Klarna nergens: `snippets/pdp-payment-methods.liquid` filtert de
-methode weg en de koopknop rendert geen `payment_button`, dus de dynamic
-checkout buttons staan uit. Zonder punt 1 verschijnt Klarna alsnog in de
-checkout, hoe schoon de theme ook is.
+---
 
-**Grep ter controle van de theme zelf:**
+## 2. Nog blokkerend
+
+### 2.1 Hoeveel geluiden kun je écht als wekgeluid kiezen? — de belangrijkste
+
+Drie bronnen, drie verhalen:
+
+| Bron | Zegt |
+|---|---|
+| Handleiding, kenmerkenblok p. 3 | "22 Wekker geluiden" |
+| Handleiding, hoofdstuk 7 | een tracklijst van 22 natuurgeluiden |
+| bol-specificaties | 25 geluiden totaal, **7** selecteerbaar als alarm |
+| Beoordeling van een koper, 13 dec 2025 | "voor het instellen van het alarm maar uit **7 geluiden + radio** kan kiezen en niet uit alle 22" |
+
+De handleiding is leidend, maar hij zégt nergens dat alle 22 als wekgeluid te
+kiezen zijn — dat kenmerkenblok is marketing, geen instelmenu. Twee
+onafhankelijke bronnen zeggen 7.
+
+**Daarom staat er nu geen getal.** Dit is precies de fout waar §3.8 van de spec
+voor waarschuwt: wie 22 verwacht en er 7 vindt, stuurt hem terug én schrijft een
+slechte beoordeling. Andersom verkoop je jezelf tekort, maar dat kost geen
+retour.
+
+> **Wat jij moet doen:** zet het apparaat aan, houd `AL1 SET` ingedrukt, draai
+> door het wekgeluidmenu en tel hoeveel opties er langskomen. Noteer ook of de
+> radio ertussen staat. Vul dat in bij `nawm.wake_sounds_count` en
+> `nawm.wake_sounds_list`. Twee minuten werk, en het is de rij waar de meeste
+> retouren op hangen.
+
+Zolang het leeg is, tonen de demo-chips de 22 natuurgeluiden onder het kopje
+"Natuurgeluiden" met een link naar de specificaties — niet als wekgeluiden.
+
+### 2.2 Blijft het alarm bewaard bij stroomuitval?
+
+De handleiding zegt hier niets over; er staat alleen netstroomvoeding in.
+Trek de stekker er een minuut uit en kijk of tijd en alarm blijven staan.
+→ `nawm.battery_backup`. Dit is FAQ-vraag 3.
+
+### 2.3 De USB-poort: ingang of oplaadpunt?
+
+De handleiding tekent op de achterkant een "USB input" en een "Type-C input".
+De bol-listing zegt "USB-oplaadpoort: ja, voor het opladen van je telefoon".
+Dat is niet hetzelfde, en de handleiding wint.
+
+**Er wordt daarom nergens beweerd dat je je telefoon eraan kunt opladen.** Klopt
+dat wel, dan is het een goed verkoopargument — check het met een kabel en zet
+`nawm.has_usb_port` aan.
+
+### 2.4 De doosinhoud — hier moet je kiezen
+
+De handleiding noemt onder *Verpakkingsinhoud* vier dingen: het apparaat, een
+USB-voedingskabel, een voedingsadapter en de gebruikershandleiding. Geen
+slaapgids, geen snelstartkaart, geen instelkaart, geen QR-kaart.
+
+De bol-titel noemt wél een slaapgids, en de landingspagina noemt vijf gedrukte
+onderdelen (`nawm.inbox.item2` t/m `item5`, `nawm.offer.included`).
+
+Je zei dat die items er zijn. De productpagina volgt nu de handleiding, omdat
+jouw eigen regel zegt dat die leidend is — en omdat een klant die vier dingen
+uitpakt terwijl de site er zes belooft, direct mailt.
+
+**Kies één van tweeën:**
+
+- de gids en de kaarten zitten er echt bij → ik zet ze op de productpagina en
+  we laten de handleiding aanpassen, want die klopt dan niet;
+- of ze zijn digitaal → dan noemen we ze apart, niet onder "In de doos", en
+  moet de landingspagina dat ook zo zeggen.
+
+Tot die keuze is de landingspagina onaangeroerd gelaten, op één punt na: daar
+stond "verzending inbegrepen" en dat is met € 4,95 verzendkosten niet meer waar.
+Die regel is aangepast.
+
+### 2.5 De voorraad staat op nul
+
+Het product heeft voorraadregistratie aan, staat op 0 en weigert bestellingen
+bij nul voorraad. **De pagina toont daardoor nu "Tijdelijk uitverkocht" in plaats
+van een koopknop.** Ik heb hier geen aantal ingevuld — dat is een echt getal, geen
+instelling.
+
+Boek de voorraad in bij Winkellocatie, of zet de variant op "doorverkopen bij
+uitverkocht" als je op bestelling levert.
+
+### 2.6 Het reviewcijfer klopt niet met wat je doorgaf
+
+Je zei 4,8 gemiddeld, geen 1-sterbeoordelingen en een paar van 3 sterren.
+Op de listing staat vandaag:
+
+| | |
+|---|---|
+| Gemiddelde | **4,4** |
+| Aantal | **41** |
+| Verdeling | 20 × 5★ · 18 × 4★ · 1 × 3★ · 2 × 2★ · 0 × 1★ |
+
+Ik heb de cijfers van de listing ingevuld, niet 4,8. De cijferregel op de pagina
+zegt letterlijk "op bol.com, gecontroleerd op 22 augustus 2026" en een bezoeker
+is één klik van die pagina verwijderd. Klopt 4,8 wel — bijvoorbeeld over een
+andere periode of een ander kanaal — pas het dan aan in de themasettings en zet
+erbij waar het cijfer vandaan komt.
+
+Er staat nu **één** echte beoordeling op de pagina, met bron, link en datum: een
+5-sterbeoordeling van 13 december 2025 die zowel het dimbare display als de
+zonsopgangduur bevestigt, en eerlijk het geluidenpunt uit §2.1 noemt. Voeg er
+drie tot vijf toe via *Inhoud → Metaobjecten → nawm_review*; kies met voorrang
+beoordelingen die een bezwaar wegnemen.
+
+### 2.7 Bedrijfsnaam ontbreekt
+
+KvK, btw-nummer, adres en e-mailadres staan erin. De **naam zoals ingeschreven**
+bij de KvK niet — vul `company_name` in bij de themasettings.
+
+Let ook op: in de handleiding staat `management@mangohub.nl` als contactadres,
+op de site komt `zubaidiecommerce@gmail.com` te staan. Twee adressen voor
+dezelfde klant is verwarrend; kies er één.
+
+### 2.8 Beeld en video
+
+Onveranderd — jij maakt de foto's. Zolang een beeld ontbreekt, toont de galerij
+een zichtbare placeholder met de bestandsnaam erin.
+
+| # | Beeld | Waar |
+|---|---|---|
+| 1 | Recht van voren, display aan | Galerij |
+| 2 | Schuin van boven, knoppen zichtbaar | Galerij |
+| 3 | Achterkant met de aansluitingen | Galerij |
+| 4 | **Donkere kamer, laagste stand, display gedimd** | §3.4 |
+| 5 | Naast een hand of mok voor schaalgevoel | Galerij |
+| 6 | Doosinhoud plat gelegd | §3.8 |
+| 7 | Video: timelapse zonsopgang, 6–10s | §3.6 |
+| 8 | Video: display dimmen, 3s | §3.4 |
+
+Bij video 7 hoort een Nederlands ondertitelbestand (`.vtt`) in `assets/`.
+
+---
+
+## 3. Buiten de theme
+
+| # | Wat | Status |
+|---|---|---|
+| 1 | Klarna uitvinken bij Betalingen | door jou opgepakt |
+| 2 | Losse Klarna-app verwijderen | door jou opgepakt |
+| 3 | Gastafrekenen aan | door jou opgepakt |
+| 4 | Product op sjabloon `wake-up-light` | ✅ staat goed |
+| 5 | Metafielddefinities `nawm` | ✅ compleet, waarden ingevuld |
+| 6 | Metaobjecten `nawm_review` / `nawm_faq` | ✅ aangemaakt |
+| 7 | Beelden uploaden | jij |
+| 8 | Voorraad inboeken | jij — zie §2.5 |
+
+De theme noemt Klarna nergens; `pdp-payment-methods.liquid` filtert de methode
+weg en de koopknop rendert geen `payment_button`. Ter controle:
 
 ```bash
 grep -rniE "\bklarna\b|\bafterpay\b|achteraf betalen|in 3 termijnen" sections snippets blocks templates locales/nl.default.json
@@ -70,111 +200,40 @@ grep -rniE "\bklarna\b|\bafterpay\b|achteraf betalen|in 3 termijnen" sections sn
 
 ---
 
-## 3. Metaobjectvelden die de productpagina verwacht
+## 4. Wat ik in de winkel heb gewijzigd
 
-### `nawm_review`
+Zodat je het kunt terugvinden:
 
-Bestaande velden uit BUILD SPEC §8.2 — `citaat`, `naam`, `bron`, `bron_url`,
-`datum`, `thema` — plus één toevoeging:
+- **Metafielddefinities** `light_colors`, `in_the_box` en `wake_sounds_list`
+  waren losse tekstvelden; de build spec schrijft lijsten voor. Ze waren nog
+  leeg, dus ze zijn verwijderd en opnieuw aangemaakt als lijst.
+- **Nieuwe definities**: `relax_sounds_list`, `dimensions_mm`, `connections`.
+- **`nawm_review`** heeft er een veld `bezwaar_code` bij, en `bron` accepteert nu
+  ook `bol.com` naast `e-mail` en `Trustpilot`.
+- **Eén beoordeling** aangemaakt en op actief gezet.
+- **De handleiding** geüpload naar Bestanden en gekoppeld aan `nawm.manual_pdf`.
 
-| Veld | Type | Waarom |
-|---|---|---|
-| `bezwaar_code` | single_line_text (B1–B12) | Reviews die een bezwaar wegnemen worden eerst getoond |
-
-`thema` voedt de filterchips. De chips worden opgebouwd uit de thema's die de
-getoonde reviews werkelijk hebben, dus er verschijnt nooit een filter dat niets
-oplevert.
-
-Een review zonder `bron_url` of `datum` rendert niet. Die guard zit in Liquid en
-kan niet per ongeluk worden overgeslagen.
-
-### `nawm_faq`
-
-| Veld | Type |
-|---|---|
-| `vraag` | single_line_text |
-| `antwoord` | multi_line_text |
-| `volgorde` | integer |
-| `bezwaar_code` | single_line_text (B1–B12) |
-| `in_json_ld` | boolean |
-
-`bezwaar_code` gaat mee in het `open_faq`-event. Daarmee zie je in GA4 welk
-bezwaar het vaakst een bestelling tegenhoudt — directe input voor je
-advertentiecopy.
+Let op: in de definitie van `nawm_faq` heet het veld `in_json_id` terwijl het
+label `in_json_ld` is. De sectie leest allebei, dus er gaat niets mis — maar als
+je de definitie ooit opnieuw aanmaakt, gebruik dan `in_json_ld`.
 
 ---
 
-## 4. Beeld dat nog gemaakt moet worden
+## 5. Techniek
 
-Fotografie, geen AI. Dit zijn bewijsbeelden.
+`shopify theme check` draait nu schoon op de PDP. Twee bugs die eruit kwamen zijn
+opgelost, en de tweede zat ook al in de landingspagina:
 
-| # | Beeld | Waar |
-|---|---|---|
-| 1 | Apparaat recht van voren, display aan | Galerij |
-| 2 | Schuin van boven, knoppen zichtbaar | Galerij |
-| 3 | Achterkant met aansluitingen en USB-poort | Galerij |
-| 4 | **Donkere kamer, laagste stand, display gedimd** | §3.4 — het meest onderschatte beeld op de pagina |
-| 5 | Naast een hand of mok voor schaalgevoel | Galerij |
-| 6 | Doosinhoud plat gelegd | §3.8 |
-| 7 | Video: timelapse zonsopgang, 6–10s | §3.6 |
-| 8 | Video: display dimmen van vol naar bijna uit, 3s | §3.4 |
+1. **Filters in `render`-argumenten.** Shopify past ze niet toe, dus
+   `label: 'sleutel' | t` zette de ruwe sleutel in de specificatietabel in plaats
+   van het label. Dat gold voor 40 aanroepen, waarvan 24 op de landingspagina.
+   `nawm-spec-row`, `nawm-cta` en `nawm-figure` nemen de sleutel nu zelf aan.
+2. **Een `{% liquid %}`-regel die over twee regels liep** in de
+   leverdatumberekening — dat is een syntaxfout, geen stijlkwestie.
 
-Zolang een beeld ontbreekt, rendert de galerij een zichtbare placeholder met de
-bestandsnaam erin. Een lege plek schuift nooit stilletjes door.
+Wat blijft staan: drie ontbrekende fontbestanden (die staan achter de setting
+`nawm_self_hosted_fonts`, die uit staat) en veertien waarschuwingen over
+CSS-klassen die gedeeld worden tussen secties. Dat laatste is opzet.
 
----
-
-## 5. Losse punten die tijdens het bouwen opvielen
-
-### 5.1 De landingspagina noemt onderdelen die niet in de doos zitten
-
-`locales/nl.default.json` → `nawm.inbox.item2` t/m `item5` en
-`nawm.offer.included` noemen een snelstartkaart, een gedrukte Sleep–Wake Guide,
-een instelkaart en een QR-kaart. Volgens `NAWM_PDP_CONVERSIE_SPEC.md` §1 zitten
-die er op basis van de werkelijke doosfoto niet in.
-
-De productpagina toont alleen wat er wél in zit. **De landingspagina is niet
-aangepast** — dat valt buiten deze opdracht, maar het is een feitelijke
-onjuistheid over de doosinhoud en dus een beslissing die genomen moet worden:
-óf de onderdelen komen er alsnog, óf de landingspagina wordt gecorrigeerd.
-
-### 5.2 Uitvoeringskeuze bij meerdere varianten
-
-Het product heeft één SKU. Mocht er later een tweede variant bij komen, dan
-toont de koopknop een keuzelijst in plaats van stilzwijgend altijd de eerste
-variant te bestellen. In de mobiele koopbalk past die keuzelijst niet; daar
-springt de knop dan naar het koopblok.
-
-### 5.3 `shopify theme check` is niet gedraaid
-
-De Shopify CLI staat niet op deze machine. Liquid-tagbalans en de JSON van elk
-sectieschema zijn wel gecontroleerd, en de claims-lint is groen. Draai vóór het
-mergen alsnog:
-
-```bash
-shopify theme check
-```
-
-### 5.4 De leverdatum kent geen feestdagen
-
-`snippets/pdp-delivery-date.liquid` slaat weekenden over en schuift de
-verzenddag door naar de eerstvolgende werkdag, maar hij weet niets van Koningsdag,
-Pasen of Kerst. Rond die dagen belooft de pagina een dag te vroeg.
-
-Twee manieren om dat op te lossen, allebei prima:
-
-- laat `delivery_business_days` rond feestdagen tijdelijk een dag hoger staan;
-- of laat `order_deadline_time` leeg, dan valt de pagina terug op de vrije tekst
-  in `delivery_time`.
-
-### 5.5 Prijsverschilblok staat uit
-
-De themasetting `show_price_difference` staat standaard uit. Zet hem pas aan
-zodra het besluit uit §6.1 gevallen is; zonder ingevulde uitleg toont het blok
-een VERIFY.
-
-### 5.6 De gegenereerde VERIFY-lijst staat in `docs/OPEN.md`
-
-`scripts/claims-lint.sh` schrijft de actuele lijst met openstaande tokens naar
-het gegenereerde blok in `docs/OPEN.md`. Dit bestand blijft handwerk: het legt
-uit wát er nodig is en waar het vandaan moet komen.
+Feestdagen zitten niet in de leverdatumberekening. Zoals afgesproken: rond een
+feestdag zet je `delivery_business_days` tijdelijk een dag hoger.

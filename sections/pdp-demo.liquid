@@ -19,7 +19,20 @@
     assign pdp_product = settings.nawm_product
   endif
 
+  comment
+    De chips tonen de tracklijst met natuurgeluiden uit de handleiding, en heten
+    hier ook zo. Ze "wekgeluiden" noemen zou suggereren dat je uit alle 22 kunt
+    kiezen bij het instellen van de wekker, en dat staat nog niet vast — zie
+    docs/OPEN-PDP.md. Staat de geverifieerde wekgeluidenlijst er wél, dan wint
+    die.
+  endcomment
   assign sounds = pdp_product.metafields.nawm.wake_sounds_list.value
+  assign sounds_label = 'nawm.sunrise.sounds_label' | t
+  if sounds == blank
+    assign sounds = pdp_product.metafields.nawm.relax_sounds_list.value
+    assign sounds_label = 'nawm.pdp.demo.sounds_label' | t
+  endif
+
   assign wake = section.settings.wake_time | default: '07:00'
 
   assign eyebrow = section.settings.eyebrow
@@ -86,7 +99,7 @@
           </div>
 
           <div class="nawm-sunrise__sounds">
-            <p class="nawm-sunrise__label" id="pdp-sounds-label">{{ 'nawm.sunrise.sounds_label' | t }}</p>
+            <p class="nawm-sunrise__label" id="pdp-sounds-label">{{ sounds_label }}</p>
             <div class="nawm-sunrise__chips" role="group" aria-labelledby="pdp-sounds-label">
               {%- if sounds != blank -%}
                 {%- for sound in sounds -%}
@@ -108,6 +121,12 @@
                 </p>
               {%- endif -%}
             </div>
+
+            {%- if sounds != blank and pdp_product.metafields.nawm.wake_sounds_list.value == blank -%}
+              <p class="nawm-small pdp-demo__sounds-note">
+                <a href="#specificaties">{{ 'nawm.pdp.demo.sounds_note' | t }}</a>
+              </p>
+            {%- endif -%}
           </div>
 
           {%- comment -%}
@@ -218,6 +237,15 @@
 
   .pdp-demo__note {
     margin-block-start: var(--sp-2);
+  }
+
+  .pdp-demo__sounds-note {
+    margin-block-start: var(--sp-2);
+  }
+
+  .pdp-demo__sounds-note a {
+    color: var(--fg-soft);
+    text-underline-offset: 3px;
   }
 
   .pdp-demo__cta {

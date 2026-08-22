@@ -47,7 +47,7 @@
 
     <div class="nawm-offer__cta nawm-reveal" style="--reveal-delay: 80ms;">
       {% render 'nawm-cta',
-        label: 'nawm.offer.cta' | t,
+        label_key: 'nawm.offer.cta',
         product: product,
         url: product.url,
         event: 'add_to_cart',
@@ -128,7 +128,7 @@
 
 <div class="nawm-sticky-cta" data-nawm-sticky-cta inert>
   <p class="nawm-sticky-cta__price nawm-mono">{{ price }}</p>
-  {% render 'nawm-cta', label: 'nawm.offer.sticky_label' | t, url: '#offer' %}
+  {% render 'nawm-cta', label_key: 'nawm.offer.sticky_label', url: '#offer' %}
 </div>
 
 {% stylesheet %}
