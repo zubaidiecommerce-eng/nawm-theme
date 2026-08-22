@@ -1,0 +1,189 @@
+{% comment %}
+  PDP-sectie: beantwoordt B3 (nooit van dit merk gehoord).
+  Zie NAWM_PDP_CONVERSIE_SPEC.md §3.12.
+
+  Een onbekend merk met een webshop die niemand kent, heeft één ding nodig:
+  bewijs dat er mensen achter zitten. Bedrijfsnaam zoals ingeschreven,
+  vestigingsplaats, KvK, btw-nummer, een e-mailadres dat gelezen wordt en een
+  reactietijd die je waarmaakt.
+
+  Het verhaal over waarom dit product bestaat staat bewust niet in de copydeck:
+  dat is geen kant-en-klare tekst maar iets wat Mohammed zelf schrijft. Zolang
+  het veld leeg is, staat er een VERIFY — beter een zichtbaar gat dan een
+  verzonnen oprichtersverhaal. Twee concrete zinnen zijn genoeg; geen
+  gekruiste armen, geen missie om de wereld beter te laten slapen.
+
+  De reactietijd verschijnt alleen wanneer hij is ingevuld. Een belofte over
+  antwoorden die je niet haalt, kost meer vertrouwen dan hij oplevert.
+{% endcomment %}
+
+{% liquid
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.brand.heading' | t
+  endif
+%}
+
+<section class="nawm-section pdp-brand ctx-dawn" id="over-nawm">
+  <div class="nawm-wrap pdp-brand__inner">
+    <h2 class="pdp-brand__heading">{{ heading }}</h2>
+
+    <div class="pdp-brand__body">
+      {%- if section.settings.body != blank -%}
+        {{ section.settings.body }}
+      {%- else -%}
+        <p>
+          {% render 'nawm-verify',
+            field: 'brand_story',
+            note: 'twee concrete zinnen over waarom dit product bestaat — door Mohammed zelf te schrijven'
+          %}
+        </p>
+      {%- endif -%}
+    </div>
+
+    <dl class="pdp-brand__details">
+      {%- if settings.company_name != blank -%}
+        <div class="pdp-brand__detail">
+          <dt>{{ 'nawm.offer.company_label' | t }}</dt>
+          <dd>{{ settings.company_name }}</dd>
+        </div>
+      {%- endif -%}
+
+      <div class="pdp-brand__detail">
+        <dt>{{ 'nawm.pdp.brand.city_label' | t }}</dt>
+        <dd>
+          {% render 'nawm-verify',
+            value: settings.company_city,
+            field: 'company_city',
+            note: 'vestigingsplaats zoals ingeschreven'
+          %}
+        </dd>
+      </div>
+
+      <div class="pdp-brand__detail">
+        <dt>{{ 'nawm.pdp.brand.kvk_label' | t }}</dt>
+        <dd class="nawm-mono">
+          {% render 'nawm-verify',
+            value: settings.kvk_number,
+            field: 'kvk_number',
+            note: 'KvK-nummer'
+          %}
+        </dd>
+      </div>
+
+      <div class="pdp-brand__detail">
+        <dt>{{ 'nawm.pdp.brand.vat_label' | t }}</dt>
+        <dd class="nawm-mono">
+          {% render 'nawm-verify',
+            value: settings.vat_number,
+            field: 'vat_number',
+            note: 'btw-nummer'
+          %}
+        </dd>
+      </div>
+
+      <div class="pdp-brand__detail">
+        <dt>{{ 'nawm.pdp.brand.email_label' | t }}</dt>
+        <dd>
+          {%- if settings.support_email != blank -%}
+            <a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>
+          {%- else -%}
+            {% render 'nawm-verify',
+              field: 'support_email',
+              note: 'e-mailadres dat daadwerkelijk gelezen wordt'
+            %}
+          {%- endif -%}
+        </dd>
+      </div>
+    </dl>
+
+    {%- if settings.support_response_time != blank -%}
+      <p class="pdp-brand__response">
+        {{ 'nawm.pdp.brand.response' | t: time: settings.support_response_time }}
+      </p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .pdp-brand {
+    padding-block: clamp(3rem, 7vw, 5rem);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .pdp-brand__inner {
+    max-width: 52rem;
+    font-size: var(--fs-small);
+  }
+
+  .pdp-brand__heading {
+    font-size: var(--fs-h3);
+  }
+
+  .pdp-brand__body {
+    margin-block-start: var(--sp-3);
+    max-width: 60ch;
+  }
+
+  .pdp-brand__body p {
+    font-size: var(--fs-small);
+  }
+
+  .pdp-brand__details {
+    margin: var(--sp-5) 0 0;
+    display: grid;
+    gap: var(--sp-3) var(--sp-5);
+  }
+
+  @media (min-width: 750px) {
+    .pdp-brand__details {
+      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    }
+  }
+
+  .pdp-brand__detail dt {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--fg-soft);
+  }
+
+  .pdp-brand__detail dd {
+    margin: var(--sp-1) 0 0;
+    color: var(--fg);
+  }
+
+  .pdp-brand__response {
+    margin-block-start: var(--sp-5);
+    color: var(--fg-soft);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP bedrijfsinfo",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Beantwoordt bezwaar B3. KvK, btw-nummer, e-mailadres en reactietijd staan in de themasettings onder Productpagina · bedrijfsgegevens."
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Waarom dit product bestaat",
+      "info": "Twee concrete zinnen, in je eigen woorden. Geen missieverklaring."
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP bedrijfsinfo"
+    }
+  ]
+}
+{% endschema %}

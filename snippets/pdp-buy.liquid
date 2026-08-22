@@ -1,0 +1,110 @@
+{% doc %}
+  De koopknop van de productpagina. PDP SPEC §4.2.
+
+  Eén label, overal: `In winkelwagen — {{ prijs }}`. Niet variëren met "Bestel
+  nu" of "Afrekenen" — elke variatie is een moment waarop de bezoeker zich
+  afvraagt of hij nog op hetzelfde pad zit.
+
+  Shopify's dynamic checkout buttons staan hier bewust niet in. Die knop wisselt
+  per bezoeker en kan een gespreid-betalen-optie tonen die niemand gekozen
+  heeft (PDP SPEC §5.2). Dit formulier rendert daarom alleen `payment_button`
+  níét — er valt verder niets uit te zetten.
+
+  De uitvoeringskeuze verschijnt alleen bij een product met meer dan één
+  variant. Bij één SKU is het een leeg element en dus geen ruis; zou er later
+  een tweede variant bijkomen, dan verkoopt de knop niet stilzwijgend altijd
+  dezelfde.
+
+  @param {object} [product] - Het product. Ontbreekt het, dan wordt de knop een link.
+  @param {string} id - Uniek id; er staan meerdere formulieren op deze pagina.
+  @param {string} [event] - dataLayer-event bij klik. Standaard add_to_cart.
+  @param {boolean} [microcopy] - Toon de regel eronder. Standaard true.
+  @param {boolean} [shipping] - Neem de verzendregel mee in de microcopy.
+  @param {boolean} [short] - Label zonder prijs. Alleen voor de mobiele koopbalk,
+    waar de prijs er los naast staat.
+{% enddoc %}
+
+{%- liquid
+  assign show_microcopy = true
+  if microcopy == false
+    assign show_microcopy = false
+  endif
+
+  assign click_event = event | default: 'add_to_cart'
+
+  if short
+    assign label = 'nawm.pdp.common.cta_short' | t
+  else
+    capture price
+      render 'nawm-price', product: product
+    endcapture
+    assign label = 'nawm.pdp.common.cta' | t: price: price
+  endif
+-%}
+
+{%- liquid
+  comment
+    In de mobiele koopbalk past geen uitvoeringskeuze. Heeft het product er
+    meer dan één, dan springt de knop daar naar het koopblok in plaats van
+    stilzwijgend de eerste variant te bestellen.
+  endcomment
+  assign jump_to_buy_block = false
+  if short and product != blank and product.has_only_default_variant == false
+    assign jump_to_buy_block = true
+  endif
+-%}
+
+<div class="pdp-buy">
+  {%- if jump_to_buy_block -%}
+    <a class="nawm-cta nawm-cta--full pdp-buy__button" href="#koopblok">{{ label }}</a>
+  {%- elsif product != blank and product.available -%}
+    {%- form 'product', product, id: id, class: 'pdp-buy__form', novalidate: 'novalidate' -%}
+      {%- unless product.has_only_default_variant -%}
+        <div class="pdp-buy__variants">
+          <label class="pdp-buy__variant-label" for="{{ id }}-variant">
+            {{ 'nawm.pdp.common.variant_label' | t }}
+          </label>
+          <select id="{{ id }}-variant" name="id" class="pdp-buy__variant-select">
+            {%- for variant in product.variants -%}
+              <option
+                value="{{ variant.id }}"
+                {% if variant == product.selected_or_first_available_variant %}selected{% endif %}
+                {% unless variant.available %}disabled{% endunless %}
+              >
+                {{ variant.title }} — {{ variant.price | money }}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+      {%- else -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      {%- endunless -%}
+
+      <button
+        type="submit"
+        name="add"
+        class="nawm-cta nawm-cta--full pdp-buy__button"
+        data-nawm-event="{{ click_event }}"
+      >
+        {{ label }}
+      </button>
+    {%- endform -%}
+  {%- elsif product != blank -%}
+    <span class="nawm-cta nawm-cta--full pdp-buy__button" aria-disabled="true">
+      {{ 'nawm.pdp.common.sold_out' | t }}
+    </span>
+  {%- else -%}
+    {%- comment -%}
+      Zonder gekoppeld product is er niets om aan de winkelwagen toe te voegen.
+      De knop wordt dan een sprong naar het aanbod, zodat de pagina in de
+      theme-editor en op een leeg dev-thema bruikbaar blijft.
+    {%- endcomment -%}
+    <a class="nawm-cta nawm-cta--full pdp-buy__button" href="#aanbod" data-nawm-event="{{ click_event }}">
+      {{ label }}
+    </a>
+  {%- endif -%}
+
+  {%- if show_microcopy -%}
+    {% render 'pdp-microcopy', shipping: shipping %}
+  {%- endif -%}
+</div>

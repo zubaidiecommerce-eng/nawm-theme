@@ -1,0 +1,117 @@
+{% comment %}
+  PDP-sectie: de afsluiting. Zie NAWM_PDP_CONVERSIE_SPEC.md §3.11.
+
+  Geen nieuwe informatie, geen nieuwe argumenten. Wie hier komt heeft alles
+  gelezen; de enige taak van deze sectie is de knop binnen bereik zetten en de
+  drempel nog één keer verlagen.
+
+  Het anker `data-pdp-close-cta` laat de mobiele koopbalk verdwijnen zodra deze
+  knop in beeld komt, zodat er nooit twee knoppen tegelijk staan.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.close.heading' | t
+  endif
+
+  assign return_days = settings.return_days | times: 1
+  if return_days > 0
+    assign reassurance = 'nawm.pdp.close.line' | t: days: return_days
+  else
+    assign reassurance = 'nawm.pdp.close.line_fallback' | t
+  endif
+%}
+
+<section class="nawm-section pdp-close ctx-dawn" id="afsluiting">
+  <div class="nawm-wrap pdp-close__inner">
+    <div class="pdp-close__panel nawm-reveal">
+      <h2 class="pdp-close__heading">{{ heading }}</h2>
+      <p class="pdp-close__line">{{ reassurance }}</p>
+
+      <div class="pdp-close__cta" data-pdp-close-cta>
+        {% render 'pdp-buy', product: pdp_product, id: 'pdp-close-form' %}
+      </div>
+    </div>
+
+    {% render 'pdp-payment-methods' %}
+
+    <p class="nawm-small pdp-close__company">
+      {%- if settings.company_name != blank -%}
+        {{ settings.company_name }}
+      {%- endif -%}
+      {%- if settings.support_email != blank -%}
+        {{ ' · ' }}<a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>
+      {%- elsif settings.contact_url != blank -%}
+        {{ ' · ' }}<a href="{{ settings.contact_url }}">{{ 'nawm.offer.contact_label' | t }}</a>
+      {%- endif -%}
+    </p>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pdp-close__inner {
+    max-width: 46rem;
+    text-align: center;
+  }
+
+  .pdp-close__panel {
+    padding: clamp(2rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 3rem);
+    border: 1px solid var(--nawm-amber);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-amber) 22%, var(--nawm-dawn));
+  }
+
+  .pdp-close__heading {
+    margin-inline: auto;
+    max-width: 18ch;
+  }
+
+  .pdp-close__line {
+    margin-block-start: var(--sp-4);
+    margin-inline: auto;
+    max-width: 44ch;
+    color: var(--ink-day);
+  }
+
+  .pdp-close__cta {
+    margin-block-start: var(--sp-5);
+    margin-inline: auto;
+    max-width: 28rem;
+  }
+
+  .pdp-close .pdp-payments {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+  }
+
+  .pdp-close__company {
+    margin-block-start: var(--sp-4);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP afsluiting",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Geen nieuwe argumenten. Alleen de kop, één geruststellende regel, de knop en de betaallogo's."
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP afsluiting"
+    }
+  ]
+}
+{% endschema %}

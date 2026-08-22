@@ -204,23 +204,54 @@ hoeft te scannen.
 ---
 
 <!-- claims-lint:start -->
-_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-20 15:42.  Niet met de hand bijwerken._
+_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-21 10:28.  Niet met de hand bijwerken._
 
-### Openstaande VERIFY-tokens (12)
+### Openstaande VERIFY-tokens (43)
 
 ```
-sections/nawm-faq.liquid:87:                  {% render 'nawm-verify', field: key, note: verify_notes[note_index] %}
+sections/nawm-system.liquid:70:              {% render 'nawm-verify',
+sections/pdp-setup.liquid:74:          {% render 'nawm-verify',
+sections/pdp-proof.liquid:77:        {% render 'nawm-verify',
+sections/pdp-proof.liquid:109:        {% render 'nawm-verify',
+sections/pdp-specs.liquid:64:                {% render 'nawm-verify',
+sections/pdp-offer.liquid:72:              {% render 'nawm-verify',
+sections/pdp-offer.liquid:84:              {% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
+sections/pdp-offer.liquid:94:              {% render 'nawm-verify', field: 'warranty_years', note: 'garantietermijn' %}
+sections/pdp-offer.liquid:115:              {% render 'nawm-verify',
+sections/pdp-offer.liquid:143:              {% render 'nawm-verify',
+sections/pdp-offer.liquid:159:              {% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
+sections/pdp-offer.liquid:166:              {% render 'nawm-verify',
+sections/pdp-offer.liquid:176:              {% render 'nawm-verify',
+sections/pdp-offer.liquid:197:            {% render 'nawm-verify',
+sections/pdp-offer.liquid:213:            {{ ' ' }}{% render 'nawm-verify',
+sections/pdp-brand.liquid:36:          {% render 'nawm-verify',
+sections/pdp-brand.liquid:55:          {% render 'nawm-verify',
+sections/pdp-brand.liquid:66:          {% render 'nawm-verify',
+sections/pdp-brand.liquid:77:          {% render 'nawm-verify',
+sections/pdp-brand.liquid:91:            {% render 'nawm-verify',
+sections/nawm-sunrise-demo.liquid:92:                {% render 'nawm-verify',
+sections/nawm-sunrise-demo.liquid:151:                {% render 'nawm-verify',
+sections/nawm-faq.liquid:88:                  {% render 'nawm-verify', field: key, note: verify_notes[note_index] %}
 sections/nawm-inbox.liquid:95:        {% render 'nawm-verify',
+sections/nawm-specs.liquid:59:                {% render 'nawm-verify',
 sections/nawm-offer.liquid:68:          {% render 'nawm-verify', field: 'shipping_line', note: 'verzendkosten en of ze in de marge zijn verwerkt' %}
 sections/nawm-offer.liquid:75:          {% render 'nawm-verify', field: 'delivery_time', note: 'levertijd' %}
 sections/nawm-offer.liquid:82:          {% render 'nawm-verify', field: 'return_policy_line', note: 'retourtermijn en -voorwaarden' %}
 sections/nawm-offer.liquid:89:          {% render 'nawm-verify', field: 'warranty_line', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
-sections/nawm-specs.liquid:59:                {% render 'nawm-verify',
-sections/nawm-sunrise-demo.liquid:92:                {% render 'nawm-verify',
-sections/nawm-sunrise-demo.liquid:151:                {% render 'nawm-verify',
-sections/nawm-system.liquid:70:              {% render 'nawm-verify',
-snippets/nawm-price.liquid:29:  {%- render 'nawm-verify',
+sections/pdp-evening.liquid:75:              {% render 'nawm-verify',
+sections/pdp-evening.liquid:89:              {% render 'nawm-verify',
+sections/pdp-hero.liquid:203:                {% render 'nawm-verify',
+sections/pdp-hero.liquid:221:                {% render 'nawm-verify',
+sections/pdp-hero.liquid:251:                {% render 'nawm-verify', field: 'manual_pdf', note: 'Nederlandstalige handleiding als PDF' %}
+sections/pdp-hero.liquid:295:              {% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
+sections/pdp-hero.liquid:311:              {% render 'nawm-verify', field: 'warranty_years', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
+sections/pdp-demo.liquid:104:                  {% render 'nawm-verify',
+sections/pdp-demo.liquid:160:              {% render 'nawm-verify',
+sections/pdp-faq.liquid:150:                <p>{% render 'nawm-verify', field: verify_field, note: verify_note %}</p>
 snippets/nawm-spec-row.liquid:44:      {% render 'nawm-verify', field: field, note: note %}
+snippets/pdp-microcopy.liquid:37:    {% render 'nawm-verify',
+snippets/pdp-microcopy.liquid:46:    {{ ' · ' }}{% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
+snippets/nawm-price.liquid:29:  {%- render 'nawm-verify',
 ```
 
 ### Claims die eigen bewijs vereisen

@@ -1,0 +1,293 @@
+{% comment %}
+  PDP-sectie: beantwoordt B1 (werkt dit echt?). Hier wordt de belofte
+  waargemaakt. Zie NAWM_PDP_CONVERSIE_SPEC.md §3.6.
+
+  Twee elementen naast elkaar, allebei expliciet gelabeld:
+    links  de scrubber   → "Schematisch"
+    rechts de video      → "Opname van het verkoopmodel"
+
+  Dat label is geen nette toevoeging maar de kern van de sectie. Een
+  gerenderde weergave die als opname leest, is op een verkooppagina een
+  misleidende voorstelling van zaken. Verwijder de labels niet.
+
+  De sectie-CTA staat onderaan: na de demo is de koopbereidheid het hoogst.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+
+  assign sounds = pdp_product.metafields.nawm.wake_sounds_list.value
+  assign wake = section.settings.wake_time | default: '07:00'
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.demo.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.demo.heading' | t
+  endif
+
+  assign body = section.settings.body
+  if body == blank
+    assign body = 'nawm.pdp.demo.body' | t
+  endif
+%}
+
+<script src="{{ 'nawm-sunrise.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<section class="nawm-section pdp-demo ctx-dawn" id="demo">
+  <div class="nawm-wrap">
+    <div class="pdp-head pdp-head--wide nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+      <p class="nawm-body">{{ body }}</p>
+    </div>
+
+    <div class="pdp-demo__grid">
+      {%- comment -%} ------------------------------------------ de scrubber {%- endcomment -%}
+      <div class="pdp-demo__panel">
+        <p class="nawm-mono pdp-demo__tag">{{ 'nawm.pdp.demo.schematic' | t }}</p>
+
+        <nawm-sunrise class="nawm-sunrise pdp-demo__sunrise" data-wake="{{ wake }}">
+          <div class="nawm-sunrise__panel" data-panel aria-hidden="true">
+            <p class="nawm-sunrise__panel-time nawm-mono" data-time>{{ wake }}</p>
+          </div>
+
+          <div class="nawm-sunrise__controls">
+            <label class="nawm-sunrise__label" for="pdp-sunrise-range">
+              {{ 'nawm.sunrise.slider_label' | t }}
+            </label>
+            <input
+              id="pdp-sunrise-range"
+              type="range"
+              min="10"
+              max="60"
+              step="5"
+              value="{{ section.settings.default_minutes }}"
+            >
+
+            <p class="nawm-sunrise__readout nawm-mono">
+              <span data-minutes>{{ section.settings.default_minutes }}</span>
+              {{ 'nawm.common.minutes' | t }}
+              ·
+              {{ 'nawm.sunrise.level_label' | t }}
+              <span data-level>1</span>
+              {{ 'nawm.sunrise.level_of' | t }}
+            </p>
+
+            <button type="button" class="nawm-chip nawm-sunrise__replay" data-play>
+              {{ 'nawm.sunrise.replay' | t }}
+            </button>
+          </div>
+
+          <div class="nawm-sunrise__sounds">
+            <p class="nawm-sunrise__label" id="pdp-sounds-label">{{ 'nawm.sunrise.sounds_label' | t }}</p>
+            <div class="nawm-sunrise__chips" role="group" aria-labelledby="pdp-sounds-label">
+              {%- if sounds != blank -%}
+                {%- for sound in sounds -%}
+                  <button
+                    type="button"
+                    class="nawm-chip"
+                    data-sound="{{ sound | escape }}"
+                    aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                  >
+                    {{ sound }}
+                  </button>
+                {%- endfor -%}
+              {%- else -%}
+                <p class="nawm-small">
+                  {% render 'nawm-verify',
+                    field: 'wake_sounds_list',
+                    note: 'exacte lijst selecteerbare wekgeluiden — fysieke test van het verkoopmodel'
+                  %}
+                </p>
+              {%- endif -%}
+            </div>
+          </div>
+
+          {%- comment -%}
+            Het getal loopt mee met de schuif, want de zin zou anders na één
+            beweging niet meer kloppen. Nooit suggereren dat de doorloop
+            realtime is: het is en blijft een samenvatting van zes seconden.
+          {%- endcomment -%}
+          {%- capture live_minutes -%}
+            <span data-minutes>{{ section.settings.default_minutes }}</span>
+          {%- endcapture -%}
+          <p class="nawm-sunrise__summary nawm-mono">
+            {{ 'nawm.pdp.demo.summary' | t: minutes: live_minutes }}
+          </p>
+        </nawm-sunrise>
+      </div>
+
+      {%- comment -%} ---------------------------------------------- de video {%- endcomment -%}
+      <div class="pdp-demo__panel">
+        <p class="nawm-mono pdp-demo__tag">{{ 'nawm.pdp.demo.recording' | t }}</p>
+
+        {%- if section.settings.video != blank -%}
+          <video
+            class="pdp-demo__player"
+            controls
+            muted
+            playsinline
+            preload="none"
+            {% if section.settings.poster != blank %}
+              poster="{{ section.settings.poster | image_url: width: 1080 }}"
+            {% endif %}
+            width="{{ section.settings.video.sources[0].width | default: 1280 }}"
+            height="{{ section.settings.video.sources[0].height | default: 720 }}"
+          >
+            {%- for source in section.settings.video.sources -%}
+              <source src="{{ source.url }}" type="{{ source.mime_type }}">
+            {%- endfor -%}
+            {%- if section.settings.captions_asset != blank -%}
+              <track
+                kind="captions"
+                srclang="nl"
+                label="Nederlands"
+                src="{{ section.settings.captions_asset | asset_url }}"
+                default
+              >
+            {%- endif -%}
+          </video>
+
+          {%- if section.settings.captions_asset == blank -%}
+            <p class="nawm-small pdp-demo__note">
+              {% render 'nawm-verify',
+                field: 'video_captions_nl',
+                note: 'Nederlandse ondertiteling (.vtt) bij de timelapse — verplicht volgens §10.3'
+              %}
+            </p>
+          {%- endif -%}
+        {%- else -%}
+          <div class="pdp-demo__placeholder">
+            <p class="nawm-small">{{ 'nawm.pdp.demo.video_missing' | t }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="pdp-demo__cta nawm-reveal">
+      {% render 'pdp-buy', product: pdp_product, id: 'pdp-demo-form' %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pdp-demo__grid {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    display: grid;
+    gap: var(--sp-5);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .pdp-demo__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .pdp-demo__tag {
+    margin: 0 0 var(--sp-2);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--fg-soft);
+  }
+
+  .pdp-demo__player {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--r-card);
+    background: var(--nawm-midnight);
+  }
+
+  .pdp-demo__placeholder {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 9;
+    padding: var(--sp-4);
+    border: 1px dashed var(--line);
+    border-radius: var(--r-card);
+    text-align: center;
+  }
+
+  .pdp-demo__note {
+    margin-block-start: var(--sp-2);
+  }
+
+  .pdp-demo__cta {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    margin-inline: auto;
+    max-width: 30rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP demo",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Beantwoordt bezwaar B1. De labels Schematisch en Opname van het verkoopmodel horen bij de sectie: een animatie tonen alsof het een opname is, is misleidend."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Tekst"
+    },
+    {
+      "type": "range",
+      "id": "default_minutes",
+      "label": "Startstand van de schuif",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "min",
+      "default": 30
+    },
+    {
+      "type": "text",
+      "id": "wake_time",
+      "label": "Wektijd in de demo",
+      "default": "07:00"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Timelapse van het verkoopmodel",
+      "info": "6 tot 10 seconden, statisch frame. Echte opname, geen generatie."
+    },
+    {
+      "type": "image_picker",
+      "id": "poster",
+      "label": "Posterbeeld"
+    },
+    {
+      "type": "text",
+      "id": "captions_asset",
+      "label": "Ondertitelbestand",
+      "info": "Bestandsnaam van het .vtt-bestand in assets/, bijvoorbeeld demo-nl.vtt."
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP demo"
+    }
+  ]
+}
+{% endschema %}

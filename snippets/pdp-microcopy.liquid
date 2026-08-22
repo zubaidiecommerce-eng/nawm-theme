@@ -1,0 +1,52 @@
+{% doc %}
+  De regel onder elke koopknop. PDP SPEC §4.3.
+
+  Nooit een kale knop: onder elke CTA staat dezelfde regel, met dezelfde
+  getallen. Beide helften kunnen los ontbreken — een leverdatum die nog niet
+  berekend kan worden, mag de retourtermijn niet meeslepen.
+
+  De verzendregel komt uit een themasetting en niet uit de copy, omdat "gratis
+  verzending" alleen mag staan wanneer het ook in de marge zit (PDP SPEC §6.2).
+
+  @param {boolean} [shipping] - Voeg de verzendregel toe. Alleen in de hero.
+{% enddoc %}
+
+{%- liquid
+  capture delivery
+    render 'pdp-delivery-date'
+  endcapture
+
+  if delivery == blank
+    assign delivery = settings.delivery_time
+    assign delivery_line = delivery
+  else
+    assign delivery_line = 'nawm.pdp.common.microcopy_delivery' | t: date: delivery
+  endif
+
+  assign return_days = settings.return_days | times: 1
+  assign return_line = blank
+  if return_days > 0
+    assign return_line = 'nawm.pdp.common.microcopy_returns' | t: days: return_days
+  endif
+-%}
+
+<p class="nawm-small pdp-microcopy">
+  {%- if delivery_line != blank -%}
+    {{ delivery_line }}
+  {%- else -%}
+    {% render 'nawm-verify',
+      field: 'delivery_business_days',
+      note: 'besteldeadline en werkelijke levertijd in werkdagen'
+    %}
+  {%- endif -%}
+
+  {%- if return_line != blank -%}
+    {{ ' · ' }}{{ return_line }}
+  {%- else -%}
+    {{ ' · ' }}{% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
+  {%- endif -%}
+
+  {%- if shipping and settings.shipping_line != blank -%}
+    {{ ' · ' }}{{ settings.shipping_line }}
+  {%- endif -%}
+</p>

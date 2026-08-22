@@ -1,0 +1,189 @@
+{% comment %}
+  PDP-sectie: beantwoordt B10 (kan dat display 's nachts helemaal uit?).
+  Zie NAWM_PDP_CONVERSIE_SPEC.md §3.4.
+
+  Cruciaal: dit bezwaar los je op met beeld, niet met tekst. Er moet een foto
+  zijn van het apparaat in een donkere kamer op de laagste stand met gedimd
+  display — beeld 4 uit de beeldbrief. Zolang die er niet is, staat er een
+  zichtbare placeholder en geen sfeerfoto die de vraag niet beantwoordt.
+
+  Dit is de sfeersectie van de pagina en tegelijk een donker eiland in een
+  lichte omgeving: de sectie draagt zijn eigen achtergrond, want de vaste lucht
+  staat hier al op ochtend.
+
+  Het aantal lichtkleuren komt uit het metafield en wordt nergens geraden.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+
+  assign colors = pdp_product.metafields.nawm.light_colors.value
+  assign brightness = pdp_product.metafields.nawm.brightness_levels.value
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.evening.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.evening.heading' | t
+  endif
+
+  assign body = section.settings.body
+  if body == blank
+    assign body = 'nawm.pdp.evening.body' | t
+  endif
+%}
+
+<section class="nawm-section pdp-evening ctx-night" id="avond">
+  <div class="nawm-wrap pdp-evening__grid">
+    <div class="pdp-evening__media nawm-reveal">
+      {% render 'nawm-figure',
+        image: section.settings.image,
+        alt: 'nawm.pdp.hero.image_alt.dark' | t,
+        slug: 'avond-donkere-kamer',
+        ratio: '16 / 10',
+        sizes: '(min-width: 900px) 58vw, 100vw'
+      %}
+    </div>
+
+    <div class="pdp-evening__text nawm-reveal" style="--reveal-delay: 80ms;">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+      <p class="nawm-body pdp-evening__body">{{ body }}</p>
+
+      <dl class="pdp-evening__points">
+        <div class="pdp-evening__point">
+          <dt>
+            {%- if colors != blank and brightness != blank -%}
+              {{-
+                'nawm.pdp.evening.points.p1.title'
+                | t: colors: colors.size, levels: brightness
+              -}}
+            {%- else -%}
+              {{ 'nawm.pdp.evening.points.p1.title_fallback' | t }}
+            {%- endif -%}
+          </dt>
+          <dd>
+            {%- if colors != blank -%}
+              {{ colors | join: ' · ' }}
+            {%- else -%}
+              {% render 'nawm-verify',
+                field: 'light_colors',
+                note: 'lichtkleuren bevestigen op het verkoopmodel'
+              %}
+            {%- endif -%}
+          </dd>
+        </div>
+
+        <div class="pdp-evening__point">
+          <dt>{{ 'nawm.pdp.evening.points.p2.title' | t }}</dt>
+          <dd>
+            {%- if pdp_product.metafields.nawm.display_dimmable.type != blank -%}
+              {{ 'nawm.pdp.evening.points.p2.body' | t }}
+            {%- else -%}
+              {% render 'nawm-verify',
+                field: 'display_dimmable',
+                note: 'kan het display volledig uit of alleen dimmen — met foto aantonen'
+              %}
+            {%- endif -%}
+          </dd>
+        </div>
+
+        <div class="pdp-evening__point">
+          <dt>{{ 'nawm.pdp.evening.points.p3.title' | t }}</dt>
+          <dd>{{ 'nawm.pdp.evening.points.p3.body' | t }}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  /* Donker eiland in een lichte omgeving: de vaste lucht staat hier al op
+     ochtend, dus deze sectie draagt haar eigen achtergrond. */
+  .pdp-evening {
+    background: var(--nawm-midnight);
+    background-image: radial-gradient(70% 60% at 20% 100%, rgb(196 86 43 / .28) 0%, transparent 62%);
+  }
+
+  .pdp-evening__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 900px) {
+    .pdp-evening__grid {
+      grid-template-columns: 1.15fr .85fr;
+    }
+  }
+
+  .pdp-evening__body {
+    margin-block-start: var(--sp-4);
+  }
+
+  .pdp-evening__points {
+    margin: var(--sp-5) 0 0;
+    display: grid;
+    gap: var(--sp-4);
+  }
+
+  .pdp-evening__point {
+    padding-block-start: var(--sp-3);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .pdp-evening__point dt {
+    font-weight: 500;
+    color: var(--fg);
+  }
+
+  .pdp-evening__point dd {
+    margin: var(--sp-1) 0 0;
+    font-size: var(--fs-small);
+    color: var(--fg-soft);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP avondgebruik",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Beantwoordt bezwaar B10: blijft mijn kamer donker? Dit bezwaar wordt met beeld beantwoord — een foto van het apparaat in een donkere kamer op de laagste stand, met gedimd display."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Nachtfoto",
+      "info": "Beeld 4 uit de beeldbrief. Fotografie, geen AI: dit is een bewijsbeeld."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Tekst"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP avondgebruik"
+    }
+  ]
+}
+{% endschema %}

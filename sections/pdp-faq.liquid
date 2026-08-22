@@ -1,0 +1,271 @@
+{% comment %}
+  PDP-sectie: beantwoordt B2 (zware slaper), B8 (partner), B9 (stroomuitval),
+  B10 (display uit) en alles wat de klantenservice binnenkrijgt.
+  Zie NAWM_PDP_CONVERSIE_SPEC.md §3.10.
+
+  Native <details> en <summary>, geen JS-accordeon: semantiek en toetsenbord
+  komen zo gratis mee. Eén kolom, 68ch, eerste item open.
+
+  De FAQPage JSON-LD wordt in dezelfde lus opgebouwd als de zichtbare lijst,
+  zodat er nooit twee versies van hetzelfde antwoord onderhouden worden. Een
+  antwoord dat nog een VERIFY is, gaat bewust niet de structured data in —
+  Google mag geen belofte tonen die de pagina zelf nog niet kan doen.
+
+  Elke vraag draagt zijn bezwaarcode mee in het open_faq-event. Daarmee zie je
+  in de data welk bezwaar het vaakst een bestelling tegenhoudt, en dat is
+  directe input voor de advertentiecopy.
+
+  Staan er metaobjects nawm_faq klaar, dan zijn die de bron. Anders komen de
+  vragen uit locales/nl.default.json.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+
+  assign faqs = shop.metaobjects.nawm_faq.values | sort: 'volgorde'
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.faq.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.faq.heading' | t
+  endif
+
+  assign keys = 'q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11' | split: ','
+
+  comment
+    Vragen die de spec als VERIFY markeert, met het veld dat ze blokkeert.
+    De volgorde loopt gelijk met `keys`; een lege waarde betekent: dit antwoord
+    staat gewoon in de copy.
+  endcomment
+  assign verify_fields = ',,battery_backup,display_dimmable,has_fm_radio,,,power,,,' | split: ','
+  assign verify_notes = ',,blijven tijd en alarm bewaard bij stroomuitval en hoelang,kan het display volledig uit of alleen dimmen — met foto beantwoorden,FM-radio als wekbron functioneel getest,,,voeding en back-upgedrag,,,' | split: ','
+
+  assign jsonld = ''
+  assign entries = 0
+
+  capture delivery_date
+    render 'pdp-delivery-date'
+  endcapture
+
+  assign warranty_years = settings.warranty_years | times: 1
+%}
+
+<section class="nawm-section pdp-faq ctx-dawn" id="faq">
+  <div class="nawm-wrap pdp-faq__inner">
+    <div class="pdp-head pdp-head--wide nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    <div class="pdp-faq__list">
+      {%- if faqs.size > 0 -%}
+        {%- for faq in faqs -%}
+          {%- liquid
+            assign question = faq.vraag.value | default: faq.vraag
+            assign answer = faq.antwoord.value | default: faq.antwoord
+            assign code = faq.bezwaar_code.value | default: faq.bezwaar_code
+          -%}
+          {%- if question != blank and answer != blank -%}
+            <details
+              class="pdp-faq__item"
+              {% if forloop.first %}open{% endif %}
+              data-nawm-event="open_faq"
+              data-nawm-params='{"bezwaar_code":{{ code | default: '' | json }}}'
+            >
+              <summary class="pdp-faq__question">{{ question }}</summary>
+              <div class="pdp-faq__answer">{{ answer }}</div>
+            </details>
+
+            {%- unless faq.in_json_ld == false or faq.in_json_ld.value == false -%}
+              {%- capture jsonld -%}
+                {{- jsonld -}}
+                {%- unless entries == 0 -%},{%- endunless -%}
+                {"@type":"Question","name":{{ question | strip_html | json }},"acceptedAnswer":{"@type":"Answer","text":{{ answer | strip_html | json }}}}
+              {%- endcapture -%}
+              {%- assign entries = entries | plus: 1 -%}
+            {%- endunless -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for key in keys -%}
+          {%- liquid
+            assign base = 'nawm.pdp.faq.items.' | append: key
+            assign k_q = base | append: '.q'
+            assign k_a = base | append: '.a'
+            assign k_code = base | append: '.code'
+
+            assign question = k_q | t
+            assign answer = k_a | t
+            assign code = k_code | t
+
+            comment
+              Twee antwoorden komen niet uit de copy maar uit de themasettings,
+              zodat levertijd en garantie op de hele site hetzelfde getal
+              tonen.
+            endcomment
+            if key == 'q9'
+              assign answer = ''
+              if settings.order_deadline_time != blank and delivery_date != blank
+                assign answer = 'nawm.pdp.hero.delivery' | t: time: settings.order_deadline_time, date: delivery_date
+              elsif settings.delivery_time != blank
+                assign answer = settings.delivery_time
+              endif
+            endif
+
+            if key == 'q10' and warranty_years > 0
+              assign answer = 'nawm.pdp.faq.warranty_answer' | t: years: warranty_years
+            elsif key == 'q10'
+              assign answer = ''
+            endif
+
+            assign verify_field = verify_fields[forloop.index0]
+            assign verify_note = verify_notes[forloop.index0]
+            if key == 'q9'
+              assign verify_field = 'delivery_business_days'
+              assign verify_note = 'besteldeadline en werkelijke levertijd in werkdagen'
+            elsif key == 'q10'
+              assign verify_field = 'warranty_years'
+              assign verify_note = 'garantietermijn'
+            endif
+          -%}
+
+          <details
+            class="pdp-faq__item"
+            {% if forloop.first %}open{% endif %}
+            data-nawm-event="open_faq"
+            data-nawm-params='{"bezwaar_code":{{ code | json }}}'
+          >
+            <summary class="pdp-faq__question">{{ question }}</summary>
+            <div class="pdp-faq__answer">
+              {%- if answer != blank -%}
+                <p>{{ answer }}</p>
+              {%- else -%}
+                <p>{% render 'nawm-verify', field: verify_field, note: verify_note %}</p>
+              {%- endif -%}
+            </div>
+          </details>
+
+          {%- comment -%}
+            Alleen beantwoorde vragen gaan de structured data in. Een VERIFY in
+            een rich result zou een antwoord suggereren dat er nog niet is.
+          {%- endcomment -%}
+          {%- if answer != blank -%}
+            {%- capture jsonld -%}
+              {{- jsonld -}}
+              {%- unless entries == 0 -%},{%- endunless -%}
+              {"@type":"Question","name":{{ question | strip_html | json }},"acceptedAnswer":{"@type":"Answer","text":{{ answer | strip_html | json }}}}
+            {%- endcapture -%}
+            {%- assign entries = entries | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    {%- comment -%}
+      Na de FAQ heeft de bezoeker geen vragen meer. Dan hoort hier de knop.
+    {%- endcomment -%}
+    <div class="pdp-faq__cta nawm-reveal">
+      {% render 'pdp-buy', product: pdp_product, id: 'pdp-faq-form' %}
+    </div>
+  </div>
+</section>
+
+{%- if entries > 0 -%}
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{ jsonld | strip_newlines | strip }}]}
+  </script>
+{%- endif -%}
+
+{% stylesheet %}
+  .pdp-faq__inner {
+    max-width: 68ch;
+  }
+
+  .pdp-faq__list {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .pdp-faq__item {
+    border-block-end: 1px solid var(--line);
+  }
+
+  .pdp-faq__question {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding-block: var(--sp-4);
+    font-size: var(--fs-h3);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -.01em;
+    color: var(--fg);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .pdp-faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .pdp-faq__question::after {
+    content: "+";
+    flex: none;
+    font-family: var(--ff-mono);
+    font-size: 1.25rem;
+    color: var(--nawm-ember);
+  }
+
+  .pdp-faq__item[open] .pdp-faq__question::after {
+    content: "–";
+  }
+
+  .pdp-faq__answer {
+    padding-block-end: var(--sp-5);
+    max-width: 62ch;
+  }
+
+  .pdp-faq__answer p {
+    color: var(--fg-soft);
+  }
+
+  .pdp-faq__cta {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    max-width: 30rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP FAQ",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Beantwoordt B2, B8, B9 en B10. Vragen komen uit metaobject nawm_faq wanneer dat bestaat, anders uit locales/nl.default.json. De FAQPage JSON-LD komt uit dezelfde bron, en antwoorden die nog een VERIFY zijn blijven eruit."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP FAQ"
+    }
+  ]
+}
+{% endschema %}
