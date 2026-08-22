@@ -135,6 +135,123 @@
     "popup_discount_percentage": 5,
     "popup_discount_code": "WELKOM5",
     "nawm_self_hosted_fonts": false,
+    "sections": {
+      "pdp-hero": {
+        "type": "pdp-hero",
+        "settings": {
+          "eyebrow": "",
+          "heading": "",
+          "subheading": ""
+        }
+      },
+      "pdp-mechanism": {
+        "type": "pdp-mechanism",
+        "settings": {
+          "eyebrow": "",
+          "heading": "",
+          "body": "",
+          "clip_contrast": "shopify://files/videos/Animate_this_still_into_one_co_2.mp4"
+        }
+      },
+      "pdp-fit": {
+        "type": "pdp-fit",
+        "settings": {
+          "eyebrow": "",
+          "heading": ""
+        }
+      },
+      "pdp-evening": {
+        "type": "pdp-evening",
+        "settings": {
+          "clip_dark": "shopify://files/videos/Animate_this_still_into_one_co.mp4",
+          "eyebrow": "",
+          "heading": "",
+          "body": ""
+        }
+      },
+      "pdp-setup": {
+        "type": "pdp-setup",
+        "settings": {
+          "eyebrow": "",
+          "heading": ""
+        }
+      },
+      "pdp-demo": {
+        "type": "pdp-demo",
+        "settings": {
+          "eyebrow": "",
+          "heading": "",
+          "body": "",
+          "default_minutes": 30,
+          "wake_time": "07:00",
+          "captions_asset": ""
+        }
+      },
+      "pdp-proof": {
+        "type": "pdp-proof",
+        "settings": {
+          "eyebrow": "",
+          "heading": ""
+        }
+      },
+      "pdp-specs": {
+        "type": "pdp-specs",
+        "settings": {
+          "eyebrow": "",
+          "heading": ""
+        }
+      },
+      "pdp-compare": {
+        "type": "pdp-compare",
+        "settings": {
+          "eyebrow": "",
+          "heading": ""
+        }
+      },
+      "nawm-trust": {
+        "type": "nawm-trust",
+        "settings": {
+          "heading": "",
+          "show_customer_count": true
+        }
+      },
+      "pdp-offer": {
+        "type": "pdp-offer",
+        "settings": {
+          "eyebrow": "",
+          "heading": ""
+        }
+      },
+      "pdp-bundle": {
+        "type": "pdp-bundle",
+        "settings": {
+          "eyebrow": "",
+          "heading": "",
+          "discount_two": 10
+        }
+      },
+      "pdp-faq": {
+        "type": "pdp-faq",
+        "settings": {
+          "eyebrow": "",
+          "heading": ""
+        }
+      },
+      "pdp-close": {
+        "type": "pdp-close",
+        "settings": {
+          "heading": ""
+        }
+      },
+      "pdp-brand": {
+        "type": "pdp-brand",
+        "settings": {
+          "heading": "",
+          "body": ""
+        }
+      }
+    },
+    "content_for_index": [],
     "color_palette": {
       "background": "#ffffff",
       "foreground": "#000000",
