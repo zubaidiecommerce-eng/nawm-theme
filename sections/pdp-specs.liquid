@@ -189,7 +189,10 @@
 
     {%- comment -%} ---------------------------------------- progressive disclosure {%- endcomment -%}
     <details class="pdp-specs__details" data-nawm-event="open_specs">
-      <summary class="pdp-specs__summary">{{ 'nawm.pdp.specs.details_label' | t }}</summary>
+      <summary class="pdp-specs__summary">
+        <span>{{ 'nawm.pdp.specs.details_label' | t }}</span>
+        <span class="nawm-accordion__marker" aria-hidden="true"></span>
+      </summary>
       <div class="pdp-specs__details-body">
         <dl class="pdp-specs__list">
           {% render 'nawm-spec-row',
@@ -251,7 +254,8 @@
 
     {%- if nawm.manual_pdf.value != blank -%}
       <p class="pdp-specs__manual">
-        <a href="{{ nawm.manual_pdf.value.url }}" data-nawm-event="open_manual" target="_blank" rel="noopener">
+        <a href="{{ nawm.manual_pdf.value.url }}" data-nawm-event="open_manual"
+                data-nawm-manual target="_blank" rel="noopener">
           {{- 'nawm.pdp.specs.manual_link' | t -}}
           <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
         </a>
@@ -323,18 +327,6 @@
 
   .pdp-specs__summary::-webkit-details-marker {
     display: none;
-  }
-
-  .pdp-specs__summary::after {
-    content: "+";
-    flex: none;
-    font-family: var(--ff-mono);
-    font-size: 1.25rem;
-    color: var(--nawm-ember);
-  }
-
-  .pdp-specs__details[open] .pdp-specs__summary::after {
-    content: "–";
   }
 
   .pdp-specs__details-body {

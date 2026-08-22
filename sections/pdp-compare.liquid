@@ -1,0 +1,283 @@
+{% comment %}
+  PDP-sectie: beantwoordt B4 in de bredere vorm — waarom dit en niet gewoon de
+  wekker die je al hebt.
+
+  Anders dan de vergelijking op de landingspagina, die over de avondroutine
+  gaat, staat hier de koopbeslissing zelf: wekmoment, nacht, instellen, geluid
+  en service. Twee kolommen naast elkaar, allebei feitelijk.
+
+  Regels die hier gelden:
+    · geen merknamen van concurrenten
+    · geen rij die een gezondheidsuitkomst claimt
+    · niets over "de gemiddelde lichtwekker", want daar hebben we geen cijfers
+      over — de vergelijking gaat over de wekker die de bezoeker al in zijn
+      hand heeft
+
+  De rechterkolom leest waarden uit metafields waar dat kan, zodat deze tabel
+  niet uit de pas gaat lopen met de specificaties verderop.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+
+  if pdp_product.id == blank and settings.nawm_product_handle != blank
+    assign pdp_product = all_products[settings.nawm_product_handle]
+  endif
+
+  assign nawm = pdp_product.metafields.nawm
+  assign sunrise_min = nawm.sunrise_min_minutes.value | default: 10
+  assign sunrise_max = nawm.sunrise_max_minutes.value | default: 60
+  assign wake_sounds = nawm.wake_sounds_count.value
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.compare.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.compare.heading' | t
+  endif
+
+  assign col_a = 'nawm.pdp.compare.col_a' | t
+  assign col_b = 'nawm.pdp.compare.col_b' | t
+  assign rows = 'r1,r2,r3,r4,r5' | split: ','
+%}
+
+<section class="nawm-section pdp-compare ctx-dawn" id="vergelijking">
+  <div class="nawm-wrap">
+    <div class="pdp-head pdp-head--wide nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2>{{ heading }}</h2>
+    </div>
+
+    <div class="pdp-compare__panel nawm-reveal">
+      <div class="pdp-compare__headers" aria-hidden="true">
+        <p class="pdp-compare__col pdp-compare__col--other">{{ col_a }}</p>
+        <p class="pdp-compare__col pdp-compare__col--nawm">
+          <span class="pdp-compare__badge">{{ col_b }}</span>
+        </p>
+      </div>
+
+      <ul class="pdp-compare__rows">
+        {%- for key in rows -%}
+          {%- liquid
+            assign base = 'nawm.pdp.compare.rows.' | append: key
+            assign k_topic = base | append: '.topic'
+            assign k_a = base | append: '.a'
+            assign k_b = base | append: '.b'
+            assign delay = forloop.index0 | times: 70
+
+            assign value_b = k_b | t
+            if key == 'r1'
+              assign value_b = k_b | t: min: sunrise_min, max: sunrise_max
+            endif
+            if key == 'r4' and wake_sounds != blank
+              assign value_b = k_b | t: count: wake_sounds
+            endif
+          -%}
+          <li class="pdp-compare__row nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
+            <p class="nawm-mono pdp-compare__topic">{{ k_topic | t }}</p>
+
+            <div class="pdp-compare__cell pdp-compare__cell--other">
+              <span class="nawm-mono pdp-compare__label">{{ col_a }}</span>
+              <span>{{ k_a | t }}</span>
+            </div>
+
+            <span class="pdp-compare__link" aria-hidden="true"></span>
+
+            <div class="pdp-compare__cell pdp-compare__cell--nawm">
+              <span class="nawm-mono pdp-compare__label">{{ col_b }}</span>
+              <span>{{ value_b }}</span>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+
+    <div class="pdp-compare__cta nawm-reveal">
+      {% render 'pdp-buy', product: pdp_product, id: 'pdp-compare-form' %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pdp-compare__panel {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+  }
+
+  .pdp-compare__headers {
+    display: none;
+  }
+
+  .pdp-compare__col {
+    margin: 0;
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--fg-soft);
+  }
+
+  .pdp-compare__badge {
+    display: inline-block;
+    padding: var(--sp-1) var(--sp-3);
+    border-radius: var(--r-pill);
+    background: color-mix(in oklab, var(--nawm-amber) 24%, var(--nawm-dawn));
+    border: 1px solid var(--nawm-amber);
+    color: var(--ink-day);
+  }
+
+  .pdp-compare__rows {
+    list-style: none;
+    margin: var(--sp-4) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-4);
+  }
+
+  .pdp-compare__row {
+    display: grid;
+    gap: var(--sp-2);
+  }
+
+  .pdp-compare__topic {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--nawm-ember);
+  }
+
+  .pdp-compare__cell {
+    display: grid;
+    gap: var(--sp-1);
+    align-content: start;
+    padding: var(--sp-4);
+    border-radius: var(--r-card);
+    border: 1px solid var(--line);
+    line-height: 1.4;
+    transition:
+      transform var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+
+  .pdp-compare__cell--other {
+    background: color-mix(in oklab, var(--nawm-cool) 8%, transparent);
+    color: var(--fg-soft);
+  }
+
+  .pdp-compare__cell--nawm {
+    background: color-mix(in oklab, var(--nawm-dawn) 92%, #fff);
+    color: var(--fg);
+  }
+
+  .pdp-compare__label {
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--fg-soft);
+  }
+
+  .pdp-compare__link {
+    display: none;
+  }
+
+  @media (min-width: 750px) {
+    .pdp-compare__headers {
+      display: grid;
+      grid-template-columns: 10rem 1fr 3rem 1fr;
+      gap: var(--sp-3);
+      align-items: center;
+      padding-inline: var(--sp-4);
+    }
+
+    .pdp-compare__headers .pdp-compare__col--other { grid-column: 2; }
+    .pdp-compare__headers .pdp-compare__col--nawm { grid-column: 4; }
+
+    .pdp-compare__row {
+      grid-template-columns: 10rem 1fr 3rem 1fr;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+
+    .pdp-compare__topic {
+      text-align: end;
+    }
+
+    .pdp-compare__label {
+      display: none;
+    }
+
+    .pdp-compare__link {
+      display: block;
+      height: 1px;
+      background: linear-gradient(90deg, var(--nawm-cool), var(--nawm-amber));
+      transform: scaleX(.55);
+      transition: transform var(--dur) var(--ease);
+    }
+  }
+
+  @media (hover: hover) and (min-width: 750px) {
+    .pdp-compare__row:hover .pdp-compare__link {
+      transform: scaleX(1);
+    }
+
+    .pdp-compare__row:hover .pdp-compare__cell--nawm {
+      transform: translateX(4px);
+      border-color: var(--nawm-amber);
+      box-shadow: 0 2px 4px rgb(26 23 16 / .06), 0 18px 36px -22px rgb(26 23 16 / .35);
+    }
+
+    .pdp-compare__row:hover .pdp-compare__cell--other {
+      transform: translateX(-4px);
+    }
+  }
+
+  .pdp-compare__cta {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    margin-inline: auto;
+    max-width: 30rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pdp-compare__cell,
+    .pdp-compare__link {
+      transition: none;
+    }
+
+    .pdp-compare__row:hover .pdp-compare__cell--nawm,
+    .pdp-compare__row:hover .pdp-compare__cell--other {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP vergelijking",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Vergelijkt met de wekker die de bezoeker al heeft. Geen merknamen van concurrenten, en geen rij die een gezondheidsuitkomst claimt."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP vergelijking"
+    }
+  ]
+}
+{% endschema %}

@@ -52,6 +52,17 @@
   capture delivery_date
     render 'pdp-delivery-date'
   endcapture
+
+  comment
+    Prijs per ochtend over het eerste jaar. Alleen rekenwerk op de werkelijke
+    prijs over een periode die erbij staat — geen uitspraak over hoe lang het
+    apparaat meegaat, want dat weten we niet.
+  endcomment
+  assign per_morning = blank
+  if pdp_product.price > 0
+    assign cents_per_day = pdp_product.price | divided_by: 365
+    assign per_morning = cents_per_day | money
+  endif
 %}
 
 <section class="nawm-section pdp-offer ctx-dawn" id="aanbod">
@@ -62,13 +73,20 @@
     </div>
 
     {%- comment -%} ---------------------------------------- blok 1 · waardestapel {%- endcomment -%}
-    <div class="nawm-card pdp-offer__block nawm-reveal">
+    <div class="nawm-card pdp-offer__block nawm-lift nawm-reveal">
       <h3 class="pdp-offer__block-heading">{{ 'nawm.pdp.offer.value_heading' | t }}</h3>
       <dl class="pdp-offer__value">
         <div class="pdp-offer__value-row">
           <dt>{{ 'nawm.pdp.offer.value.product' | t }}</dt>
           <dd class="nawm-mono">{% render 'nawm-price', product: pdp_product %}</dd>
         </div>
+
+        {%- if per_morning != blank -%}
+          <div class="pdp-offer__value-row pdp-offer__value-row--framing">
+            <dt>{{ 'nawm.offer.per_morning' | t: amount: per_morning }}</dt>
+            <dd class="nawm-mono"></dd>
+          </div>
+        {%- endif -%}
         <div class="pdp-offer__value-row">
           <dt>{{ 'nawm.pdp.offer.value.accessories' | t }}</dt>
           <dd class="nawm-mono">{{ included }}</dd>
@@ -146,7 +164,7 @@
 
     <div class="pdp-offer__blocks">
       {%- comment -%} ------------------------------------ blok 2 · risico-omkering {%- endcomment -%}
-      <div class="nawm-card pdp-offer__block nawm-reveal">
+      <div class="nawm-card pdp-offer__block nawm-lift nawm-reveal">
         <h3 class="pdp-offer__block-heading">{{ 'nawm.pdp.offer.risk_heading' | t }}</h3>
 
         <ol class="pdp-offer__steps">
@@ -199,7 +217,7 @@
       </div>
 
       {%- comment -%} ------------------------------------------ blok 3 · levering {%- endcomment -%}
-      <div class="nawm-card pdp-offer__block nawm-reveal" style="--reveal-delay: 80ms;">
+      <div class="nawm-card pdp-offer__block nawm-lift nawm-reveal" style="--reveal-delay: 80ms;">
         <h3 class="pdp-offer__block-heading">{{ 'nawm.pdp.offer.delivery_heading' | t }}</h3>
         <p class="pdp-offer__delivery">
           {%- if settings.order_deadline_time != blank and delivery_date != blank -%}
@@ -219,7 +237,7 @@
       </div>
 
       {%- comment -%} ------------------------------- blok 4 · geen verrassingen {%- endcomment -%}
-      <div class="nawm-card pdp-offer__block nawm-reveal" style="--reveal-delay: 160ms;">
+      <div class="nawm-card pdp-offer__block nawm-lift nawm-reveal" style="--reveal-delay: 160ms;">
         <h3 class="pdp-offer__block-heading">{{ 'nawm.pdp.offer.no_surprises_heading' | t }}</h3>
         <p>
           {{ 'nawm.pdp.offer.no_surprises' | t }}
@@ -291,6 +309,20 @@
   .pdp-offer__value-row dd {
     margin: 0;
     color: var(--fg-soft);
+  }
+
+  /* De prijs per ochtend is geen onderdeel van de bestelling maar een manier
+     om het bedrag te wegen. Hij staat er daarom stiller bij dan de rest. */
+  .pdp-offer__value-row--framing {
+    border-block-end: 0;
+    padding-block: var(--sp-2) var(--sp-3);
+  }
+
+  .pdp-offer__value-row--framing dt {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: .06em;
+    color: var(--nawm-ember);
   }
 
   .pdp-offer__difference {

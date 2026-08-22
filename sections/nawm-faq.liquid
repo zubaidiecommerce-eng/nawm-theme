@@ -48,7 +48,10 @@
           -%}
           {%- if question != blank and answer != blank -%}
             <details class="nawm-faq__item" {% if forloop.first %}open{% endif %} data-nawm-event="open_faq">
-              <summary class="nawm-faq__question">{{ question }}</summary>
+              <summary class="nawm-faq__question">
+                <span class="nawm-faq__question-text">{{ question }}</span>
+                <span class="nawm-accordion__marker" aria-hidden="true"></span>
+              </summary>
               <div class="nawm-faq__answer">{{ answer }}</div>
             </details>
             {%- unless faq.toon_in_json_ld == false or faq.toon_in_json_ld.value == false -%}
@@ -71,7 +74,10 @@
             assign answer = k_a | t
           -%}
           <details class="nawm-faq__item" {% if forloop.first %}open{% endif %} data-nawm-event="open_faq">
-            <summary class="nawm-faq__question">{{ question }}</summary>
+            <summary class="nawm-faq__question">
+                <span class="nawm-faq__question-text">{{ question }}</span>
+                <span class="nawm-accordion__marker" aria-hidden="true"></span>
+              </summary>
             <div class="nawm-faq__answer">
               {%- if answer != blank -%}
                 <p>{{ answer }}</p>
@@ -123,7 +129,10 @@
         -%}
         {%- if answer != blank -%}
           <details class="nawm-faq__item" data-nawm-event="open_faq">
-            <summary class="nawm-faq__question">{{ question }}</summary>
+            <summary class="nawm-faq__question">
+                <span class="nawm-faq__question-text">{{ question }}</span>
+                <span class="nawm-accordion__marker" aria-hidden="true"></span>
+              </summary>
             <div class="nawm-faq__answer"><p>{{ answer }}</p></div>
           </details>
 
@@ -176,18 +185,6 @@
 
   .nawm-faq__question::-webkit-details-marker {
     display: none;
-  }
-
-  .nawm-faq__question::after {
-    content: "+";
-    flex: none;
-    font-family: var(--ff-mono);
-    font-size: 1.25rem;
-    color: var(--nawm-ember);
-  }
-
-  .nawm-faq__item[open] .nawm-faq__question::after {
-    content: "–";
   }
 
   .nawm-faq__answer {

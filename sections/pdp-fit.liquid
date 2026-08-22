@@ -40,7 +40,7 @@
     </div>
 
     <div class="pdp-fit__columns">
-      <div class="pdp-fit__column nawm-reveal">
+      <div class="pdp-fit__column nawm-lift nawm-reveal">
         <h3 class="pdp-fit__column-heading">{{ 'nawm.pdp.fit.yes_heading' | t }}</h3>
         <ul class="pdp-checklist">
           {%- for key in yes_keys -%}
@@ -50,7 +50,7 @@
         </ul>
       </div>
 
-      <div class="pdp-fit__column nawm-reveal" style="--reveal-delay: 80ms;">
+      <div class="pdp-fit__column nawm-lift nawm-reveal" style="--reveal-delay: 80ms;">
         <h3 class="pdp-fit__column-heading">{{ 'nawm.pdp.fit.no_heading' | t }}</h3>
         <ul class="pdp-checklist pdp-checklist--neutral">
           {%- for key in no_keys -%}

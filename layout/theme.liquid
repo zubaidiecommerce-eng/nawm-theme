@@ -6,15 +6,21 @@
 {%- endcomment -%}
 {%- liquid
   assign nawm_page = false
-  if template.name == 'index' or template.suffix == 'wake-up-light'
+  assign nawm_pdp = false
+  if template.name == 'index'
     assign nawm_page = true
+  endif
+  if template.suffix == 'wake-up-light'
+    assign nawm_page = true
+    assign nawm_pdp = true
   endif
 -%}
 <!doctype html>
 <html
   class="
     {%- if request.design_mode %}shopify-design-mode {% endif -%}
-    {%- if nawm_page %}nawm-page{% endif -%}
+    {%- if nawm_page %}nawm-page {% endif -%}
+    {%- if nawm_pdp %}nawm-pdp{% endif -%}
   "
   lang="{{ request.locale.iso_code }}"
 >
@@ -71,7 +77,7 @@
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
 
     {%- if nawm_page -%}
-      {%- render 'nawm-shell' -%}
+      {%- render 'nawm-shell', nawm_pdp: nawm_pdp -%}
     {%- endif -%}
 
     {% render 'chat-drawer' %}

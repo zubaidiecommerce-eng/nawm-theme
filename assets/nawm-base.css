@@ -379,17 +379,83 @@ html.nawm-page :is(a, button, input, select, textarea, summary, [tabindex]):focu
   backdrop-filter: blur(3px);
 }
 
-.nawm-popup[open] {
-  animation: nawm-popup-in var(--dur) var(--ease);
+/* De popup komt op zoals het licht in het product: eerst de achtergrond die
+   zachtjes dieper wordt, dan het venster dat van onderaf op zijn plaats zakt en
+   scherpstelt. Geen ploffende modal.
+
+   `@starting-style` laat een dialog animeren vanaf het moment dat hij in de
+   top layer verschijnt; zonder die regel springt hij er in één frame in. De
+   `transition-behavior: allow-discrete` houdt het venster in beeld terwijl het
+   sluiten nog loopt. */
+.nawm-popup {
+  opacity: 0;
+  transform: translateY(24px) scale(.97);
+  filter: blur(6px);
+  transition:
+    opacity var(--dur-slow) var(--ease),
+    transform var(--dur-slow) var(--ease),
+    filter var(--dur-slow) var(--ease),
+    overlay var(--dur-slow) allow-discrete,
+    display var(--dur-slow) allow-discrete;
 }
 
-@keyframes nawm-popup-in {
-  from { opacity: 0; transform: translateY(10px); }
+.nawm-popup[open] {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+@starting-style {
+  .nawm-popup[open] {
+    opacity: 0;
+    transform: translateY(24px) scale(.97);
+    filter: blur(6px);
+  }
+}
+
+.nawm-popup::backdrop {
+  opacity: 0;
+  transition:
+    opacity var(--dur-slow) var(--ease),
+    overlay var(--dur-slow) allow-discrete,
+    display var(--dur-slow) allow-discrete;
+}
+
+.nawm-popup[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .nawm-popup[open]::backdrop { opacity: 0; }
+}
+
+/* De inhoud volgt het venster met een korte naloop, zodat de tekst niet
+   tegelijk met het kader aankomt maar er net in gaat staan. */
+.nawm-popup[open] .nawm-popup__body > * {
+  animation: nawm-popup-rise var(--dur-slow) var(--ease) backwards;
+}
+
+.nawm-popup[open] .nawm-popup__body > *:nth-child(1) { animation-delay: 120ms; }
+.nawm-popup[open] .nawm-popup__body > *:nth-child(2) { animation-delay: 180ms; }
+.nawm-popup[open] .nawm-popup__body > *:nth-child(3) { animation-delay: 240ms; }
+.nawm-popup[open] .nawm-popup__body > *:nth-child(4) { animation-delay: 300ms; }
+.nawm-popup[open] .nawm-popup__body > *:nth-child(n+5) { animation-delay: 360ms; }
+
+@keyframes nawm-popup-rise {
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nawm-popup[open] { animation: none; }
+  .nawm-popup,
+  .nawm-popup::backdrop,
+  .nawm-popup[open] .nawm-popup__body > * {
+    transition: none;
+    animation: none;
+    filter: none;
+    transform: none;
+    opacity: 1;
+  }
 }
 
 .nawm-popup__body {
@@ -593,4 +659,246 @@ html.nawm-page #header-component .header__logo svg {
 html.nawm-page #header-component button,
 html.nawm-page #header-component .header__icon {
   color: var(--nawm-header-ink);
+}
+
+/* --------------------------------------------------------------- accordeon */
+
+/* `<details>` blijft de basis: semantiek, toetsenbord en zoeken-in-pagina
+   komen daar gratis mee. Deze regels geven het alleen een fatsoenlijke
+   beweging. `::details-content` is de doos om de inhoud; browsers die hem niet
+   kennen, klappen zonder animatie open en dat is prima. */
+
+.nawm-faq__item::details-content,
+.pdp-faq__item::details-content,
+.pdp-specs__details::details-content {
+  block-size: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    block-size var(--dur) var(--ease),
+    opacity var(--dur-fast) var(--ease),
+    content-visibility var(--dur) allow-discrete;
+}
+
+.nawm-faq__item[open]::details-content,
+.pdp-faq__item[open]::details-content,
+.pdp-specs__details[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+
+/* De marker: twee streepjes in een cirkel. De verticale krimpt weg en het
+   geheel draait een kwartslag, dus een plus wordt een min zonder te knipperen. */
+.nawm-accordion__marker {
+  position: relative;
+  flex: none;
+  inline-size: 26px;
+  block-size: 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  transition:
+    transform var(--dur) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease);
+}
+
+.nawm-accordion__marker::before,
+.nawm-accordion__marker::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: 11px;
+  block-size: 1.5px;
+  border-radius: 2px;
+  background: var(--nawm-ember);
+  translate: -50% -50%;
+  transition: rotate var(--dur) var(--ease), opacity var(--dur-fast) var(--ease);
+}
+
+.ctx-night .nawm-accordion__marker::before,
+.ctx-night .nawm-accordion__marker::after {
+  background: var(--nawm-amber);
+}
+
+.nawm-accordion__marker::after {
+  rotate: 90deg;
+}
+
+[open] > summary .nawm-accordion__marker {
+  transform: rotate(180deg);
+  border-color: var(--nawm-amber);
+  background: color-mix(in oklab, var(--nawm-amber) 18%, transparent);
+}
+
+[open] > summary .nawm-accordion__marker::after {
+  rotate: 0deg;
+  opacity: 0;
+}
+
+/* De hele regel reageert op hover, niet alleen de tekst. */
+.nawm-faq__question,
+.pdp-faq__question,
+.pdp-specs__summary {
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.nawm-faq__question:hover .nawm-accordion__marker,
+.pdp-faq__question:hover .nawm-accordion__marker,
+.pdp-specs__summary:hover .nawm-accordion__marker {
+  border-color: var(--nawm-amber);
+  transform: scale(1.08);
+}
+
+.nawm-faq__question-text,
+.pdp-faq__question-text {
+  transition: transform var(--dur) var(--ease);
+}
+
+.nawm-faq__question:hover .nawm-faq__question-text,
+.pdp-faq__question:hover .pdp-faq__question-text {
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-faq__item::details-content,
+  .pdp-faq__item::details-content,
+  .pdp-specs__details::details-content,
+  .nawm-accordion__marker,
+  .nawm-accordion__marker::before,
+  .nawm-accordion__marker::after,
+  .nawm-faq__question-text,
+  .pdp-faq__question-text {
+    transition: none;
+  }
+
+  .nawm-faq__item::details-content,
+  .pdp-faq__item::details-content,
+  .pdp-specs__details::details-content {
+    block-size: auto;
+    opacity: 1;
+  }
+}
+
+/* De gate deelt de vormgeving van de popup; alleen de uitweg eronder is eigen. */
+.nawm-gate__skip {
+  margin: var(--sp-4) 0 0;
+  text-align: center;
+  font-size: var(--fs-small);
+}
+
+.nawm-gate__skip a {
+  color: var(--ink-day-soft);
+  text-underline-offset: 3px;
+}
+
+.nawm-gate__skip a:hover {
+  color: var(--ink-day);
+}
+
+/* --------------------------------------------------------------- beweging */
+
+/* Eén gedeelde set hover-gedragingen, zodat de pagina overal hetzelfde
+   antwoordt op een muis. Alles blijft binnen de motion-regels uit de spec:
+   licht en opaciteit doen het werk, positie verschuift hooguit een paar pixels,
+   en er beweegt nooit meer dan één ding tegelijk in beeld. */
+
+.nawm-lift {
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    border-color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease);
+}
+
+@media (hover: hover) {
+  .nawm-lift:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in oklab, var(--nawm-amber) 55%, var(--line));
+  }
+
+  .ctx-night .nawm-lift:hover {
+    box-shadow: var(--glow-amber);
+  }
+
+  .ctx-dawn .nawm-lift:hover {
+    box-shadow: 0 2px 4px rgb(26 23 16 / .06), 0 18px 36px -22px rgb(26 23 16 / .35);
+  }
+}
+
+/* Een haarlijn die van links uitgroeit onder een kaartkop. */
+.nawm-underline {
+  position: relative;
+}
+
+.nawm-underline::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -4px;
+  height: 1px;
+  background: var(--nawm-amber);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+
+@media (hover: hover) {
+  .nawm-lift:hover .nawm-underline::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-lift,
+  .nawm-underline::after {
+    transition: none;
+  }
+
+  .nawm-lift:hover {
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------- productpagina-licht */
+
+/* De landingspagina is een nacht die naar de ochtend loopt. De productpagina is
+   dat niet: daar staat de bezoeker stil bij één beslissing, en dan helpt een
+   donkere, verhalende omgeving niet. Hij begint hier dus meteen in de ochtend.
+
+   `--dawn` en `--sky` worden normaal door nawm-dawn.js gezet aan de hand van
+   `data-dawn-start`/`data-dawn-end`. Die staan op de PDP niet, dus zonder deze
+   regel zouden beide op 0 blijven en zou de hele pagina nacht zijn. */
+html.nawm-pdp {
+  --dawn: 1;
+  --sky: 1;
+
+  background: var(--nawm-dawn);
+}
+
+/* De vaste lucht blijft staan voor de warme ondergrond, maar zonder de
+   nachtlagen eroverheen. */
+html.nawm-pdp .nawm-sky__night,
+html.nawm-pdp .nawm-sky__ember {
+  opacity: 0;
+}
+
+/* Op een lichte pagina hoort een lichte header met donkere inkt. */
+html.nawm-pdp #header-component {
+  --nawm-header-ink: var(--ink-day);
+}
+
+html.nawm-pdp #header-component:not([transparent]) {
+  background: color-mix(in oklab, var(--nawm-dawn) 88%, transparent);
+  border-block-end: 1px solid rgb(26 23 16 / .1);
+}
+
+html.nawm-pdp #header-component .header__logo img,
+html.nawm-pdp #header-component .header__logo svg {
+  filter: none;
+}
+
+/* Het donkere eiland houdt zijn eigen inkt. */
+html.nawm-pdp .pdp-evening {
+  color: var(--ink-night);
 }

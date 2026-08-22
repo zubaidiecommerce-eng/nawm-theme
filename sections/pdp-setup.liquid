@@ -59,7 +59,7 @@
           assign k_body = base | append: '.body'
           assign delay = forloop.index0 | times: 60
         -%}
-        <li class="nawm-card pdp-setup__step nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
+        <li class="nawm-card pdp-setup__step nawm-lift nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
           <p class="nawm-mono pdp-setup__time">{{ k_time | t }}</p>
           <h3 class="pdp-setup__title">{{ k_title | t }}</h3>
           <p class="pdp-setup__body">{{ k_body | t }}</p>
@@ -73,6 +73,7 @@
           class="pdp-setup__manual-link"
           href="{{ manual.value.url }}"
           data-nawm-event="open_manual"
+                data-nawm-manual
           target="_blank"
           rel="noopener"
         >

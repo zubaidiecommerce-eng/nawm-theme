@@ -7,6 +7,10 @@
 
   De klok is aria-hidden: hij is narratief, geen informatie die een screenreader
   nodig heeft.
+
+  @param {boolean} [nawm_pdp] - True op de productpagina. Daar blijft de klok
+    weg: die vertelt de reis van 23:30 naar 07:00, en op de productpagina is
+    geen reis maar één beslissing.
 {% enddoc %}
 
 <div class="nawm-sky" aria-hidden="true">
@@ -15,9 +19,16 @@
   <div class="nawm-sky__morning"></div>
 </div>
 
-<p class="nawm-clock" aria-hidden="true">
-  <span data-nawm-clock>23:30</span>
-</p>
+{%- comment -%}
+  De nachtklok vertelt de reis van 23:30 naar 07:00 en hoort dus bij de
+  landingspagina. Op de productpagina is er geen reis — daar staat de bezoeker
+  stil bij één beslissing — dus daar blijft hij weg.
+{%- endcomment -%}
+{%- unless nawm_pdp -%}
+  <p class="nawm-clock" aria-hidden="true">
+    <span data-nawm-clock>23:30</span>
+  </p>
+{%- endunless -%}
 
 <script src="{{ 'nawm-dawn.js' | asset_url }}" type="module"></script>
 <script src="{{ 'nawm-reveal.js' | asset_url }}" type="module" fetchpriority="low"></script>
