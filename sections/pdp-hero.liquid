@@ -142,12 +142,9 @@
       </div>
 
       {%- if slide_count > 1 -%}
-        <p class="nawm-mono pdp-gallery__position">
-          {{-
-            'nawm.pdp.hero.gallery_position'
-            | t: index: '<span data-gallery-position>1</span>', total: slide_count
-          -}}
-        </p>
+        {%- capture live_index -%}<span data-gallery-position>1</span>{%- endcapture -%}
+        {%- assign position = 'nawm.pdp.hero.gallery_position' | t: index: '{index}', total: slide_count | replace: '{index}', live_index -%}
+        <p class="nawm-mono pdp-gallery__position">{{ position }}</p>
 
         <ul class="pdp-gallery__thumbs">
           {%- for index in (1..slide_count) -%}

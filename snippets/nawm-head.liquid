@@ -30,7 +30,7 @@
   kent: de koopknop, de betaallogorij, de sterrenrij en de mobiele koopbalk.
   Die laden alleen daar, zodat de landingspagina er geen byte van meekrijgt.
 {%- endcomment -%}
-{%- if template.suffix == 'wake-up-light' -%}
+{%- if template.suffix == 'nawm' or template.suffix == 'wake-up-light' -%}
   {{ 'nawm-pdp.css' | asset_url | stylesheet_tag }}
 {%- endif -%}
 

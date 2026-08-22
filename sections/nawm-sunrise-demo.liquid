@@ -124,12 +124,9 @@
           beweging niet meer kloppen. Nooit suggereren dat de doorloop realtime
           is: het is en blijft een samenvatting van zes seconden.
         {%- endcomment -%}
-        {%- capture live_minutes -%}
-          <span data-minutes>{{ section.settings.default_minutes }}</span>
-        {%- endcapture -%}
-        <p class="nawm-sunrise__summary nawm-mono">
-          {{ 'nawm.sunrise.summary' | t: minutes: live_minutes }}
-        </p>
+        {%- capture live_minutes -%}<span data-minutes>{{ section.settings.default_minutes }}</span>{%- endcapture -%}
+        {%- assign summary = 'nawm.sunrise.summary' | t: minutes: '{minutes}' | replace: '{minutes}', live_minutes -%}
+        <p class="nawm-sunrise__summary nawm-mono">{{ summary }}</p>
       </nawm-sunrise>
 
       <div class="nawm-sunrise-demo__text nawm-reveal">
