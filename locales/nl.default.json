@@ -12,7 +12,7 @@
       "heading": "Frisser wakker begint|de avond ervoor.",
       "subheading": "Bouw in 30 minuten af zonder eindeloos scrollen en word geleidelijk wakker met licht, natuurgeluiden of radio. Eén systeem voor een rustigere avond en een zachtere start.",
       "cta": "Word wakker met licht — {{ price }}",
-      "trust": "Inclusief Nederlandse Sleep–Wake Guide · EU-stekker · 30 dagen retour",
+      "trust": "Nederlandstalige handleiding · EU-stekker · 30 dagen retour, retourzending gratis",
       "trial": "{{ nights }} nachten proberen",
       "image_alt": "Nachtkastje met warm amberlicht in een donkere slaapkamer"
     },
@@ -159,11 +159,10 @@
     "inbox": {
       "eyebrow": "Wat je krijgt",
       "heading": "Wat je krijgt.",
-      "item1": "NAWM Premium Wake Up Light met EU-stekker",
-      "item2": "Nederlandse snelstartkaart — van uitpakken naar eerste avond in minder dan tien minuten",
-      "item3": "NAWM Sleep–Wake Guide — vaste 30-minutenroutine, korte alternatieven en een 14-daagse opbouw",
-      "item4": "Instelkaart voor avondlicht, zonsopgangsduur, alarmgeluid, volume, radio en week/weekend-alarm",
-      "item5": "QR-code naar de online handleiding en de digitale gids",
+      "item1": "NAWM Wake Up Light",
+      "item2": "Nederlandstalige gebruikershandleiding — vooraf te lezen, niet pas na het uitpakken",
+      "item3": "USB-voedingskabel",
+      "item4": "Voedingsadapter met EU-stekker",
       "manual_link": "Lees de Nederlandse handleiding vóór je bestelt",
       "guide_link": "Bekijk de Sleep–Wake Guide (PDF)",
       "image_alt": "Alle onderdelen uit de doos van bovenaf naast elkaar gelegd"
@@ -235,7 +234,7 @@
     "offer": {
       "eyebrow": "Het aanbod",
       "heading": "Klaar om vanavond te beginnen.",
-      "included": "Wake up light, EU-stekker, snelstartkaart, Sleep–Wake Guide, instelkaart en QR-kaart.",
+      "included": "Wake up light, USB-voedingskabel, voedingsadapter met EU-stekker en de Nederlandstalige handleiding.",
       "cta": "Bestellen",
       "cta_price": "Bestel NAWM — {{ price }}",
       "sold_out": "Tijdelijk uitverkocht",
@@ -481,13 +480,9 @@
         "box_heading": "In de doos",
         "box": {
           "b1": "NAWM Wake Up Light",
-          "b2": "USB-voedingskabel",
-          "b3": "Voedingsadapter met EU-stekker",
-          "b4": "Nederlandstalige gebruikershandleiding",
-          "b5": "Sleep–Wake Guide",
-          "b6": "Snelstartkaart",
-          "b7": "Instelkaart",
-          "b8": "QR-kaart naar de online handleiding"
+          "b2": "Nederlandstalige gebruikershandleiding",
+          "b3": "USB-voedingskabel",
+          "b4": "Voedingsadapter met EU-stekker"
         },
         "radio_row": "FM-radio als wekbron",
         "manual_link": "Nederlandse handleiding (PDF)",
@@ -650,8 +645,8 @@
     },
     "announcement": {
       "delivery": "Vandaag besteld, {{ date }} in huis",
-      "free_shipping": "Gratis verzending vanaf {{ amount }}",
-      "returns": "{{ days }} dagen bedenktijd — retour is gratis"
+      "returns": "{{ days }} dagen retour — retourzending gratis",
+      "shipping": "Verzending € 4,95"
     },
     "popup": {
       "eyebrow": "{{ percentage }}% korting op je eerste bestelling",
@@ -688,7 +683,7 @@
     },
     "trust": {
       "heading": "Waarom je hier veilig bestelt",
-      "customers": "Meer dan 1.000 klanten gingen je voor op bol.com",
+      "customers": "{{ score }} van 5 op basis van {{ count }} beoordelingen op {{ source }}",
       "returns": "{{ days }} dagen retour — retourzending is voor onze rekening",
       "warranty": "{{ years }} jaar garantie",
       "support": "Nederlandse klantenservice, antwoord binnen {{ time }}",

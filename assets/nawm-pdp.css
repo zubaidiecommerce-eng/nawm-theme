@@ -91,6 +91,7 @@
 .pdp-payments__item svg {
   height: 100%;
   width: auto;
+  display: block;
 }
 
 /* -------------------------------------------------------------------- sterren */
