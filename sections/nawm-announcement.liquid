@@ -1,0 +1,190 @@
+{% comment %}
+  De balk boven de header. Draagt de twee dingen die een bezoeker in de eerste
+  seconde moet weten: wanneer het pakket er is, en wanneer verzenden gratis is.
+
+  Toegankelijkheid boven effect. Alle boodschappen staan in één lijst in de DOM
+  en zijn allemaal leesbaar voor een screenreader; het roteren is puur visueel
+  en gebruikt daarom geen aria-live. Een balk die elke vier seconden een nieuwe
+  melding in het oor van een screenreaderlezer duwt, is geen aankondiging maar
+  een onderbreking.
+
+  Bij prefers-reduced-motion draait er niets: dan staan de boodschappen naast
+  elkaar met een scheidingsteken. Bij één boodschap draait er ook niets.
+
+  De leverdatum komt uit dezelfde berekening als de productpagina, zodat de
+  balk en de knop nooit iets anders beloven.
+{% endcomment %}
+
+{% liquid
+  assign free_from = section.settings.free_shipping_threshold | times: 1
+
+  capture delivery_date
+    render 'pdp-delivery-date'
+  endcapture
+
+  assign messages = ''
+
+  if delivery_date != blank
+    assign line = 'nawm.announcement.delivery' | t: date: delivery_date
+    assign messages = messages | append: line | append: '|'
+  elsif settings.delivery_time != blank
+    assign messages = messages | append: settings.delivery_time | append: '|'
+  endif
+
+  if free_from > 0
+    assign threshold = free_from | times: 100 | money_without_trailing_zeros
+    assign line = 'nawm.announcement.free_shipping' | t: amount: threshold
+    assign messages = messages | append: line | append: '|'
+  endif
+
+  assign return_days = settings.return_days | times: 1
+  if return_days > 0
+    assign line = 'nawm.announcement.returns' | t: days: return_days
+    assign messages = messages | append: line | append: '|'
+  endif
+
+  if section.settings.extra_message != blank
+    assign messages = messages | append: section.settings.extra_message | append: '|'
+  endif
+
+  assign message_list = messages | split: '|'
+%}
+
+{%- if message_list.size > 0 -%}
+  <aside class="nawm-announce" data-nawm-announce>
+    <div class="nawm-announce__inner">
+      <ul class="nawm-announce__list">
+        {%- for message in message_list -%}
+          <li class="nawm-announce__item{% if forloop.first %} is-current{% endif %}" data-announce-item>
+            {{ message }}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </aside>
+
+  {%- if message_list.size > 1 -%}
+    <script src="{{ 'nawm-announce.js' | asset_url }}" type="module" fetchpriority="low"></script>
+  {%- endif -%}
+{%- endif -%}
+
+{% stylesheet %}
+  .nawm-announce {
+    position: relative;
+    z-index: 2;
+    background: var(--nawm-midnight);
+    color: var(--ink-night);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: .06em;
+    /* Een haarlijn amber onderaan: het enige merkaccent dat de balk nodig heeft. */
+    box-shadow: inset 0 -1px 0 color-mix(in oklab, var(--nawm-amber) 40%, transparent);
+  }
+
+  .nawm-announce__inner {
+    width: min(var(--wrap), 100% - var(--gutter) * 2);
+    margin-inline: auto;
+    /* De hoogte staat vast, zodat het wisselen van boodschap niets verschuift. */
+    height: 38px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+
+  .nawm-announce__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  /* Alle boodschappen liggen op elkaar; alleen de huidige is zichtbaar. Ze
+     blijven in de DOM staan, dus een screenreader leest ze gewoon alle vier. */
+  .nawm-announce__item {
+    grid-area: 1 / 1;
+    margin: 0;
+    text-align: center;
+    text-wrap: balance;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+  }
+
+  .nawm-announce__item.is-current {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Zonder JS is er niets dat rouleert, dus dan staat de eerste er gewoon. */
+  html:not(.nawm-js) .nawm-announce__item:first-child {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Niets beweegt: de boodschappen staan naast elkaar op één regel. */
+    .nawm-announce__list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--sp-1) var(--sp-3);
+    }
+
+    .nawm-announce__item {
+      grid-area: auto;
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .nawm-announce__item + .nawm-announce__item::before {
+      content: "·";
+      margin-inline-end: var(--sp-3);
+    }
+
+    .nawm-announce__inner {
+      height: auto;
+      padding-block: var(--sp-2);
+    }
+  }
+
+  @media (max-width: 749px) {
+    .nawm-announce {
+      font-size: .75rem;
+    }
+
+    .nawm-announce__inner {
+      height: 34px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Balk bovenaan",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De leverdatum en de retourtermijn komen uit de themasettings, zodat de balk nooit iets anders belooft dan de knop. Laat een veld leeg om die boodschap weg te laten."
+    },
+    {
+      "type": "number",
+      "id": "free_shipping_threshold",
+      "label": "Gratis verzending vanaf",
+      "info": "Bedrag in hele euro's. Leeg of 0 laat de boodschap weg."
+    },
+    {
+      "type": "text",
+      "id": "extra_message",
+      "label": "Extra boodschap",
+      "info": "Optioneel. Alleen iets wat waar is — geen aflopende actie die niet bestaat."
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Balk bovenaan"
+    }
+  ]
+}
+{% endschema %}

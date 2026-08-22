@@ -357,3 +357,240 @@ html.nawm-page :is(a, button, input, select, textarea, summary, [tabindex]):focu
   height: 1px;
   background: var(--nawm-amber);
 }
+
+/* ------------------------------------------------------- nieuwsbriefpopup */
+
+/* Op het native <dialog>: de browser regelt focus, Escape en het inert maken
+   van de achtergrond. Hier staat alleen hoe hij eruitziet. */
+.nawm-popup {
+  width: min(27rem, 100% - var(--gutter) * 2);
+  max-height: min(90dvh, 44rem);
+  padding: 0;
+  border: 1px solid var(--nawm-peach);
+  border-radius: var(--r-card);
+  background: var(--nawm-dawn);
+  color: var(--ink-day);
+  box-shadow: 0 2px 4px rgb(26 23 16 / .08), 0 32px 64px -24px rgb(11 18 32 / .45);
+  overflow: visible;
+}
+
+.nawm-popup::backdrop {
+  background: rgb(11 18 32 / .62);
+  backdrop-filter: blur(3px);
+}
+
+.nawm-popup[open] {
+  animation: nawm-popup-in var(--dur) var(--ease);
+}
+
+@keyframes nawm-popup-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-popup[open] { animation: none; }
+}
+
+.nawm-popup__body {
+  padding: clamp(1.75rem, 5vw, 2.5rem);
+  /* De amberband bovenaan is het enige decoratieve element. */
+  border-block-start: 3px solid var(--nawm-amber);
+  border-start-start-radius: var(--r-card);
+  border-start-end-radius: var(--r-card);
+}
+
+.nawm-popup__dismiss-form {
+  margin: 0;
+}
+
+.nawm-popup__close {
+  position: absolute;
+  inset-block-start: var(--sp-2);
+  inset-inline-end: var(--sp-2);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--ink-day-soft);
+  cursor: pointer;
+}
+
+.nawm-popup__close:hover {
+  background: color-mix(in oklab, var(--ink-day) 8%, transparent);
+  color: var(--ink-day);
+}
+
+.nawm-popup__eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--nawm-ember);
+}
+
+.nawm-popup__heading {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--ff-display);
+  font-variation-settings: "opsz" 96, "SOFT" 0, "WONK" 0;
+  font-weight: 300;
+  font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.25rem);
+  line-height: 1.05;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+  color: var(--ink-day);
+}
+
+.nawm-popup__lede {
+  margin: var(--sp-3) 0 0;
+  color: var(--ink-day-soft);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+}
+
+.nawm-popup__form {
+  margin: var(--sp-5) 0 0;
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.nawm-popup__input {
+  width: 100%;
+  min-height: 52px;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid color-mix(in oklab, var(--ink-day) 22%, transparent);
+  border-radius: var(--r-data);
+  background: #fff;
+  color: var(--ink-day);
+  font-family: var(--ff-body);
+  font-size: 1rem;
+}
+
+.nawm-popup__input::placeholder {
+  color: color-mix(in oklab, var(--ink-day) 45%, transparent);
+}
+
+.nawm-popup__error {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--nawm-ember);
+}
+
+.nawm-popup__fine {
+  margin: var(--sp-3) 0 0;
+  font-size: .8125rem;
+  line-height: 1.45;
+  color: var(--ink-day-soft);
+}
+
+/* "Nu niet" is een tekstlink, geen tweede knop: er hoort één duidelijke
+   hoofdactie in dit venster te staan. */
+.nawm-popup__decline {
+  display: block;
+  margin: var(--sp-4) auto 0;
+  padding: var(--sp-1) var(--sp-2);
+  border: 0;
+  background: transparent;
+  color: var(--ink-day-soft);
+  font-family: var(--ff-body);
+  font-size: var(--fs-small);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.nawm-popup__decline:hover {
+  color: var(--ink-day);
+}
+
+.nawm-popup__code {
+  margin: var(--sp-5) 0 var(--sp-4);
+  padding: var(--sp-3);
+  border: 1px dashed var(--nawm-ember);
+  border-radius: var(--r-data);
+  background: color-mix(in oklab, var(--nawm-amber) 16%, var(--nawm-dawn));
+  text-align: center;
+}
+
+.nawm-popup__code code {
+  font-family: var(--ff-mono);
+  font-size: 1.5rem;
+  letter-spacing: .18em;
+  color: var(--ink-day);
+  user-select: all;
+}
+
+/* ------------------------------------------------------------------- header */
+
+/* Horizon levert een prima werkende header, maar met de typografie van een
+   willekeurige webshop. Deze regels zetten hem in het NAWM-idioom: mono,
+   uppercase, ruime letterafstand, en een amber haarlijn die van links uit
+   groeit bij hover. Alleen op de NAWM-sjablonen, zodat de rest van de winkel
+   onaangeroerd blijft. */
+
+html.nawm-page #header-component {
+  --nawm-header-ink: var(--ink-night);
+}
+
+html.nawm-page #header-component a,
+html.nawm-page #header-component .header__menu a {
+  color: var(--nawm-header-ink);
+}
+
+html.nawm-page .header__menu-item,
+html.nawm-page #header-component nav a {
+  position: relative;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  text-decoration: none;
+}
+
+/* De onderlijn groeit van links, in plaats van te knipperen. */
+html.nawm-page #header-component nav a::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -6px;
+  height: 1px;
+  background: var(--nawm-amber);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease);
+}
+
+html.nawm-page #header-component nav a:hover::after,
+html.nawm-page #header-component nav a[aria-current]::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.nawm-page #header-component nav a::after {
+    transition: none;
+  }
+}
+
+/* Zodra de header niet meer transparant is, staat hij op midnight in plaats van
+   op wit. Zo blijft de nachtkleur doorlopen terwijl je scrollt. */
+html.nawm-page #header-component:not([transparent]) {
+  background: color-mix(in oklab, var(--nawm-midnight) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-block-end: 1px solid rgb(255 255 255 / .08);
+}
+
+html.nawm-page #header-component .header__logo img,
+html.nawm-page #header-component .header__logo svg {
+  /* Het logo is donker aangeleverd; op de nachtheader moet het licht zijn. */
+  filter: brightness(0) invert(1);
+}
+
+/* De winkelwagen- en menuknoppen erven dezelfde inkt. */
+html.nawm-page #header-component button,
+html.nawm-page #header-component .header__icon {
+  color: var(--nawm-header-ink);
+}

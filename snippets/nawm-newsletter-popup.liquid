@@ -1,0 +1,115 @@
+{% doc %}
+  De nieuwsbriefpopup met korting op de eerste bestelling.
+
+  Gebouwd op het native `<dialog>`-element. Dat levert de focustrap, het
+  sluiten met Escape en het inert maken van de achtergrond gratis en correct
+  op — een zelfgebouwde modal doet dat vrijwel nooit helemaal goed.
+
+  Beide toestanden — het formulier en de bevestiging met de code — staan in de
+  DOM; nawm-popup.js toont de juiste. Dat moet ook: `form.posted_successfully?`
+  bestaat alleen bínnen een `{% form %}`-blok, en Shopify stuurt de bezoeker na
+  het inschrijven terug met `?customer_posted=true` in de url. Die parameter is
+  vanuit Liquid niet te lezen, dus de keuze valt in JavaScript.
+
+  Vier keuzes die bewust zo zijn:
+
+  · Hij verschijnt na een vertraging, niet meteen. Wie nog niet weet wat hij
+    ziet, heeft niets aan een korting.
+  · Hij komt één keer. Sluiten of inschrijven zet een vlag in localStorage.
+  · De weigerknop heet gewoon "Nu niet". Geen "nee, ik betaal liever te veel" —
+    die truc werkt één keer en kost precies het vertrouwen dat de rest van deze
+    site opbouwt.
+  · De kortingscode staat in de bevestiging, niet alleen in de mail. Een code
+    die pas na twintig minuten aankomt, is een code die niet gebruikt wordt.
+{% enddoc %}
+
+{%- liquid
+  assign percentage = settings.popup_discount_percentage | times: 1
+  assign code = settings.popup_discount_code
+-%}
+
+{%- if settings.popup_enabled and percentage > 0 and code != blank -%}
+  <dialog
+    class="nawm-popup"
+    id="nawm-newsletter-popup"
+    data-nawm-popup
+    data-delay="{{ settings.popup_delay_seconds | default: 8 }}"
+    aria-labelledby="nawm-popup-heading"
+  >
+    <form method="dialog" class="nawm-popup__dismiss-form">
+      <button
+        type="submit"
+        class="nawm-popup__close"
+        value="close"
+        aria-label="{{ 'nawm.popup.close' | t }}"
+      >
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+      </button>
+    </form>
+
+    {%- comment -%} ------------------------------------------- het formulier {%- endcomment -%}
+    <div class="nawm-popup__body" data-popup-state="form">
+      <p class="nawm-popup__eyebrow nawm-mono">
+        {{ 'nawm.popup.eyebrow' | t: percentage: percentage }}
+      </p>
+
+      <h2 class="nawm-popup__heading" id="nawm-popup-heading">{{ 'nawm.popup.heading' | t }}</h2>
+
+      <p class="nawm-popup__lede">{{ 'nawm.popup.body' | t: percentage: percentage }}</p>
+
+      {%- form 'customer', id: 'nawm-popup-form', class: 'nawm-popup__form' -%}
+        <input type="hidden" name="contact[tags]" value="nieuwsbrief,popup">
+        <input type="hidden" name="contact[accepts_marketing]" value="true">
+
+        <label class="nawm-visually-hidden" for="nawm-popup-email">
+          {{ 'nawm.popup.email_label' | t }}
+        </label>
+        <input
+          id="nawm-popup-email"
+          class="nawm-popup__input"
+          type="email"
+          name="contact[email]"
+          autocomplete="email"
+          inputmode="email"
+          required
+          placeholder="{{ 'nawm.popup.email_placeholder' | t }}"
+        >
+
+        <button type="submit" class="nawm-cta nawm-cta--full nawm-popup__submit">
+          {{ 'nawm.popup.cta' | t }}
+        </button>
+
+        {%- if form.errors -%}
+          <p class="nawm-popup__error" role="alert">{{ 'nawm.popup.error' | t }}</p>
+        {%- endif -%}
+      {%- endform -%}
+
+      <p class="nawm-popup__fine">{{ 'nawm.popup.fine_print' | t }}</p>
+
+      <form method="dialog">
+        <button type="submit" class="nawm-popup__decline" value="close">
+          {{ 'nawm.popup.decline' | t }}
+        </button>
+      </form>
+    </div>
+
+    {%- comment -%} ------------------------------------------ de bevestiging {%- endcomment -%}
+    <div class="nawm-popup__body" data-popup-state="success" hidden>
+      <p class="nawm-popup__eyebrow nawm-mono">{{ 'nawm.popup.success_eyebrow' | t }}</p>
+      <h2 class="nawm-popup__heading">{{ 'nawm.popup.success_heading' | t }}</h2>
+      <p class="nawm-popup__lede">{{ 'nawm.popup.success_body' | t: percentage: percentage }}</p>
+
+      <p class="nawm-popup__code"><code>{{ code }}</code></p>
+
+      <form method="dialog">
+        <button type="submit" class="nawm-cta nawm-cta--full" value="close">
+          {{ 'nawm.popup.success_cta' | t }}
+        </button>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="{{ 'nawm-popup.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}

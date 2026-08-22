@@ -20,6 +20,16 @@
   endif
 
   comment
+    Vangnet voor de productkoppeling. Een `product`-themasetting levert normaal
+    een productobject op, maar staat hij leeg of verkeerd ingevuld, dan valt
+    alles wat eraan hangt stil: prijs, specificaties en de knoptekst. De handle
+    is de tweede weg naar hetzelfde product en kost niets.
+  endcomment
+  if pdp_product.id == blank and settings.nawm_product_handle != blank
+    assign pdp_product = all_products[settings.nawm_product_handle]
+  endif
+
+  comment
     De chips tonen de tracklijst met natuurgeluiden uit de handleiding, en heten
     hier ook zo. Ze "wekgeluiden" noemen zou suggereren dat je uit alle 22 kunt
     kiezen bij het instellen van de wekker, en dat staat nog niet vast — zie

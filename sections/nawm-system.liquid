@@ -12,6 +12,16 @@
 
 {% liquid
   assign product = settings.nawm_product
+  comment
+    Vangnet voor de productkoppeling. Een `product`-themasetting levert normaal
+    een productobject op, maar staat hij leeg of verkeerd ingevuld, dan valt
+    alles wat eraan hangt stil: prijs, specificaties en de knoptekst. De handle
+    is de tweede weg naar hetzelfde product en kost niets.
+  endcomment
+  if product.id == blank and settings.nawm_product_handle != blank
+    assign product = all_products[settings.nawm_product_handle]
+  endif
+
   assign radio = product.metafields.nawm.has_fm_radio
 
   assign eyebrow = section.settings.eyebrow
@@ -30,7 +40,7 @@
   endif
 %}
 
-<section class="nawm-section nawm-system ctx-night" data-dawn-marker="mid">
+<section class="nawm-section nawm-system ctx-night" id="systeem" data-dawn-marker="mid">
   <div class="nawm-wrap">
     <div class="nawm-system__head nawm-reveal">
       {% render 'nawm-eyebrow', text: eyebrow %}

@@ -2135,6 +2135,13 @@
         "info": "De bron voor prijs, voorraad en alle specificatie-metafields."
       },
       {
+        "type": "text",
+        "id": "nawm_product_handle",
+        "label": "Producthandle",
+        "info": "Vangnet voor de koppeling hierboven. Vul de handle uit de product-url in, bijvoorbeeld nawm-wake-up-light. Zonder dit valt bij een lege koppeling de prijs, de knoptekst en de hele specificatietabel stil.",
+        "default": "nawm-wake-up-light"
+      },
+      {
         "type": "select",
         "id": "price_display_source",
         "label": "Prijs tonen vanuit",
@@ -2393,6 +2400,51 @@
         "id": "support_response_time",
         "label": "Reactietijd",
         "info": "Bijvoorbeeld: één werkdag. Alleen invullen als je hem waarmaakt."
+      },
+      {
+        "type": "header",
+        "content": "Nieuwsbriefpopup"
+      },
+      {
+        "type": "paragraph",
+        "content": "De popup verschijnt één keer per bezoeker en nooit op de winkelwagen of de kassa. De kortingscode moet ook echt bestaan onder Kortingen — anders belooft de popup iets wat bij het afrekenen niet werkt."
+      },
+      {
+        "type": "checkbox",
+        "id": "popup_enabled",
+        "label": "Popup tonen",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "popup_delay_seconds",
+        "label": "Verschijnt na",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "unit": "s",
+        "default": 8,
+        "info": "Meteen tonen werkt averechts: wie nog niet weet wat hij ziet, heeft niets aan een korting.",
+        "visible_if": "{{ settings.popup_enabled }}"
+      },
+      {
+        "type": "range",
+        "id": "popup_discount_percentage",
+        "label": "Kortingspercentage",
+        "min": 0,
+        "max": 25,
+        "step": 1,
+        "unit": "%",
+        "default": 5,
+        "visible_if": "{{ settings.popup_enabled }}"
+      },
+      {
+        "type": "text",
+        "id": "popup_discount_code",
+        "label": "Kortingscode",
+        "default": "WELKOM5",
+        "info": "Exact zoals de code onder Kortingen heet.",
+        "visible_if": "{{ settings.popup_enabled }}"
       },
       {
         "type": "header",

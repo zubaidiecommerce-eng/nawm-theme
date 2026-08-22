@@ -204,6 +204,15 @@
       </footer>
     </div>
 
+    {%- comment -%}
+      De nieuwsbriefpopup leunt op de NAWM-tokens, dus hij verschijnt op de twee
+      sjablonen die die tokens laden: de landingspagina en de productpagina.
+      Daar komt vrijwel al het verkeer binnen.
+    {%- endcomment -%}
+    {%- if nawm_page -%}
+      {% render 'nawm-newsletter-popup' %}
+    {%- endif -%}
+
     {% render 'cart-drawer', render_wrapper: true %}
     {% render 'theme-drawer' %}
 

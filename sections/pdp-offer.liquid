@@ -25,6 +25,16 @@
     assign pdp_product = settings.nawm_product
   endif
 
+  comment
+    Vangnet voor de productkoppeling. Een `product`-themasetting levert normaal
+    een productobject op, maar staat hij leeg of verkeerd ingevuld, dan valt
+    alles wat eraan hangt stil: prijs, specificaties en de knoptekst. De handle
+    is de tweede weg naar hetzelfde product en kost niets.
+  endcomment
+  if pdp_product.id == blank and settings.nawm_product_handle != blank
+    assign pdp_product = all_products[settings.nawm_product_handle]
+  endif
+
   assign eyebrow = section.settings.eyebrow
   if eyebrow == blank
     assign eyebrow = 'nawm.pdp.offer.eyebrow' | t

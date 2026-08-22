@@ -20,6 +20,11 @@
   @param {string} [kind] - 'text' (standaard), 'bool' of 'list'.
   @param {string} [suffix] - Eenheid achter de waarde.
   @param {string} [note] - Wat er geverifieerd moet worden en waaruit.
+  @param {boolean} [optional] - Laat de rij weg zolang de waarde ontbreekt, in
+    plaats van er een VERIFY-token te tonen. Alleen voor specificaties die de
+    fabrikant niet opgeeft: een rij die er niet staat, belooft niets. Voor alles
+    wat de bezoeker wél verwacht blijft het token staan, want een stille
+    weglating is daar erger dan een zichtbaar gat.
 {% enddoc %}
 
 {%- liquid
@@ -28,12 +33,22 @@
     assign exists = true
   endif
 
+  comment
+    `break` bestaat in Liquid alleen binnen een lus, dus de rij wordt met een
+    conditie omheen weggelaten in plaats van vroegtijdig afgebroken.
+  endcomment
+  assign show_row = true
+  if exists == false and optional
+    assign show_row = false
+  endif
+
   assign row_label = label
   if label_key != blank
     assign row_label = label_key | t
   endif
 -%}
 
+{%- if show_row -%}
 <div class="nawm-specs__row">
   <dt class="nawm-specs__label">{{ row_label }}</dt>
   <dd class="nawm-specs__value nawm-mono">
@@ -56,3 +71,4 @@
     {%- endif -%}
   </dd>
 </div>
+{%- endif -%}
