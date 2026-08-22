@@ -241,7 +241,9 @@
       "payment_label": "Betaalmethoden",
       "sticky_label": "Bestellen",
       "company_label": "Verkoper",
-      "contact_label": "Contact"
+      "contact_label": "Contact",
+      "per_morning": "{{ amount }} per ochtend in het eerste jaar",
+      "image_alt": "De NAWM Wake Up Light op een nachtkastje, met het licht op een warme stand"
     },
     "faq": {
       "eyebrow": "Veelgestelde vragen",
@@ -593,6 +595,39 @@
         "heading": "Zo werkt hij, in een paar seconden",
         "pause": "Pauze",
         "empty_slot": "Clip volgt"
+      },
+      "compare": {
+        "eyebrow": "Waarom deze",
+        "heading": "Naast de wekker die je nu gebruikt",
+        "col_a": "Je telefoonwekker",
+        "col_b": "NAWM",
+        "rows": {
+          "r1": {
+            "topic": "Het wekmoment",
+            "a": "Nul seconden. Het alarm is er ineens.",
+            "b": "Het licht bouwt {{ min }} tot {{ max }} minuten op; het geluid komt als laatste stap."
+          },
+          "r2": {
+            "topic": "’s Nachts",
+            "a": "Een scherm binnen handbereik, dat oplicht bij elke melding.",
+            "b": "Een warm nachtlampje. Het display dim je los, tot het helemaal uit is."
+          },
+          "r3": {
+            "topic": "Instellen",
+            "a": "Via het besturingssysteem, tussen je apps door.",
+            "b": "Op het apparaat zelf. Geen app, geen account, geen wifi."
+          },
+          "r4": {
+            "topic": "Het geluid",
+            "a": "Een alarmtoon of een liedje, op volle sterkte.",
+            "b": "{{ count }} natuurgeluiden of de FM-radio, op het volume dat jij instelt."
+          },
+          "r5": {
+            "topic": "Als er iets is",
+            "a": "Zoeken in een helpcentrum.",
+            "b": "Nederlandse handleiding vooraf te lezen, en klantenservice die in het Nederlands antwoordt."
+          }
+        }
       }
     },
     "announcement": {
@@ -620,6 +655,18 @@
       "newsletter_heading": "Krijg {{ percentage }}% korting op je eerste bestelling",
       "newsletter_body": "Schrijf je in voor de nieuwsbrief en je kortingscode komt direct binnen. Verder mailen we alleen als er iets te melden is.",
       "newsletter_label": "Inschrijven"
+    },
+    "gate": {
+      "eyebrow": "Handleiding · PDF",
+      "heading": "Lees hem voordat je bestelt.",
+      "body": "De volledige Nederlandse handleiding, met alle knoppen, de tracklijst en het instelmenu. Laat je adres achter en hij staat er meteen.",
+      "cta": "Stuur mij de handleiding",
+      "fine_print": "We gebruiken je adres voor de handleiding en hooguit een paar mails per jaar. Uitschrijven kan met één klik.",
+      "skip": "Liever zonder mailadres? Open de handleiding direct",
+      "success_eyebrow": "Klaar",
+      "success_heading": "Je handleiding staat open.",
+      "success_body": "Hij staat ook in je inbox, zodat je hem later terugvindt.",
+      "success_cta": "Handleiding openen"
     }
   },
   "blocks": {

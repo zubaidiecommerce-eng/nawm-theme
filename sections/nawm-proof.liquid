@@ -60,7 +60,7 @@
   endfor
 %}
 
-{%- if visible > 2 -%}
+{%- if visible > 1 -%}
   <script src="{{ 'nawm-marquee.js' | asset_url }}" type="module" fetchpriority="low"></script>
 {%- endif -%}
 
@@ -132,7 +132,7 @@
       hij loopt door, dus hij mag niet in een kader staan.
     {%- endcomment -%}
     <div
-      class="nawm-proof__marquee{% if visible > 2 %} is-animated{% endif %}"
+      class="nawm-proof__marquee{% if visible > 1 %} is-animated{% else %} is-single{% endif %}"
       data-nawm-marquee
       data-count="{{ visible }}"
     >
@@ -264,6 +264,26 @@
     grid-auto-columns: min(82%, 23rem);
     gap: var(--sp-4);
     width: max-content;
+  }
+
+  /* Eén beoordeling is geen band. Dan geen scrollruimte naar rechts waar niets
+     staat, maar één ruimere kaart in het midden. */
+  .nawm-proof__marquee.is-single {
+    overflow: visible;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .nawm-proof__marquee.is-single .nawm-proof__track {
+    width: auto;
+    justify-content: center;
+    grid-auto-columns: min(100%, 34rem);
+  }
+
+  .nawm-proof__marquee.is-single .nawm-review__quote {
+    -webkit-line-clamp: unset;
+    line-clamp: unset;
+    font-size: var(--fs-body);
   }
 
   .nawm-proof__item {

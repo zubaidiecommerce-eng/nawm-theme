@@ -53,7 +53,7 @@
     {%- if section.blocks.size > 0 -%}
       <ul class="pdp-clips__grid" style="--clip-ratio: {{ section.settings.ratio | default: '9 / 16' }};">
         {%- for block in section.blocks -%}
-          <li class="pdp-clips__item nawm-reveal" style="--reveal-delay: {{ forloop.index0 | times: 60 }}ms;" {{ block.shopify_attributes }}>
+          <li class="pdp-clips__item nawm-lift nawm-reveal" style="--reveal-delay: {{ forloop.index0 | times: 60 }}ms;" {{ block.shopify_attributes }}>
             {%- if block.settings.video != blank -%}
               <div class="pdp-clips__frame">
                 <video

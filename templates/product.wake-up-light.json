@@ -37,7 +37,8 @@
       "settings": {
         "eyebrow": "",
         "heading": "",
-        "body": ""
+        "body": "",
+        "image": "shopify://shop_images/koud-scherm.jpg"
       }
     },
     "pdp_setup": {
@@ -137,6 +138,13 @@
         "heading": "",
         "ratio": "9 / 16"
       }
+    },
+    "pdp_compare": {
+      "type": "pdp-compare",
+      "settings": {
+        "eyebrow": "",
+        "heading": ""
+      }
     }
   },
   "order": [
@@ -149,6 +157,7 @@
     "pdp_clips",
     "pdp_proof",
     "pdp_specs",
+    "pdp_compare",
     "pdp_offer",
     "pdp_faq",
     "pdp_close",

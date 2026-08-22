@@ -44,3 +44,11 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
 }
+
+/* Laat `height: auto` en `block-size: auto` meedoen in transities. Zonder deze
+   regel springt een uitklappend antwoord van 0 naar zijn eindhoogte in één
+   frame. Browsers die het niet kennen, negeren de regel en klappen gewoon
+   direct open — dat is de nette terugval. */
+:root {
+  interpolate-size: allow-keywords;
+}

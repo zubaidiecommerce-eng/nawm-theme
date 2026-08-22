@@ -39,6 +39,8 @@
   assign items = 'item1,item2,item3,item4,item5' | split: ','
 %}
 
+{% render 'nawm-manual-gate', manual: product.metafields.nawm.manual_pdf %}
+
 <section class="nawm-section nawm-inbox ctx-dawn">
   <div class="nawm-wrap">
     <div class="nawm-inbox__head nawm-reveal">
@@ -90,7 +92,14 @@
     {%- if manual != blank or guide != blank -%}
       <p class="nawm-inbox__docs">
         {%- if manual != blank -%}
-          <a href="{{ manual | file_url }}" class="nawm-inbox__doc" data-nawm-event="open_guide">
+          <a
+            href="{{ manual | file_url }}"
+            class="nawm-inbox__doc"
+            data-nawm-event="open_manual"
+            data-nawm-manual
+            target="_blank"
+            rel="noopener"
+          >
             {{- 'nawm.inbox.manual_link' | t -}}
           </a>
         {%- endif -%}

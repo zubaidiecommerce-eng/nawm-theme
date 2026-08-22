@@ -70,7 +70,8 @@
       "type": "nawm-proof",
       "settings": {
         "eyebrow": "",
-        "heading": ""
+        "heading": "",
+        "image": "shopify://shop_images/ochtend-raam.jpg"
       }
     },
     "nawm_inbox": {
@@ -109,7 +110,8 @@
       "type": "nawm-offer",
       "settings": {
         "eyebrow": "",
-        "heading": ""
+        "heading": "",
+        "image": "shopify://shop_images/hero-nachtkastje-mobile.jpg"
       }
     },
     "nawm_faq": {

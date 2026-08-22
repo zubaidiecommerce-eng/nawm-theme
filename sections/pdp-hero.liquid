@@ -86,13 +86,14 @@
   endcapture
 %}
 
+{% render 'nawm-manual-gate', manual: manual %}
+
 <script src="{{ 'pdp-gallery.js' | asset_url }}" type="module" fetchpriority="low"></script>
 <script src="{{ 'pdp-sticky-cta.js' | asset_url }}" type="module" fetchpriority="low"></script>
 
 <section
-  class="nawm-section pdp-hero ctx-night"
+  class="nawm-section pdp-hero ctx-dawn"
   id="koopblok"
-  data-dawn-start
   data-nawm-pdp
 >
   <div class="nawm-wrap pdp-hero__grid">
@@ -255,6 +256,7 @@
                 class="pdp-hero__usp-proof"
                 href="{{ manual.value.url }}"
                 data-nawm-event="open_manual"
+                data-nawm-manual
                 target="_blank"
                 rel="noopener"
               >
