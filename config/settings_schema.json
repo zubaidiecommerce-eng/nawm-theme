@@ -2236,17 +2236,11 @@
         "type": "text",
         "id": "review_checked_on",
         "label": "Gecontroleerd op",
-        "info": "Datum waarop het cijfer met de bron is vergeleken."
+        "info": "Datum waarop het cijfer is nageteld. Verschijnt in de cijferregel."
       },
       {
         "type": "header",
         "content": "Productpagina · reviewverdeling"
-      },
-      {
-        "type": "text",
-        "id": "review_source",
-        "label": "Bron van het reviewcijfer",
-        "info": "Bijvoorbeeld bol.com. Verschijnt in de cijferregel boven de verdeling."
       },
       {
         "type": "text",

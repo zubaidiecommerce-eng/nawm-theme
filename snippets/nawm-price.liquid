@@ -4,7 +4,7 @@
   Nooit hardcoded. Standaard komt de prijs uit het gekozen product; staat de
   themasetting op handmatig, dan uit `price_manual`. Ontbreken ze allebei, dan
   rendert het VERIFY-token — de definitieve webshopprijs is nog een besluit
-  (§13, punt 3: blauwdruk €69,95 tegenover de bol-listing op €39,95).
+  (§13, punt 3: de blauwdruk noemde €69,95, een ander kanaal €39,95).
 
   Geen doorgestreepte adviesprijs tenzij die juridisch en feitelijk
   verdedigbaar is; daarom wordt `compare_at_price` hier bewust niet getoond.
@@ -28,6 +28,6 @@
 {%- else -%}
   {%- render 'nawm-verify',
     field: 'price',
-    note: 'definitieve webshopprijs — kanaalconflict met de bol-listing eerst beslissen'
+    note: 'definitieve webshopprijs — eerst het prijsverschil tussen kanalen beslissen'
   -%}
 {%- endif -%}

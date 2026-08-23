@@ -10,7 +10,8 @@
       verpakking, dan hoort dat hier thuis; tot dat bevestigd is, staat het er
       niet. Zie docs/OPEN-PDP.md.
 
-  Het klantenaantal komt uit de bol-verkopen en staat er mét die bron bij. Een
+  Er staat geen klantenaantal: dat was niet te controleren. Wat er wél staat is
+  het gemiddelde over de geverifieerde beoordelingen, met het aantal erbij. Een
   kaal "12.000 klanten" zonder herkomst is precies de claim waar de spec voor
   waarschuwt.
 {% endcomment %}
@@ -32,8 +33,8 @@
     <ul class="nawm-trust__list">
       {%- comment -%}
         Geen klantenaantal: dat was niet te controleren en valt onder Google's
-        Misrepresentation-beleid. Wat er staat komt uit de bol-listing en is met
-        één klik na te rekenen.
+        Misrepresentation-beleid. Wat er staat is het gemiddelde over de
+        geverifieerde beoordelingen, met het aantal erbij.
       {%- endcomment -%}
       {%- if section.settings.show_customer_count
         and settings.review_score != blank
@@ -46,7 +47,7 @@
           <span>
             {{-
               'nawm.trust.customers'
-              | t: score: settings.review_score, count: settings.review_count, source: settings.review_source
+              | t: score: settings.review_score, count: settings.review_count
             -}}
           </span>
         </li>

@@ -158,12 +158,13 @@
     "proof": {
       "eyebrow": "Social proof",
       "heading": "Wat kopers terugmelden.",
-      "score_line": "{{ score }} uit {{ count }} beoordelingen op {{ source }} · gecontroleerd op {{ date }}",
-      "empty": "Er staan nog geen gecontroleerde citaten klaar. Een review zonder bron en datum tonen we niet.",
+      "score_line": "{{ score }} uit {{ count }} geverifieerde beoordelingen · gecontroleerd op {{ date }}",
+      "empty": "Er staan nog geen gecontroleerde citaten klaar. Een beoordeling zonder geverifieerde aankoop en datum tonen we niet.",
       "image_alt": "Vroeg ochtendlicht valt in een band over verkreukeld beddengoed",
       "distribution_label": "Beoordelingsverdeling",
       "stars_short": "{{ n }}★",
-      "stars_of_five": "{{ n }} van de 5 sterren"
+      "stars_of_five": "{{ n }} van de 5 sterren",
+      "verified": "Geverifieerde aankoop"
     },
     "inbox": {
       "eyebrow": "Wat je krijgt",
@@ -475,14 +476,15 @@
       "proof": {
         "eyebrow": "Wat kopers zeggen",
         "heading": "Wat kopers zeggen",
-        "score_line": "{{ score }} uit {{ count }} beoordelingen op {{ source }} · gecontroleerd op {{ date }}",
+        "score_line": "{{ score }} uit {{ count }} geverifieerde beoordelingen · gecontroleerd op {{ date }}",
         "distribution_label": "Beoordelingsverdeling",
         "stars": "{{ n }} sterren",
         "star_count": "{{ count }} beoordelingen",
         "filter_label": "Filter op onderwerp",
         "filter_all": "Alles",
-        "empty": "Zodra er beoordelingen met bron, link en datum zijn, staan ze hier. Een beoordeling zonder bron tonen we niet.",
-        "stars_of_five": "{{ n }} van de 5 sterren"
+        "empty": "Zodra er geverifieerde beoordelingen met datum zijn, staan ze hier. Een beoordeling zonder geverifieerde aankoop tonen we niet.",
+        "stars_of_five": "{{ n }} van de 5 sterren",
+        "verified": "Geverifieerde aankoop"
       },
       "specs": {
         "eyebrow": "Specificaties",
@@ -700,7 +702,7 @@
         "warranty": "garantie",
         "warranty_value": "{{ years }} jaar",
         "frame": "Ongeveer wat je in een maand aan koffie onderweg uitgeeft. Dan wel elke ochtend, een jaar lang.",
-        "elsewhere_heading": "Waarom hier en niet op bol.com",
+        "elsewhere_heading": "Waarom je hem hier bestelt",
         "e1": "30 dagen retour, en de retourzending is voor onze rekening",
         "e2": "Nederlandse klantenservice, antwoord binnen 24 uur, geen tussenpartij",
         "e3": "De handleiding vóór je bestelt, zodat je weet waar je aan begint"
@@ -769,7 +771,7 @@
     },
     "trust": {
       "heading": "Waarom je hier veilig bestelt",
-      "customers": "{{ score }} van 5 op basis van {{ count }} beoordelingen op {{ source }}",
+      "customers": "{{ score }} van 5 op basis van {{ count }} geverifieerde beoordelingen",
       "returns": "{{ days }} dagen retour — retourzending is voor onze rekening",
       "warranty": "{{ years }} jaar garantie",
       "support": "Nederlandse klantenservice, antwoord binnen {{ time }}",
@@ -817,15 +819,24 @@
       "empty_heading": "Nog niks in je mandje",
       "empty_body": "De NAWM Wake Up Light — zonsopgang van {{ min }} tot {{ max }} minuten, {{ days }} dagen retour",
       "empty_cta": "Bekijken",
-      "gift_label": "Verstuur als cadeau — geen prijs op de pakbon"
+      "gift_label": "Verstuur als cadeau — geen prijs op de pakbon",
+      "eyebrow": "Bijna klaar",
+      "heading": "Je winkelwagen",
+      "quantity_label": "Aantal",
+      "remove": "Verwijderen",
+      "update": "Aantal bijwerken",
+      "total": "Totaal",
+      "tax_note": "Inclusief btw. Verzendkosten worden bij het afrekenen berekend.",
+      "checkout": "Afrekenen"
     },
     "differentiation": {
-      "channels": "Verkocht via bol.com en rechtstreeks bij ons — nergens anders",
+      "channels": "Rechtstreeks bij ons besteld, met onze garantie en onze service",
       "dutch": "Nederlandse handleiding en Nederlandse klantenservice"
     },
     "trustpilot": {
-      "heading": "Wat kopers na een week schrijven",
-      "note": "Beoordelingen op Trustpilot, verzameld via automatische uitnodigingen zeven dagen na levering."
+      "heading": "Wat klanten elders over ons schrijven",
+      "line": "{{ score }} op Trustpilot, op basis van {{ count }} beoordelingen",
+      "editor_note": "Trustpilot staat uit, of domein, business unit-id, score of aantal ontbreekt. Op de winkel toont deze sectie dan niets."
     }
   },
   "blocks": {

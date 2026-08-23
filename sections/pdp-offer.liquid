@@ -1,5 +1,5 @@
 {% comment %}
-  PDP-sectie: beantwoordt B4 (goedkoper op bol.com), B7 (wat als het niks voor
+  PDP-sectie: beantwoordt B4 (elders goedkoper), B7 (wat als het niks voor
   mij is), B11 (wanneer heb ik hem) en B12 (verborgen kosten).
   Zie NAWM_PDP_CONVERSIE_SPEC.md §3.9.
 
@@ -133,7 +133,7 @@
       </dl>
 
       {%- comment -%}
-        Het prijsverschil met de bol-listing. Blijft uit tot het besluit uit
+        Het prijsverschil met het andere kanaal. Blijft uit tot het besluit uit
         §6.1 gevallen is: een meerprijs verantwoorden werkt alleen wanneer de
         meerwaarde die je noemt ook echt bestaat.
       {%- endcomment -%}
@@ -148,7 +148,7 @@
             <p>
               {% render 'nawm-verify',
                 field: 'price_difference_text',
-                note: 'besluit over het bol.com-prijsverschil en de meerwaarde die dat verantwoordt'
+                note: 'besluit over het prijsverschil tussen kanalen en de meerwaarde die dat verantwoordt'
               %}
             </p>
           {%- endif -%}
