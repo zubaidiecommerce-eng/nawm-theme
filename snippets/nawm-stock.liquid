@@ -1,0 +1,35 @@
+{% doc %}
+  De voorraadindicator. Zie conversiespec v2 §3.1.
+
+  Toont uitsluitend waarden die uit de werkelijke voorraad komen. Staat
+  voorraadregistratie niet aan op de variant, dan rendert dit snippet niets — en
+  dat is precies goed: liever geen melding dan een verzonnen aantal. Een
+  "Nog 3 op voorraad" zonder koppeling is een misleidende handelspraktijk en
+  valt bij Google onder Misrepresentation.
+
+  @param {object} product - Het product.
+  @param {number} [threshold] - Onder dit aantal verschijnt de lage-voorraadregel.
+{% enddoc %}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign limit = threshold | default: 10 | times: 1
+-%}
+
+{%- if variant.inventory_management != blank -%}
+  {%- assign quantity = variant.inventory_quantity -%}
+
+  {%- if quantity > 0 and quantity <= limit -%}
+    <p class="nawm-stock nawm-stock--low" aria-live="polite">
+      <span class="nawm-stock__dot" aria-hidden="true"></span>
+      {{ 'nawm.stock.low' | t: count: quantity }}
+    </p>
+  {%- elsif quantity > limit -%}
+    <p class="nawm-stock nawm-stock--ok">
+      <span class="nawm-stock__dot" aria-hidden="true"></span>
+      {{ 'nawm.stock.ok' | t }}
+    </p>
+  {%- else -%}
+    <p class="nawm-stock nawm-stock--out">{{ 'nawm.stock.out' | t }}</p>
+  {%- endif -%}
+{%- endif -%}

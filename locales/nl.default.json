@@ -660,7 +660,7 @@
         "room_dark": "De kamer blijft donker",
         "cold_warm": "Koud scherm, warm licht",
         "closeup": "Het apparaat, van dichtbij",
-        "label_render": "Animatie",
+        "label_render": "Sfeerimpressie",
         "label_recording": "Opname van het verkoopmodel"
       },
       "beforeafter": {
@@ -670,6 +670,63 @@
         "after_label": "Met NAWM",
         "before_caption": "Koud schermlicht onder het dekbed, tot je ogen dichtvallen.",
         "after_caption": "Licht dat opbouwt, en een geluid dat pas als laatste komt."
+      },
+      "mirror": {
+        "eyebrow": "Even eerlijk",
+        "heading": "Klinkt dit bekend?",
+        "s1": "Ik lig te scrollen tot mijn ogen dichtvallen",
+        "s2": "Mijn alarm voelt elke ochtend als een schok",
+        "s3": "Ik snooze minstens één keer",
+        "s4": "Het eerste uur van mijn dag is verspild",
+        "result_0": "Dan zit je goed. Serieus — dit product lost een probleem op dat jij niet hebt.",
+        "result_low": "Herkenbaar. Meestal zit het in het begin en het einde van je nacht, niet in de uren ertussen.",
+        "result_high": "Dan ligt het niet aan jouw discipline. Je avond heeft geen eindpunt en je ochtend geen aanloop. Dat is precies wat hieronder staat."
+      },
+      "strip": {
+        "eyebrow": "In beeld",
+        "heading": "Vier keer zes seconden",
+        "label_impression": "Sfeerimpressie",
+        "label_recording": "Opname van het verkoopmodel",
+        "c1": "Zo loopt het licht op",
+        "c2": "Zo donker blijft je kamer",
+        "c3": "Van scherm naar licht",
+        "c4": "Opname van het verkoopmodel"
+      },
+      "costs": {
+        "eyebrow": "De prijs",
+        "heading": "Wat het kost, eerlijk",
+        "once": "eenmalig",
+        "per_morning": "per ochtend in het eerste jaar",
+        "warranty": "garantie",
+        "warranty_value": "{{ years }} jaar",
+        "frame": "Ongeveer wat je in een maand aan koffie onderweg uitgeeft. Dan wel elke ochtend, een jaar lang.",
+        "elsewhere_heading": "Waarom hier en niet op bol.com",
+        "e1": "30 dagen retour, en de retourzending is voor onze rekening",
+        "e2": "Nederlandse klantenservice, antwoord binnen 24 uur, geen tussenpartij",
+        "e3": "De handleiding vóór je bestelt, zodat je weet waar je aan begint"
+      },
+      "fortnight": {
+        "eyebrow": "Wat je kunt verwachten",
+        "heading": "Wat je de eerste twee weken merkt",
+        "n1_label": "Nacht 1",
+        "n1": "Je zet hem in, je kiest je geluid. Waarschijnlijk word je wakker vóór het licht klaar is — je lichaam kent het patroon nog niet.",
+        "n2_label": "Nacht 4",
+        "n2": "De zonsopgang begint bekend te voelen. Veel mensen zetten hier hun duur langer, van 20 naar 30 of 40 minuten.",
+        "n3_label": "Nacht 14",
+        "n3": "De routine draait vanzelf. Je merkt het pas echt als je een nacht ergens anders slaapt.",
+        "closing": "Werkt het na {{ days }} nachten niet voor je? Dan stuur je hem terug en betalen wij de retourzending."
+      },
+      "gift": {
+        "eyebrow": "Met z’n tweeën",
+        "heading": "Twee mensen, twee ochtenden",
+        "body": "De korting wordt bij het afrekenen vanzelf verrekend. Je hoeft geen code in te vullen.",
+        "one": "1 stuk",
+        "two": "2 stuks",
+        "off": "{{ percentage }}% korting",
+        "free_shipping": "verzending gratis",
+        "each": "{{ amount }} per stuk",
+        "gift_label": "Verstuur als cadeau — geen prijs op de pakbon",
+        "qty_label": "Aantal"
       }
     },
     "announcement": {
@@ -738,6 +795,37 @@
       "submit": "Verstuur",
       "success": "Bedankt. Je bericht is binnen en we antwoorden zo snel mogelijk.",
       "error": "Er ging iets mis bij het versturen. Controleer je e-mailadres en probeer het opnieuw."
+    },
+    "stock": {
+      "low": "Nog {{ count }} op voorraad",
+      "ok": "Op voorraad — vandaag verzonden",
+      "out": "Tijdelijk uitverkocht"
+    },
+    "cutoff": {
+      "default": "Vandaag vóór {{ time }} besteld, {{ date }} in huis",
+      "countdown": "Nog {{ hours }} uur en {{ minutes }} minuten om vandaag verzonden te worden",
+      "countdown_minutes": "Nog {{ minutes }} minuten om vandaag verzonden te worden",
+      "passed": "Vandaag besteld, {{ date }} in huis"
+    },
+    "cart": {
+      "progress": "Nog {{ amount }} tot gratis verzending",
+      "progress_done": "Gratis verzending — je zit erboven",
+      "upsell": "Voeg een tweede toe voor {{ amount }} en je verzending is gratis",
+      "upsell_cta": "Maak er twee van",
+      "added": "Toegevoegd aan je winkelwagen",
+      "trust": "{{ days }} dagen retour · retourzending gratis · {{ years }} jaar garantie",
+      "empty_heading": "Nog niks in je mandje",
+      "empty_body": "De NAWM Wake Up Light — zonsopgang van {{ min }} tot {{ max }} minuten, {{ days }} dagen retour",
+      "empty_cta": "Bekijken",
+      "gift_label": "Verstuur als cadeau — geen prijs op de pakbon"
+    },
+    "differentiation": {
+      "channels": "Verkocht via bol.com en rechtstreeks bij ons — nergens anders",
+      "dutch": "Nederlandse handleiding en Nederlandse klantenservice"
+    },
+    "trustpilot": {
+      "heading": "Wat kopers na een week schrijven",
+      "note": "Beoordelingen op Trustpilot, verzameld via automatische uitnodigingen zeven dagen na levering."
     }
   },
   "blocks": {

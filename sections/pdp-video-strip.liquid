@@ -1,0 +1,192 @@
+{% comment %}
+  PDP-sectie: de videostrip. Bewijs voor iemand die scant in plaats van leest.
+  Zie conversiespec v2 §2.4.
+
+  Vier clips van zes tot acht seconden in een horizontale strip met scroll-snap.
+  Het label onder elke clip is niet decoratief: drie ervan heten
+  "Sfeerimpressie" en de vierde "Opname van het verkoopmodel". Dat onderscheid
+  is precies de reden dat de vierde als bewijs mag gelden. Verwissel ze nooit.
+
+  Techniek: `preload="none"` en een posterbeeld, zodat vier video's niet vier
+  bestanden binnenhalen voordat iemand kijkt. De clips spelen af zodra ze in
+  beeld komen, zonder geluid, met een pauzeknop — en bij
+  prefers-reduced-motion blijft alles op het poster staan.
+{% endcomment %}
+
+{% liquid
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.strip.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.strip.heading' | t
+  endif
+
+  assign filled = 0
+  if section.settings.clip_1 != blank
+    assign filled = filled | plus: 1
+  endif
+  if section.settings.clip_2 != blank
+    assign filled = filled | plus: 1
+  endif
+  if section.settings.clip_3 != blank
+    assign filled = filled | plus: 1
+  endif
+  if section.settings.clip_4 != blank
+    assign filled = filled | plus: 1
+  endif
+%}
+
+{%- if filled > 0 -%}
+  <section class="nawm-section pdp-strip ctx-dawn" id="video-strip" data-nawm-strip>
+    <div class="nawm-wrap">
+      <div class="pdp-head pdp-head--wide nawm-reveal">
+        {% render 'nawm-eyebrow', text: eyebrow %}
+        <h2>{{ heading }}</h2>
+      </div>
+    </div>
+
+    {%- comment -%}
+      De strip loopt van rand tot rand, met de wrap als binnenmarge. Geen
+      negatieve marges: die maakten eerder de hele pagina breder dan het scherm.
+    {%- endcomment -%}
+    <ul class="pdp-strip__track">
+      {%- if section.settings.clip_1 != blank -%}
+        <li class="pdp-strip__item nawm-lift">
+          {% render 'nawm-clip',
+            video: section.settings.clip_1,
+            poster: section.settings.clip_1_poster,
+            ratio: '9 / 16',
+            kind: 'render',
+            caption_key: 'nawm.pdp.strip.c1'
+          %}
+        </li>
+      {%- endif -%}
+
+      {%- if section.settings.clip_2 != blank -%}
+        <li class="pdp-strip__item nawm-lift">
+          {% render 'nawm-clip',
+            video: section.settings.clip_2,
+            poster: section.settings.clip_2_poster,
+            ratio: '9 / 16',
+            kind: 'render',
+            caption_key: 'nawm.pdp.strip.c2'
+          %}
+        </li>
+      {%- endif -%}
+
+      {%- if section.settings.clip_3 != blank -%}
+        <li class="pdp-strip__item nawm-lift">
+          {% render 'nawm-clip',
+            video: section.settings.clip_3,
+            poster: section.settings.clip_3_poster,
+            ratio: '9 / 16',
+            kind: 'render',
+            caption_key: 'nawm.pdp.strip.c3'
+          %}
+        </li>
+      {%- endif -%}
+
+      {%- if section.settings.clip_4 != blank -%}
+        <li class="pdp-strip__item nawm-lift">
+          {% render 'nawm-clip',
+            video: section.settings.clip_4,
+            poster: section.settings.clip_4_poster,
+            ratio: '9 / 16',
+            kind: 'recording',
+            caption_key: 'nawm.pdp.strip.c4'
+          %}
+        </li>
+      {%- endif -%}
+    </ul>
+  </section>
+{%- endif -%}
+
+{% stylesheet %}
+  .pdp-strip__track {
+    list-style: none;
+    margin: clamp(2rem, 5vw, 3rem) 0 0;
+    padding: var(--sp-1) var(--gutter) var(--sp-3);
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(64%, 16rem);
+    gap: var(--sp-4);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+
+  .pdp-strip__item {
+    scroll-snap-align: center;
+  }
+
+  @media (min-width: 900px) {
+    .pdp-strip__track {
+      width: min(var(--wrap), 100% - var(--gutter) * 2);
+      margin-inline: auto;
+      padding-inline: 0;
+      grid-auto-flow: row;
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-columns: auto;
+      overflow: visible;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP videostrip",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Vier clips van zes tot acht seconden. De eerste drie zijn sfeerimpressies, de vierde is de opname van het verkoopmodel — dat onderscheid staat onder elke clip en is de reden dat de vierde als bewijs telt. De sectie blijft weg zolang er geen clip staat."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "video",
+      "id": "clip_1",
+      "label": "1 · Zo loopt het licht op",
+      "info": "Sfeerimpressie."
+    },
+    { "type": "image_picker", "id": "clip_1_poster", "label": "Posterbeeld 1" },
+    {
+      "type": "video",
+      "id": "clip_2",
+      "label": "2 · Zo donker blijft je kamer",
+      "info": "Sfeerimpressie."
+    },
+    { "type": "image_picker", "id": "clip_2_poster", "label": "Posterbeeld 2" },
+    {
+      "type": "video",
+      "id": "clip_3",
+      "label": "3 · Van scherm naar licht",
+      "info": "Sfeerimpressie."
+    },
+    { "type": "image_picker", "id": "clip_3_poster", "label": "Posterbeeld 3" },
+    {
+      "type": "video",
+      "id": "clip_4",
+      "label": "4 · Opname van het verkoopmodel",
+      "info": "De echte timelapse. Dit is het enige bewijsbeeld in de strip."
+    },
+    { "type": "image_picker", "id": "clip_4_poster", "label": "Posterbeeld 4" }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP videostrip"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,313 @@
+{% comment %}
+  PDP-sectie: de tweede koper. Vervangt de oude staffelkorting.
+  Zie conversiespec v2 §2.5.
+
+  Twee opties, meer niet. Drie en vier stuks stonden er eerder en zagen er
+  berekend uit; niemand koopt vier wekkers. Twee is wél verdedigbaar: partner,
+  huisgenoot of cadeau. Een van de eigen bol-beoordelingen zegt het letterlijk:
+  "Ook leuk idee voor een kadootje."
+
+  De tweede optie doet twee dingen tegelijk: hij geeft korting én tikt de
+  gratisverzendingsdrempel aan. Dat is een echte reden om er twee te nemen, geen
+  verzonnen urgentie.
+
+  De cadeauoptie wordt als line item property meegestuurd, zodat de pakbon
+  zonder prijs verstuurd kan worden. Dat kost niets en verlaagt de drempel voor
+  de cadeaukoper.
+
+  Het percentage hier moet gelijk staan aan de automatische korting in de admin.
+  Als de kassa de korting niet geeft, hoort de pagina hem niet te beloven.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+  if pdp_product.id == blank and settings.nawm_product_handle != blank
+    assign pdp_product = all_products[settings.nawm_product_handle]
+  endif
+
+  assign variant = pdp_product.selected_or_first_available_variant
+  assign unit_price = variant.price | default: pdp_product.price
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.gift.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.gift.heading' | t
+  endif
+
+  assign percentage = section.settings.discount_two | times: 1
+  assign free_from_cents = section.settings.free_shipping_threshold | times: 100
+
+  assign single_total = unit_price
+  assign pair_gross = unit_price | times: 2
+  assign pair_discount = pair_gross | times: percentage | divided_by: 100
+  assign pair_total = pair_gross | minus: pair_discount
+  assign pair_each = pair_total | divided_by: 2
+
+  assign pair_free_shipping = false
+  if free_from_cents > 0 and pair_total >= free_from_cents
+    assign pair_free_shipping = true
+  endif
+%}
+
+{%- if unit_price > 0 -%}
+  <section class="nawm-section pdp-gift ctx-dawn" id="cadeau">
+    <div class="nawm-wrap">
+      <div class="pdp-head pdp-head--wide nawm-reveal">
+        {% render 'nawm-eyebrow', text: eyebrow %}
+        <h2>{{ heading }}</h2>
+        <p class="nawm-body">{{ 'nawm.pdp.gift.body' | t }}</p>
+      </div>
+
+      <form
+        class="pdp-gift__form"
+        method="post"
+        action="{{ routes.cart_add_url }}"
+        accept-charset="UTF-8"
+        enctype="multipart/form-data"
+        data-nawm-gift-form
+      >
+        <input type="hidden" name="form_type" value="product">
+        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="id" value="{{ variant.id }}">
+
+        <fieldset class="pdp-gift__options">
+          <legend class="nawm-visually-hidden">{{ 'nawm.pdp.gift.qty_label' | t }}</legend>
+
+          <label class="pdp-gift__option nawm-lift">
+            <input type="radio" name="quantity" value="1" class="pdp-gift__radio" checked>
+            <span class="pdp-gift__body">
+              <span class="pdp-gift__count">{{ 'nawm.pdp.gift.one' | t }}</span>
+              <span class="pdp-gift__total nawm-mono">{{ single_total | money }}</span>
+            </span>
+          </label>
+
+          <label class="pdp-gift__option nawm-lift">
+            <input type="radio" name="quantity" value="2" class="pdp-gift__radio">
+            <span class="pdp-gift__body">
+              <span class="pdp-gift__head">
+                <span class="pdp-gift__count">{{ 'nawm.pdp.gift.two' | t }}</span>
+                {%- if percentage > 0 -%}
+                  <span class="pdp-gift__badge">
+                    {{- 'nawm.pdp.gift.off' | t: percentage: percentage -}}
+                  </span>
+                {%- endif -%}
+              </span>
+              <span class="pdp-gift__total nawm-mono">{{ pair_total | money }}</span>
+              <span class="pdp-gift__meta nawm-mono">
+                {{- 'nawm.pdp.gift.each' | t: amount: pair_each | money -}}
+                {%- if pair_free_shipping -%}
+                  {{ ' · ' }}{{ 'nawm.pdp.gift.free_shipping' | t }}
+                {%- endif -%}
+              </span>
+            </span>
+          </label>
+        </fieldset>
+
+        {%- comment -%}
+          De cadeauoptie gaat als line item property mee. Hij verschijnt pas bij
+          twee stuks — bij één exemplaar voor jezelf is de vraag onzin.
+        {%- endcomment -%}
+        <label class="pdp-gift__checkbox" data-gift-toggle hidden>
+          <input type="checkbox" name="properties[Cadeau]" value="ja" data-gift-check>
+          <span class="pdp-gift__checkbox-box" aria-hidden="true"></span>
+          <span>{{ 'nawm.pdp.gift.gift_label' | t }}</span>
+        </label>
+
+        {%- if pdp_product.available -%}
+          <button type="submit" name="add" class="nawm-cta nawm-cta--full" data-nawm-event="add_to_cart">
+            {{ 'nawm.pdp.common.cta_short' | t }}
+          </button>
+        {%- else -%}
+          <span class="nawm-cta nawm-cta--full" aria-disabled="true">{{ 'nawm.pdp.common.sold_out' | t }}</span>
+        {%- endif -%}
+
+        {% render 'pdp-microcopy' %}
+      </form>
+    </div>
+  </section>
+
+  <script src="{{ 'nawm-gift.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}
+
+{% stylesheet %}
+  .pdp-gift__form {
+    margin: clamp(2rem, 5vw, 3rem) auto 0;
+    max-width: 34rem;
+  }
+
+  .pdp-gift__options {
+    margin: 0 0 var(--sp-4);
+    padding: 0;
+    border: 0;
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  @media (min-width: 600px) {
+    .pdp-gift__options {
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+    }
+  }
+
+  .pdp-gift__option {
+    position: relative;
+    display: block;
+    padding: var(--sp-4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
+    cursor: pointer;
+  }
+
+  .pdp-gift__radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .pdp-gift__option:has(.pdp-gift__radio:focus-visible) {
+    outline: 2px solid var(--nawm-amber);
+    outline-offset: 3px;
+  }
+
+  .pdp-gift__option:has(.pdp-gift__radio:checked) {
+    border-color: var(--nawm-amber);
+    background: color-mix(in oklab, var(--nawm-amber) 16%, var(--nawm-dawn));
+    box-shadow: inset 0 0 0 1px var(--nawm-amber);
+  }
+
+  .pdp-gift__body {
+    display: grid;
+    gap: var(--sp-1);
+  }
+
+  .pdp-gift__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .pdp-gift__count {
+    font-weight: 500;
+    color: var(--fg);
+  }
+
+  .pdp-gift__badge {
+    padding: 2px var(--sp-2);
+    border-radius: var(--r-pill);
+    background: var(--nawm-ember);
+    color: var(--nawm-dawn);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: .04em;
+  }
+
+  .pdp-gift__total {
+    font-size: 1.375rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
+  }
+
+  .pdp-gift__meta {
+    color: var(--fg-soft);
+  }
+
+  .pdp-gift__checkbox {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--sp-3);
+    align-items: center;
+    margin-block-end: var(--sp-4);
+    padding: var(--sp-3) var(--sp-4);
+    border: 1px dashed var(--line);
+    border-radius: var(--r-card);
+    font-size: var(--fs-small);
+    color: var(--fg);
+    cursor: pointer;
+  }
+
+  .pdp-gift__checkbox input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .pdp-gift__checkbox-box {
+    inline-size: 22px;
+    block-size: 22px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--r-data);
+    display: grid;
+    place-items: center;
+  }
+
+  .pdp-gift__checkbox-box::after {
+    content: "";
+    inline-size: 10px;
+    block-size: 6px;
+    border-inline-start: 2px solid var(--nawm-dawn);
+    border-block-end: 2px solid var(--nawm-dawn);
+    rotate: -45deg;
+    translate: 0 -1px;
+    opacity: 0;
+  }
+
+  .pdp-gift__checkbox:has(input:checked) {
+    border-style: solid;
+    border-color: var(--nawm-amber);
+  }
+
+  .pdp-gift__checkbox:has(input:checked) .pdp-gift__checkbox-box {
+    border-color: var(--nawm-ember);
+    background: var(--nawm-ember);
+  }
+
+  .pdp-gift__checkbox:has(input:checked) .pdp-gift__checkbox-box::after {
+    opacity: 1;
+  }
+
+  .pdp-gift__checkbox:has(input:focus-visible) {
+    outline: 2px solid var(--nawm-amber);
+    outline-offset: 3px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP cadeau",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Twee opties, meer niet. Het percentage hier moet gelijk staan aan de automatische korting onder Kortingen in de admin — als de kassa hem niet geeft, hoort de pagina hem niet te beloven."
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "textarea", "id": "heading", "label": "Kop" },
+    {
+      "type": "range",
+      "id": "discount_two",
+      "label": "Korting bij 2 stuks",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "number",
+      "id": "free_shipping_threshold",
+      "label": "Gratis verzending vanaf",
+      "info": "Bedrag in hele euro's. Bij dat bedrag verschijnt het label bij de tweede optie."
+    }
+  ],
+  "presets": [{ "name": "NAWM · PDP cadeau" }]
+}
+{% endschema %}

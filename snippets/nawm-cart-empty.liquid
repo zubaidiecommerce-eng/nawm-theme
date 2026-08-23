@@ -1,0 +1,52 @@
+{% doc %}
+  De lege winkelwagen. Zie conversiespec v2 §5.2.
+
+  Was een doodlopende weg: "Je winkelwagen is leeg" en een inloglink. Nu één
+  productkaart die rechtstreeks naar de productpagina gaat — niet naar
+  /collections/all, want bij één product is een collectiepagina een omweg.
+{% enddoc %}
+
+{%- liquid
+  assign nawm_product = settings.nawm_product
+  if nawm_product.id == blank and settings.nawm_product_handle != blank
+    assign nawm_product = all_products[settings.nawm_product_handle]
+  endif
+
+  assign sunrise_min = nawm_product.metafields.nawm.sunrise_min_minutes.value | default: 10
+  assign sunrise_max = nawm_product.metafields.nawm.sunrise_max_minutes.value | default: 60
+  assign return_days = settings.return_days | times: 1
+-%}
+
+<div class="nawm-cart-empty">
+  <h2 class="nawm-cart-empty__heading" id="cart-drawer-heading">
+    {{ 'nawm.cart.empty_heading' | t }}
+  </h2>
+
+  {%- if nawm_product != blank -%}
+    <a class="nawm-cart-empty__card" href="{{ nawm_product.url }}">
+      {%- if nawm_product.featured_image != blank -%}
+        {{
+          nawm_product.featured_image
+          | image_url: width: 320
+          | image_tag: widths: '160,320', sizes: '80px', alt: '', loading: 'lazy'
+        }}
+      {%- endif -%}
+
+      <span class="nawm-cart-empty__meta">
+        <span class="nawm-cart-empty__title">{{ nawm_product.title }}</span>
+        <span class="nawm-cart-empty__price nawm-mono">{{ nawm_product.price | money }}</span>
+      </span>
+
+      <span class="nawm-cta nawm-cta--ghost nawm-cart-empty__cta">
+        {{ 'nawm.cart.empty_cta' | t }}
+      </span>
+    </a>
+
+    <p class="nawm-cart-empty__body">
+      {{-
+        'nawm.cart.empty_body'
+        | t: min: sunrise_min, max: sunrise_max, days: return_days
+      -}}
+    </p>
+  {%- endif -%}
+</div>

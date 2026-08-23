@@ -2403,6 +2403,47 @@
       },
       {
         "type": "header",
+        "content": "Trustpilot"
+      },
+      {
+        "type": "paragraph",
+        "content": "Zet dit pas aan vanaf ongeveer tien beoordelingen. Een widget met nul beoordelingen doet meer kwaad dan geen widget. De volgorde: eigen domein koppelen, profiel aanmaken, automatische uitnodigingen zeven dagen ná levering, en dán pas tonen."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_trustpilot",
+        "label": "Trustpilot tonen",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "trustpilot_url",
+        "label": "Link naar je Trustpilot-profiel",
+        "visible_if": "{{ settings.show_trustpilot }}"
+      },
+      {
+        "type": "header",
+        "content": "Winkelwagen"
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold_cart",
+        "label": "Gratis verzending vanaf",
+        "info": "Bedrag in hele euro's. Voedt de voortgangsbalk in de winkelwagen."
+      },
+      {
+        "type": "range",
+        "id": "cart_pair_discount",
+        "label": "Korting bij twee stuks",
+        "min": 0,
+        "max": 30,
+        "step": 1,
+        "unit": "%",
+        "default": 10,
+        "info": "Moet gelijk staan aan de automatische korting onder Kortingen. Voedt de upsellregel in de winkelwagen."
+      },
+      {
+        "type": "header",
         "content": "Nieuwsbriefpopup"
       },
       {

@@ -1,0 +1,40 @@
+{% doc %}
+  De verzenddeadline met aftelling. Zie conversiespec v2 §3.2.
+
+  Een teller die elke dag opnieuw begint mag, zolang de deadline echt bestaat.
+  Die van NAWM staat op 16:00 en moet ook op 16:00 waargemaakt worden — de
+  eerdere 23:59 was ongeloofwaardig, want niemand pakt om middernacht in.
+
+  Ná de deadline verdwijnt de teller en staat er alleen nog de leverdatum. Er
+  loopt dan immers niets meer af. Een teller die op nul springt en dan opnieuw
+  begint terwijl er niets gebeurt, staat hier bewust niet in.
+
+  De leverdatum komt uit dezelfde berekening als de rest van de site; er wordt
+  nooit een tweede berekening gedaan.
+
+  @param {string} [class] - Extra klassen.
+{% enddoc %}
+
+{%- liquid
+  assign deadline = settings.order_deadline_time
+  capture delivery
+    render 'pdp-delivery-date'
+  endcapture
+-%}
+
+{%- if deadline != blank and delivery != blank -%}
+  <p
+    class="nawm-cutoff {{ class }}"
+    data-nawm-cutoff
+    data-cutoff="{{ deadline }}"
+    data-text-countdown="{{ 'nawm.cutoff.countdown' | t: hours: '{h}', minutes: '{m}' | escape }}"
+    data-text-countdown-minutes="{{ 'nawm.cutoff.countdown_minutes' | t: minutes: '{m}' | escape }}"
+    aria-live="polite"
+  >
+    <span data-cutoff-text>
+      {{- 'nawm.cutoff.default' | t: time: deadline, date: delivery -}}
+    </span>
+  </p>
+
+  <script src="{{ 'nawm-cutoff.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}

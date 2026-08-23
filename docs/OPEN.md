@@ -204,7 +204,7 @@ hoeft te scannen.
 ---
 
 <!-- claims-lint:start -->
-_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-23 08:35.  Niet met de hand bijwerken._
+_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-23 21:47.  Niet met de hand bijwerken._
 
 ### Openstaande VERIFY-tokens (36)
 
@@ -233,11 +233,11 @@ sections/nawm-inbox.liquid:109:        {% render 'nawm-verify',
 sections/nawm-specs.liquid:69:                {% render 'nawm-verify',
 sections/pdp-evening.liquid:101:              {% render 'nawm-verify',
 sections/pdp-evening.liquid:115:              {% render 'nawm-verify',
-sections/pdp-hero.liquid:297:                {% render 'nawm-verify',
-sections/pdp-hero.liquid:315:                {% render 'nawm-verify',
-sections/pdp-hero.liquid:345:                {% render 'nawm-verify', field: 'manual_pdf', note: 'Nederlandstalige handleiding als PDF' %}
-sections/pdp-hero.liquid:389:              {% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
-sections/pdp-hero.liquid:405:              {% render 'nawm-verify', field: 'warranty_years', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
+sections/pdp-hero.liquid:298:                {% render 'nawm-verify',
+sections/pdp-hero.liquid:316:                {% render 'nawm-verify',
+sections/pdp-hero.liquid:346:                {% render 'nawm-verify', field: 'manual_pdf', note: 'Nederlandstalige handleiding als PDF' %}
+sections/pdp-hero.liquid:382:              {% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
+sections/pdp-hero.liquid:398:              {% render 'nawm-verify', field: 'warranty_years', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
 sections/pdp-demo.liquid:147:                  {% render 'nawm-verify',
 sections/pdp-demo.liquid:209:              {% render 'nawm-verify',
 sections/pdp-faq.liquid:178:                <p>{% render 'nawm-verify', field: verify_field, note: verify_note %}</p>
@@ -249,5 +249,7 @@ snippets/nawm-price.liquid:29:  {%- render 'nawm-verify',
 
 ### Claims die eigen bewijs vereisen
 
-Geen.
+```
+sections/pdp-veertien-dagen.liquid:12:  gewenning aan een apparaat. Houd dat zo; een regel als "je slaapt beter" is
+```
 <!-- claims-lint:end -->

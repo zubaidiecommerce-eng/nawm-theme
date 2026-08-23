@@ -55,7 +55,15 @@ for (const video of players) {
     sync();
   });
 
-  video.addEventListener('play', sync);
+  /* Eén melding per clip is genoeg om te weten dát er gekeken wordt. */
+  let reported = false;
+  video.addEventListener('play', () => {
+    if (!reported) {
+      reported = true;
+      if (typeof window.nawmTrack === 'function') window.nawmTrack('video_strip_play');
+    }
+    sync();
+  });
   video.addEventListener('pause', sync);
 
   if ('IntersectionObserver' in window) {

@@ -1,0 +1,116 @@
+{% doc %}
+  Wat er in de gevulde winkelwagen bij moet. Zie conversiespec v2 §5.1.
+
+  De winkelwagen is het moment waarop de bezoeker nog één keer twijfelt. Elk
+  vertrouwenselement dat op de productpagina staat, hoort hier terug te komen —
+  anders vergeet hij het bij de laatste stap.
+
+  Wat hier bewust níét staat: een kortingscodeveld. Een leeg codeveld stuurt
+  iemand naar Google om een code te zoeken, en dan komt hij niet terug. Codes
+  horen in de checkout.
+
+  De leverdatum komt uit dezelfde berekening als de productpagina. Nooit een
+  tweede berekening: twee plekken die hetzelfde zouden moeten zeggen en het niet
+  doen, is erger dan één plek die zwijgt.
+{% enddoc %}
+
+{%- liquid
+  assign nawm_product = settings.nawm_product
+  if nawm_product.id == blank and settings.nawm_product_handle != blank
+    assign nawm_product = all_products[settings.nawm_product_handle]
+  endif
+
+  assign threshold_euros = settings.free_shipping_threshold_cart | times: 1
+  assign threshold = threshold_euros | times: 100
+  assign remaining = threshold | minus: cart.total_price
+
+  assign return_days = settings.return_days | times: 1
+  assign warranty_years = settings.warranty_years | times: 1
+
+  capture delivery
+    render 'pdp-delivery-date'
+  endcapture
+
+  comment
+    De upsell rekent met de staffelkorting van twee stuks, zodat het genoemde
+    bedrag klopt met wat de kassa straks doet.
+  endcomment
+  assign unit_price = nawm_product.selected_or_first_available_variant.price | default: nawm_product.price
+  assign pair_discount = settings.cart_pair_discount | times: 1
+  assign second_price = unit_price
+  if pair_discount > 0
+    assign pair_gross = unit_price | times: 2
+    assign pair_off = pair_gross | times: pair_discount | divided_by: 100
+    assign pair_total = pair_gross | minus: pair_off
+    assign second_price = pair_total | minus: unit_price
+  endif
+
+  assign show_upsell = false
+  if cart.item_count == 1 and remaining > 0 and unit_price > 0
+    assign show_upsell = true
+  endif
+-%}
+
+<div class="nawm-cart" data-added-text="{{ 'nawm.cart.added' | t | escape }}">
+  {%- if threshold > 0 -%}
+    <div class="nawm-cart__progress" aria-live="polite">
+      {%- if remaining > 0 -%}
+        <p class="nawm-cart__progress-text">
+          {{- 'nawm.cart.progress' | t: amount: remaining | money -}}
+        </p>
+      {%- else -%}
+        <p class="nawm-cart__progress-text nawm-cart__progress-text--done">
+          {{- 'nawm.cart.progress_done' | t -}}
+        </p>
+      {%- endif -%}
+
+      {%- liquid
+        assign pct = cart.total_price | times: 100 | divided_by: threshold
+        if pct > 100
+          assign pct = 100
+        endif
+      -%}
+      <div class="nawm-cart__track" aria-hidden="true">
+        <div class="nawm-cart__fill" style="inline-size: {{ pct }}%;"></div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if show_upsell -%}
+    {%- comment -%}
+      Eén knop die de hoeveelheid naar twee zet. Voor de cadeaukoper is dit het
+      duwtje; voor de rest is het één regel die hij overslaat.
+    {%- endcomment -%}
+    <form
+      class="nawm-cart__upsell"
+      method="post"
+      action="{{ routes.cart_change_url }}"
+      data-nawm-cart-upsell
+    >
+      <input type="hidden" name="line" value="1">
+      <input type="hidden" name="quantity" value="2">
+      <p class="nawm-cart__upsell-text">
+        {{- 'nawm.cart.upsell' | t: amount: second_price | money -}}
+      </p>
+      <button type="submit" class="nawm-cta nawm-cta--ghost" data-nawm-event="cart_upsell_click">
+        {{ 'nawm.cart.upsell_cta' | t }}
+      </button>
+    </form>
+  {%- endif -%}
+
+  {%- if delivery != blank and settings.order_deadline_time != blank -%}
+    <p class="nawm-cart__delivery nawm-mono">
+      {{- 'nawm.cutoff.default' | t: time: settings.order_deadline_time, date: delivery -}}
+    </p>
+  {%- endif -%}
+
+  {%- if return_days > 0 and warranty_years > 0 -%}
+    <p class="nawm-cart__trust">
+      {{- 'nawm.cart.trust' | t: days: return_days, years: warranty_years -}}
+    </p>
+  {%- endif -%}
+
+  {% render 'pdp-payment-methods' %}
+</div>
+
+<script src="{{ 'nawm-cart.js' | asset_url }}" type="module" fetchpriority="low"></script>
