@@ -70,10 +70,10 @@
     <div class="pdp-setup__manual nawm-reveal">
       {%- if manual.value != blank -%}
         <a
-          class="pdp-setup__manual-link"
+          class="nawm-cta pdp-setup__manual-button"
           href="{{ manual.value.url }}"
           data-nawm-event="open_manual"
-                data-nawm-manual
+          data-nawm-manual
           target="_blank"
           rel="noopener"
         >
@@ -122,11 +122,21 @@
   }
 
   .pdp-setup__manual {
-    margin-block-start: clamp(2rem, 5vw, 3rem);
+    margin-block-start: clamp(3rem, 8vw, 4.5rem);
+    display: grid;
+    justify-items: center;
+    gap: var(--sp-3);
+    text-align: center;
     padding: var(--sp-4) var(--sp-5);
     border: 1px solid var(--nawm-peach);
     border-radius: var(--r-card);
     background: color-mix(in oklab, var(--nawm-amber) 14%, var(--nawm-dawn));
+  }
+
+  .pdp-setup__manual-button {
+    min-height: 60px;
+    padding-inline: var(--sp-6);
+    font-size: 1.0625rem;
   }
 
   .pdp-setup__manual-link {

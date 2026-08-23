@@ -39,6 +39,8 @@
   assign items = 'item1,item2,item3,item4' | split: ','
 %}
 
+{% render 'nawm-manual-gate', manual: product.metafields.nawm.manual_pdf %}
+
 <section class="nawm-section nawm-inbox ctx-dawn">
   <div class="nawm-wrap">
     <div class="nawm-inbox__head nawm-reveal">

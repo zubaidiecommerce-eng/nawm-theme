@@ -55,6 +55,7 @@ class NawmSunrise extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this.audio?.pause();
     cancelAnimationFrame(this.raf);
     this.io?.disconnect();
   }
@@ -129,7 +130,33 @@ class NawmSunrise extends HTMLElement {
   selectSound(chip) {
     for (const other of this.chips) other.setAttribute('aria-pressed', String(other === chip));
     if (this.soundEl) this.soundEl.textContent = chip.dataset.sound;
+    this.playPreview(chip);
     this.report();
+  }
+
+  /* Een kort fragment bij de gekozen chip, als er een audiobestand aan hangt.
+     Er speelt er nooit meer dan één tegelijk, en er start niets vanzelf: geluid
+     dat uit zichzelf begint is op een webshop een reden om weg te klikken. */
+  playPreview(chip) {
+    const src = chip.dataset.soundSrc;
+
+    if (this.audio) {
+      this.audio.pause();
+      this.audio.currentTime = 0;
+    }
+
+    if (!src) return;
+
+    if (!this.audio) {
+      this.audio = new Audio();
+      this.audio.preload = 'none';
+    }
+
+    if (this.audio.src !== src) this.audio.src = src;
+    this.audio.play().catch(() => {
+      /* De browser mag weigeren, bijvoorbeeld zonder eerdere interactie. Dat is
+         geen fout die de pagina moet halen. */
+    });
   }
 
   /* Via nawmTrack, zodat het event de consent-wachtrij van nawm-analytics.js

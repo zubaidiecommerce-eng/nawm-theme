@@ -55,8 +55,31 @@
           assign k_body = base | append: '.body'
           assign delay = forloop.index0 | times: 80
         -%}
+        {%- liquid
+          assign clip_key = 'clip_' | append: key
+          assign step_clip = section.settings[clip_key]
+          assign poster_key = 'clip_' | append: key | append: '_poster'
+          assign step_poster = section.settings[poster_key]
+        -%}
         <li class="pdp-mechanism__step nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
           <p class="nawm-mono pdp-mechanism__time">{{ k_time | t }}</p>
+
+          {%- comment -%}
+            De clip staat tussen de tijd en de tekst: je ziet eerst hoe laat het
+            is, dan wat er gebeurt, dan waarom. Ontbreekt hij, dan schuift de
+            tekst gewoon omhoog.
+          {%- endcomment -%}
+          {%- if step_clip != blank -%}
+            <div class="pdp-mechanism__step-clip">
+              {% render 'nawm-clip',
+                video: step_clip,
+                poster: step_poster,
+                ratio: '4 / 3',
+                kind: 'recording'
+              %}
+            </div>
+          {%- endif -%}
+
           <h3 class="pdp-mechanism__title">{{ k_title | t }}</h3>
           <p class="pdp-mechanism__body">{{ k_body | t }}</p>
         </li>
@@ -67,22 +90,6 @@
       Twee regels tegenover elkaar. Het contrast doet het argument, dus er
       hoort geen derde regel bij en geen toelichting onder.
     {%- endcomment -%}
-    {%- comment -%}
-      Animatie 3 — koud scherm tegenover warm licht. De enige van de vier
-      zonder product in beeld, en juist daarom volledig veilig: hij toont een
-      probleem, geen functie.
-    {%- endcomment -%}
-    {%- if section.settings.clip_contrast != blank -%}
-      <div class="pdp-mechanism__clip nawm-reveal">
-        {% render 'nawm-clip',
-          video: section.settings.clip_contrast,
-          poster: section.settings.clip_contrast_poster,
-          ratio: '4 / 5',
-          kind: 'render',
-          caption_key: 'nawm.pdp.animations.cold_warm'
-        %}
-      </div>
-    {%- endif -%}
 
     <div class="pdp-mechanism__contrast nawm-reveal">
       <p class="pdp-mechanism__old">{{ 'nawm.pdp.mechanism.old_way' | t }}</p>
@@ -139,6 +146,12 @@
     letter-spacing: .08em;
   }
 
+  /* De clip krijgt een vaste verhouding, zodat de drie kolommen op desktop
+     even hoog blijven ook als er maar één clip staat. */
+  .pdp-mechanism__step-clip {
+    margin-block: var(--sp-3);
+  }
+
   .pdp-mechanism__title {
     margin-block-start: var(--sp-1);
   }
@@ -172,11 +185,6 @@
       top: -6px;
       inset-inline-start: 0;
     }
-  }
-
-  .pdp-mechanism__clip {
-    margin-block-start: clamp(2rem, 5vw, 3rem);
-    max-width: 22rem;
   }
 
   .pdp-mechanism__contrast {
@@ -227,15 +235,42 @@
       "label": "Tekst"
     },
     {
+      "type": "header",
+      "content": "Een clip per moment"
+    },
+    {
+      "type": "paragraph",
+      "content": "Bij elk tijdstip in de tijdlijn kan een korte opname. Houd ze kort en zonder gesproken tekst: ze staan naast elkaar en spelen vanzelf zodra ze in beeld komen."
+    },
+    {
       "type": "video",
-      "id": "clip_contrast",
-      "label": "3 · Koud scherm, warm licht",
-      "info": "4:5. Het probleem in beeld, zonder product. Beantwoordt bezwaar B1."
+      "id": "clip_s1",
+      "label": "06:30 · Het begint donker"
     },
     {
       "type": "image_picker",
-      "id": "clip_contrast_poster",
-      "label": "Posterbeeld"
+      "id": "clip_s1_poster",
+      "label": "Posterbeeld 06:30"
+    },
+    {
+      "type": "video",
+      "id": "clip_s2",
+      "label": "06:52 · Het bouwt op"
+    },
+    {
+      "type": "image_picker",
+      "id": "clip_s2_poster",
+      "label": "Posterbeeld 06:52"
+    },
+    {
+      "type": "video",
+      "id": "clip_s3",
+      "label": "07:00 · Het geluid volgt"
+    },
+    {
+      "type": "image_picker",
+      "id": "clip_s3_poster",
+      "label": "Posterbeeld 07:00"
     }
   ],
   "presets": [

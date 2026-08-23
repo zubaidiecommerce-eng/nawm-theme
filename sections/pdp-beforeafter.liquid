@@ -1,0 +1,238 @@
+{% comment %}
+  PDP-sectie: twee ochtenden naast elkaar. Ondersteunt B1 (werkt dit echt) door
+  het probleem en de uitkomst in één beeldpaar te zetten.
+
+  Belangrijk onderscheid, en de reden dat deze sectie mag bestaan: dit is een
+  **proces**-voor/na, geen resultaat-voor/na. Links een avond die niet stopt,
+  rechts een ochtend die opbouwt. Er wordt niets beweerd over hoe iemand zich
+  daarna voelt, over slaapkwaliteit of over energie — een voor/na dat een
+  gezondheidsuitkomst suggereert is verboden onder PDP SPEC §7.
+
+  Houd de bijschriften dus bij wat er te zien is. Schrijf "koud schermlicht
+  onder het dekbed", niet "slecht slapen".
+
+  Op mobiel staan de twee onder elkaar met het label eroverheen, zodat je nooit
+  hoeft te raden naar welke helft je kijkt.
+{% endcomment %}
+
+{% liquid
+  assign pdp_product = product
+  if pdp_product == blank
+    assign pdp_product = settings.nawm_product
+  endif
+  if pdp_product.id == blank and settings.nawm_product_handle != blank
+    assign pdp_product = all_products[settings.nawm_product_handle]
+  endif
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.beforeafter.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.beforeafter.heading' | t
+  endif
+
+  assign before_caption = section.settings.before_caption
+  if before_caption == blank
+    assign before_caption = 'nawm.pdp.beforeafter.before_caption' | t
+  endif
+
+  assign after_caption = section.settings.after_caption
+  if after_caption == blank
+    assign after_caption = 'nawm.pdp.beforeafter.after_caption' | t
+  endif
+
+  assign has_media = false
+  if section.settings.before_video != blank or section.settings.after_video != blank
+    assign has_media = true
+  endif
+%}
+
+{%- if has_media -%}
+  <section class="nawm-section pdp-beforeafter ctx-dawn" id="voor-en-na">
+    <div class="nawm-wrap">
+      <div class="pdp-head pdp-head--wide nawm-reveal">
+        {% render 'nawm-eyebrow', text: eyebrow %}
+        <h2>{{ heading }}</h2>
+      </div>
+
+      <div class="pdp-beforeafter__pair">
+        <div class="pdp-beforeafter__side pdp-beforeafter__side--before nawm-reveal">
+          <p class="nawm-mono pdp-beforeafter__label">
+            {{ 'nawm.pdp.beforeafter.before_label' | t }}
+          </p>
+          {% render 'nawm-clip',
+            video: section.settings.before_video,
+            poster: section.settings.before_poster,
+            ratio: '4 / 5',
+            kind: 'render',
+            caption: before_caption
+          %}
+        </div>
+
+        {%- comment -%}
+          De pijl tussen de twee helften. Puur decoratief: de labels dragen de
+          betekenis, dus hij is verborgen voor hulpsoftware.
+        {%- endcomment -%}
+        <span class="pdp-beforeafter__arrow" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="26" height="26" focusable="false">
+            <path d="M6 16h18M18 9l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+
+        <div class="pdp-beforeafter__side pdp-beforeafter__side--after nawm-reveal" style="--reveal-delay: 100ms;">
+          <p class="nawm-mono pdp-beforeafter__label pdp-beforeafter__label--after">
+            {{ 'nawm.pdp.beforeafter.after_label' | t }}
+          </p>
+          {% render 'nawm-clip',
+            video: section.settings.after_video,
+            poster: section.settings.after_poster,
+            ratio: '4 / 5',
+            kind: 'recording',
+            caption: after_caption
+          %}
+        </div>
+      </div>
+
+      <div class="pdp-beforeafter__cta nawm-reveal">
+        {% render 'pdp-buy', product: pdp_product, id: 'pdp-beforeafter-form' %}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% stylesheet %}
+  .pdp-beforeafter__pair {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    display: grid;
+    gap: var(--sp-4);
+    align-items: start;
+  }
+
+  @media (min-width: 750px) {
+    .pdp-beforeafter__pair {
+      grid-template-columns: 1fr auto 1fr;
+      gap: var(--sp-5);
+      align-items: center;
+    }
+  }
+
+  .pdp-beforeafter__label {
+    margin: 0 0 var(--sp-2);
+    display: inline-block;
+    padding: var(--sp-1) var(--sp-3);
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--fg-soft);
+  }
+
+  /* De rechterhelft krijgt het merkaccent; de linker blijft koel. Niet fout
+     tegenover goed — alleen het verschil dat de sectie laat zien. */
+  .pdp-beforeafter__label--after {
+    border-color: var(--nawm-amber);
+    background: color-mix(in oklab, var(--nawm-amber) 20%, var(--nawm-dawn));
+    color: var(--ink-day);
+  }
+
+  .pdp-beforeafter__side--before .nawm-clip__frame {
+    filter: saturate(.8);
+  }
+
+  /* De pijl wijst op mobiel naar beneden en op desktop naar rechts, want dat is
+     de kant waar de tweede helft staat. */
+  .pdp-beforeafter__arrow {
+    display: grid;
+    place-items: center;
+    justify-self: center;
+    inline-size: 44px;
+    block-size: 44px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--nawm-amber);
+    background: color-mix(in oklab, var(--nawm-amber) 14%, transparent);
+    color: var(--nawm-ember);
+    rotate: 90deg;
+  }
+
+  @media (min-width: 750px) {
+    .pdp-beforeafter__arrow {
+      rotate: none;
+    }
+  }
+
+  .pdp-beforeafter__cta {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    margin-inline: auto;
+    max-width: 30rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP voor en na",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Een proces-voor/na: links de avond die niet stopt, rechts de ochtend die opbouwt. Houd de bijschriften bij wat er te zien is — een voor/na dat een gezondheidsuitkomst suggereert mag niet. De sectie blijft weg zolang er geen video staat."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "header",
+      "content": "Links · nu"
+    },
+    {
+      "type": "video",
+      "id": "before_video",
+      "label": "Video",
+      "info": "Koud scherm, warm licht: de man onder zijn dekbed op zijn telefoon."
+    },
+    {
+      "type": "image_picker",
+      "id": "before_poster",
+      "label": "Posterbeeld"
+    },
+    {
+      "type": "text",
+      "id": "before_caption",
+      "label": "Bijschrift"
+    },
+    {
+      "type": "header",
+      "content": "Rechts · met NAWM"
+    },
+    {
+      "type": "video",
+      "id": "after_video",
+      "label": "Video",
+      "info": "Dezelfde man die wakker wordt met de wake-up light."
+    },
+    {
+      "type": "image_picker",
+      "id": "after_poster",
+      "label": "Posterbeeld"
+    },
+    {
+      "type": "text",
+      "id": "after_caption",
+      "label": "Bijschrift"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP voor en na"
+    }
+  ]
+}
+{% endschema %}

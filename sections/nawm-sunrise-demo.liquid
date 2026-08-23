@@ -31,6 +31,13 @@
     suggereren dat je uit alle 22 kunt kiezen bij het instellen van de wekker,
     en dat kan niet — zie docs/OPEN-PDP.md.
   endcomment
+  comment
+    Audiofragmenten bij de geluidchips. Ze komen uit het metafield
+    nawm.sound_previews en staan in dezelfde volgorde als de tracklijst. Staat
+    er niets, dan blijven de chips gewoon keuzeknoppen zonder geluid.
+  endcomment
+  assign previews = product.metafields.nawm.sound_previews.value
+
   assign sounds = product.metafields.nawm.wake_sounds_list.value
   assign sounds_label = 'nawm.sunrise.sounds_label' | t
   if sounds == blank
@@ -113,6 +120,9 @@
                   type="button"
                   class="nawm-chip"
                   data-sound="{{ sound | escape }}"
+                  {% if previews[forloop.index0] != blank %}
+                    data-sound-src="{{ previews[forloop.index0] | file_url }}"
+                  {% endif %}
                   aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
                 >
                   {{ sound }}

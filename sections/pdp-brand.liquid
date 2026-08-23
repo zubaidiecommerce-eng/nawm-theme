@@ -32,7 +32,13 @@
       {%- if section.settings.body != blank -%}
         {{ section.settings.body }}
       {%- else -%}
-        {{ 'nawm.pdp.brand.body' | t }}
+        {%- comment -%}
+          Twee losse alinea's in plaats van HTML in de copydeck. Shopify's
+          t-filter escapet zijn uitvoer, dus een <p> in de vertaling belandde
+          letterlijk op het scherm.
+        {%- endcomment -%}
+        <p>{{ 'nawm.pdp.brand.body_1' | t }}</p>
+        <p>{{ 'nawm.pdp.brand.body_2' | t }}</p>
       {%- endif -%}
     </div>
 
