@@ -7,6 +7,13 @@
 {%- liquid
   assign nawm_page = false
   assign nawm_pdp = false
+  comment
+    De achtergrond van html staat op midnight, omdat de landings- en
+    productpagina daar een vaste lucht overheen tekenen. Pagina's zonder die
+    lucht kregen daardoor donkere tekst op een donkere grond. `nawm_light`
+    zet de grond op dawn voor precies die pagina's.
+  endcomment
+  assign nawm_light = false
   if template.name == 'index'
     assign nawm_page = true
   endif
@@ -17,6 +24,15 @@
   endcomment
   if template.name == 'page' and template.suffix == 'contact'
     assign nawm_page = true
+    assign nawm_light = true
+  endif
+
+  comment
+    De winkelwagenpagina draait op dezelfde tokens en heeft evenmin een lucht.
+  endcomment
+  if template.name == 'cart'
+    assign nawm_page = true
+    assign nawm_light = true
   endif
   comment
     Twee suffixen. `nawm` is de huidige; `wake-up-light` blijft staan omdat het
@@ -35,6 +51,7 @@
   class="
     {%- if request.design_mode %}shopify-design-mode {% endif -%}
     {%- if nawm_page %}nawm-page {% endif -%}
+    {%- if nawm_light %}nawm-light {% endif -%}
     {%- if nawm_pdp %}nawm-pdp{% endif -%}
   "
   lang="{{ request.locale.iso_code }}"
@@ -91,7 +108,13 @@
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
     {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
 
-    {%- if nawm_page -%}
+    {%- comment -%}
+      De lucht en de nachtklok horen bij de pagina's die de reis van 23:30 naar
+      07:00 vertellen. Op contact en winkelwagen was er geen sectie die een eigen
+      grond schilderde, dus stond daar donkere tekst op een vaste midnight-laag:
+      onleesbaar, en een klok die telde bij een adresgegeven.
+    {%- endcomment -%}
+    {%- if nawm_page and nawm_light == false -%}
       {%- render 'nawm-shell', nawm_pdp: nawm_pdp -%}
     {%- endif -%}
 
