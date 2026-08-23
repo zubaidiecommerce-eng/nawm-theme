@@ -20,6 +20,16 @@
   capture delivery
     render 'pdp-delivery-date'
   endcapture
+
+  comment
+    De plaatshouders bevatten bewust geen accolades. Liquid's parser struikelt
+    over een string met een accolade erin binnen een filterargument: hij ziet
+    die accolade aan voor het begin van een expressie en meldt dan dat de
+    variabele niet goed is afgesloten. HOURS en MINUTES zijn gewone tekst en gaan zonder
+    problemen door de tokenizer.
+  endcomment
+  assign countdown_template = 'nawm.cutoff.countdown' | t: hours: 'HOURS', minutes: 'MINUTES'
+  assign countdown_minutes_template = 'nawm.cutoff.countdown_minutes' | t: minutes: 'MINUTES'
 -%}
 
 {%- if deadline != blank and delivery != blank -%}
@@ -27,8 +37,8 @@
     class="nawm-cutoff {{ class }}"
     data-nawm-cutoff
     data-cutoff="{{ deadline }}"
-    data-text-countdown="{{ 'nawm.cutoff.countdown' | t: hours: '{h}', minutes: '{m}' | escape }}"
-    data-text-countdown-minutes="{{ 'nawm.cutoff.countdown_minutes' | t: minutes: '{m}' | escape }}"
+    data-text-countdown="{{ countdown_template | escape }}"
+    data-text-countdown-minutes="{{ countdown_minutes_template | escape }}"
     aria-live="polite"
   >
     <span data-cutoff-text>
