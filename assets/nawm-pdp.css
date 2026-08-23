@@ -311,3 +311,24 @@ body.pdp-sticky-active .content-for-layout {
   font-size: var(--fs-small);
   color: var(--fg-soft);
 }
+
+/* Thumbnail van een animatie zonder posterbeeld: een afspeeldriehoek op het
+   nachtvlak, zodat de rij niet in een gat valt. */
+.pdp-gallery__thumb-play {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: var(--nawm-midnight);
+  color: var(--nawm-amber);
+}
+
+/* De clip in de galerij vult de slide net als een foto. */
+.pdp-gallery__clip .nawm-clip__frame {
+  border: 0;
+  border-radius: var(--r-card);
+}
+
+.pdp-gallery__clip .nawm-clip__caption {
+  margin-block-start: var(--sp-2);
+}
