@@ -22,6 +22,8 @@
   @param {boolean} [shipping] - Neem de verzendregel mee in de microcopy.
   @param {boolean} [short] - Label zonder prijs. Alleen voor de mobiele koopbalk,
     waar de prijs er los naast staat.
+  @param {boolean} [volume] - Toon de keuze tussen één en twee stuks boven de knop.
+  @param {boolean} [payments] - Toon de betaallogo's onder de knop.
 {% enddoc %}
 
 {%- liquid
@@ -32,8 +34,47 @@
 
   assign click_event = event | default: 'add_to_cart'
 
+  comment
+    De staffel. Het percentage komt uit één instelling — dezelfde die de
+    winkelwagen gebruikt — zodat de koopknop, de winkelwagen en de kassa nooit
+    drie verschillende bedragen noemen. Staat de automatische korting in de
+    admin niet op ditzelfde percentage, dan belooft deze knop iets wat de kassa
+    niet geeft; dat is de enige manier waarop dit blok fout kan gaan.
+  endcomment
+  assign unit_price = product.selected_or_first_available_variant.price | default: product.price
+  assign pair_percentage = settings.cart_pair_discount | times: 1
+  assign pair_gross = unit_price | times: 2
+  assign pair_off = pair_gross | times: pair_percentage | divided_by: 100
+  assign pair_total = pair_gross | minus: pair_off
+
+  assign show_volume = false
+  if volume and product != blank and product.available and unit_price > 0 and pair_percentage > 0
+    assign show_volume = true
+  endif
+
   if short
     assign label = 'nawm.pdp.common.cta_short' | t
+  elsif show_volume
+    comment
+      Met een staffel erboven moet het bedrag op de knop meebewegen met de
+      keuze, anders staat er €59,95 terwijl er twee in de wagen gaan. Beide
+      totalen worden hier gerenderd; CSS toont het totaal dat bij de aangevinkte
+      optie hoort. Geen JavaScript, dus ook geen moment waarop de knop het
+      verkeerde bedrag laat zien.
+
+      De plaatshouder is een losse # in plaats van accolades: het `t`-filter
+      escapet HTML, dus de opmaak kan niet als argument mee en wordt er daarna
+      pas ingezet.
+    endcomment
+    capture totals
+      echo '<span class="pdp-buy__total pdp-buy__total--one">'
+      echo unit_price | money
+      echo '</span><span class="pdp-buy__total pdp-buy__total--two">'
+      echo pair_total | money
+      echo '</span>'
+    endcapture
+    assign label_raw = 'nawm.pdp.common.cta' | t: price: '#'
+    assign label = label_raw | replace: '#', totals
   else
     capture price
       render 'nawm-price', product: product
@@ -80,6 +121,27 @@
         <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
       {%- endunless -%}
 
+      {%- if show_volume -%}
+        <fieldset class="pdp-buy__volume">
+          <legend class="nawm-visually-hidden">{{ 'nawm.pdp.gift.qty_label' | t }}</legend>
+
+          <label class="pdp-buy__qty">
+            <input type="radio" name="quantity" value="1" class="pdp-buy__qty-radio" checked>
+            <span class="pdp-buy__qty-label">{{ 'nawm.pdp.gift.one' | t }}</span>
+            <span class="pdp-buy__qty-price nawm-mono">{{ unit_price | money }}</span>
+          </label>
+
+          <label class="pdp-buy__qty">
+            <input type="radio" name="quantity" value="2" class="pdp-buy__qty-radio">
+            <span class="pdp-buy__qty-label">
+              {{- 'nawm.pdp.gift.two' | t -}}
+              <span class="pdp-buy__qty-badge">{{ 'nawm.pdp.gift.off' | t: percentage: pair_percentage }}</span>
+            </span>
+            <span class="pdp-buy__qty-price nawm-mono">{{ pair_total | money }}</span>
+          </label>
+        </fieldset>
+      {%- endif -%}
+
       <button
         type="submit"
         name="add"
@@ -106,5 +168,14 @@
 
   {%- if show_microcopy -%}
     {% render 'pdp-microcopy', shipping: shipping %}
+  {%- endif -%}
+
+  {%- comment -%}
+    De betaallogo's horen onder de knop en niet pas honderd schermen lager in
+    het aanbod: de vraag "kan ik hier wel met iDEAL betalen" komt op het moment
+    dat iemand naar de knop kijkt, niet later.
+  {%- endcomment -%}
+  {%- if payments -%}
+    {% render 'pdp-payment-methods' %}
   {%- endif -%}
 </div>

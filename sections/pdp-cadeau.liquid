@@ -4,8 +4,8 @@
 
   Twee opties, meer niet. Drie en vier stuks stonden er eerder en zagen er
   berekend uit; niemand koopt vier wekkers. Twee is wél verdedigbaar: partner,
-  huisgenoot of cadeau. Een van de eigen bol-beoordelingen zegt het letterlijk:
-  "Ook leuk idee voor een kadootje."
+  huisgenoot of cadeau. Een van de eigen geverifieerde beoordelingen zegt het
+  letterlijk: "Ook leuk idee voor een kadootje."
 
   De tweede optie doet twee dingen tegelijk: hij geeft korting én tikt de
   gratisverzendingsdrempel aan. Dat is een echte reden om er twee te nemen, geen
@@ -15,8 +15,11 @@
   zonder prijs verstuurd kan worden. Dat kost niets en verlaagt de drempel voor
   de cadeaukoper.
 
-  Het percentage hier moet gelijk staan aan de automatische korting in de admin.
-  Als de kassa de korting niet geeft, hoort de pagina hem niet te beloven.
+  Het percentage komt uit één themasetting, dezelfde die het koopblok en de
+  winkelwagen gebruiken. Drie plekken die hetzelfde bedrag moeten noemen en het
+  uit drie velden halen, gaan een keer uit elkaar lopen. Die setting moet wél
+  gelijk staan aan de automatische korting in de admin: geeft de kassa hem niet,
+  dan hoort de pagina hem niet te beloven.
 {% endcomment %}
 
 {% liquid
@@ -41,7 +44,7 @@
     assign heading = 'nawm.pdp.gift.heading' | t
   endif
 
-  assign percentage = section.settings.discount_two | times: 1
+  assign percentage = settings.cart_pair_discount | times: 1
   assign free_from_cents = section.settings.free_shipping_threshold | times: 100
 
   assign single_total = unit_price
@@ -287,20 +290,10 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Twee opties, meer niet. Het percentage hier moet gelijk staan aan de automatische korting onder Kortingen in de admin — als de kassa hem niet geeft, hoort de pagina hem niet te beloven."
+      "content": "Twee opties, meer niet. Het percentage staat onder Thema-instellingen bij de winkelwagen en geldt voor het koopblok, deze sectie en de winkelwagen tegelijk. Het moet gelijk staan aan de automatische korting onder Kortingen in de admin — als de kassa hem niet geeft, hoort de pagina hem niet te beloven."
     },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
     { "type": "textarea", "id": "heading", "label": "Kop" },
-    {
-      "type": "range",
-      "id": "discount_two",
-      "label": "Korting bij 2 stuks",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "%",
-      "default": 10
-    },
     {
       "type": "number",
       "id": "free_shipping_threshold",
