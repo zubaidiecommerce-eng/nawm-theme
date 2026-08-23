@@ -123,12 +123,15 @@
     "order_deadline_time": "16:00",
     "delivery_business_days": 2,
     "show_stock_notice": true,
+    "stock_threshold": 10,
     "show_price_difference": false,
     "company_city": "Rietbeemd 89, 4907 EC",
     "kvk_number": "99294656",
     "vat_number": "NL005379424B91",
     "support_email": "zubaidiecommerce@gmail.com",
     "support_response_time": "24 uur",
+    "free_shipping_threshold_cart": 100,
+    "cart_pair_discount": 10,
     "popup_enabled": true,
     "popup_delay_seconds": 8,
     "popup_discount_percentage": 5,
@@ -259,8 +262,7 @@
           "heading": "",
           "clip_1": "shopify://files/videos/Animate_this_still_into_a_sing.mp4",
           "clip_2": "shopify://files/videos/Animate_this_still_into_one_co.mp4",
-          "clip_3": "shopify://files/videos/Animate_this_still_into_one_co_2.mp4",
-          "clip_4": ""
+          "clip_3": "shopify://files/videos/Animate_this_still_into_one_co_2.mp4"
         }
       },
       "pdp-herkenning": {
@@ -294,7 +296,6 @@
         "settings": {
           "eyebrow": "",
           "heading": "",
-          "discount_two": 10,
           "free_shipping_threshold": 100
         }
       }
@@ -305,10 +306,7 @@
       "foreground": "#000000",
       "color1": "#333333",
       "color2": "#DFDFDF"
-    },
-    "stock_threshold": 10,
-    "free_shipping_threshold_cart": 100,
-    "cart_pair_discount": 10
+    }
   },
   "presets": {
     "Horizon": {
