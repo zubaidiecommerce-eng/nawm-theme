@@ -123,6 +123,9 @@
   .pdp-mechanism__step {
     padding-inline-start: var(--sp-5);
     position: relative;
+    transition:
+      opacity var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
   }
 
   .pdp-mechanism__step::before {
@@ -134,6 +137,10 @@
     height: 7px;
     border-radius: 50%;
     background: var(--nawm-amber);
+    transition:
+      scale var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
   }
 
   .pdp-mechanism__step:first-child::before {
@@ -144,6 +151,65 @@
     color: var(--nawm-amber);
     font-size: 1rem;
     letter-spacing: .08em;
+    transition:
+      color var(--dur) var(--ease),
+      letter-spacing var(--dur) var(--ease);
+  }
+
+  /* De tijdlijn reageert op de muis. Eén moment komt naar voren, de andere twee
+     zakken terug — dat is wat een tijdlijn doet die je aandacht volgt, en het
+     kost niets aan leesbaarheid omdat er niets verdwijnt.
+
+     `:focus-within` staat er bewust naast: de pauzeknop in een clip is het
+     enige focusbare element in een stap, en wie met het toetsenbord navigeert
+     hoort dezelfde nadruk te zien als wie met de muis wijst. */
+  @media (hover: hover) {
+    .pdp-mechanism__steps:has(.pdp-mechanism__step:hover) .pdp-mechanism__step:not(:hover) {
+      opacity: .5;
+    }
+
+    .pdp-mechanism__step:hover,
+    .pdp-mechanism__step:focus-within {
+      transform: translateY(-3px);
+    }
+
+    .pdp-mechanism__step:hover::before,
+    .pdp-mechanism__step:focus-within::before {
+      scale: 1.8;
+      background: var(--nawm-ember);
+      box-shadow: 0 0 0 7px color-mix(in oklab, var(--nawm-amber) 22%, transparent);
+    }
+
+    .pdp-mechanism__step:hover .pdp-mechanism__time,
+    .pdp-mechanism__step:focus-within .pdp-mechanism__time {
+      color: var(--nawm-ember);
+      letter-spacing: .16em;
+    }
+
+    /* De clip kruipt iets dichterbij; de tekst blijft staan waar hij staat,
+       zodat er niets verspringt tijdens het lezen. */
+    .pdp-mechanism__step .pdp-mechanism__step-clip {
+      transition: box-shadow var(--dur) var(--ease);
+      border-radius: var(--r-card);
+    }
+
+    .pdp-mechanism__step:hover .pdp-mechanism__step-clip,
+    .pdp-mechanism__step:focus-within .pdp-mechanism__step-clip {
+      box-shadow: 0 18px 40px -28px rgb(26 23 16 / .55);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pdp-mechanism__step,
+    .pdp-mechanism__step::before,
+    .pdp-mechanism__time {
+      transition: none;
+    }
+
+    .pdp-mechanism__step:hover,
+    .pdp-mechanism__step:focus-within {
+      transform: none;
+    }
   }
 
   /* De clip krijgt een vaste verhouding, zodat de drie kolommen op desktop

@@ -2,10 +2,10 @@
   PDP-sectie: het prijsbezwaar in zijn taal. Beantwoordt B4.
   Zie conversiespec v2 §2.2.
 
-  Drie getallen naast elkaar, en dan het bol.com-antwoord dat er tot nu toe
-  nergens stond terwijl elke beoordelingskaart naar die listing linkt.
+  Drie getallen naast elkaar, en dan het antwoord op "waarom bij jullie" dat er
+  tot nu toe nergens stond.
 
-  De drie punten onder "Waarom hier en niet op bol.com" zijn geen marketing:
+  De drie punten onder "Waarom je hem hier bestelt" zijn geen marketing:
   het zijn beloften die je waarmaakt of weglaat. Kun je er één niet waarmaken,
   haal hem dan weg — een verantwoording die niet klopt is erger dan geen
   verantwoording.
@@ -79,9 +79,9 @@
       <p class="nawm-lede pdp-costs__frame nawm-reveal">{{ 'nawm.pdp.costs.frame' | t }}</p>
 
       {%- comment -%}
-        Het bol.com-antwoord. Zet `toon_prijsverschil_blok` uit zodra een van de
-        drie punten niet meer waar is — beter geen verantwoording dan een die
-        niet klopt.
+        Het antwoord op "waarom bij jullie". Zet deze schakelaar uit zodra een
+        van de drie punten niet meer waar is — beter geen verantwoording dan
+        een die niet klopt.
       {%- endcomment -%}
       {%- if section.settings.show_elsewhere -%}
         <div class="pdp-costs__elsewhere nawm-reveal">
@@ -199,7 +199,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Beantwoordt bezwaar B4. De drie punten onder \"Waarom hier en niet op bol.com\" zijn beloften die je waarmaakt of weghaalt — een verantwoording die niet klopt is erger dan geen verantwoording."
+      "content": "Beantwoordt bezwaar B4. De drie punten onder \"Waarom je hem hier bestelt\" zijn beloften die je waarmaakt of weghaalt — een verantwoording die niet klopt is erger dan geen verantwoording."
     },
     {
       "type": "text",
@@ -214,7 +214,7 @@
     {
       "type": "checkbox",
       "id": "show_elsewhere",
-      "label": "Het bol.com-antwoord tonen",
+      "label": "Het waarom-bij-jullie-blok tonen",
       "default": true,
       "info": "Zet dit uit zodra je een van de drie punten niet meer waarmaakt."
     },

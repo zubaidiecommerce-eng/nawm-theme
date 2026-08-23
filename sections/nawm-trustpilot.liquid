@@ -1,0 +1,174 @@
+{% comment %}
+  Trustpilot. Zie conversiespec v2 §7.
+
+  Deze sectie staat er zodat hij klaarstaat, niet omdat hij nu iets bewijst.
+  Zolang er geen echt Trustpilot-profiel met echte beoordelingen is, hoort er
+  op de winkel geen Trustpilot-logo te staan: een leeg of geleend keurmerk is
+  precies de misrepresentatie waar de audit over gaat. Hij blijft dus uit tot
+  het profiel bestaat.
+
+  Wat hij doet zodra hij aanstaat:
+    · het domein en de score komen uit de settings, niet uit deze code
+    · zonder ingevuld profiel-id rendert de sectie niets, ook niet aangezet
+    · de widget wordt pas geladen als er toestemming voor is; tot die tijd
+      staat er de statische regel, die uit dezelfde cijfers is opgebouwd
+
+  Het script van Trustpilot is een externe tracker. Het laadt daarom niet
+  onvoorwaardelijk: `nawm-trustpilot.js` wacht op de Customer Privacy API,
+  precies zoals nawm-analytics.js dat doet. Zonder toestemming blijft het bij
+  de statische regel met een link naar het profiel — die zegt hetzelfde en
+  volgt niemand.
+{% endcomment %}
+
+{% liquid
+  assign profile = section.settings.profile_id | strip
+  assign domain = section.settings.domain | strip
+  assign score = section.settings.score | strip
+  assign count = section.settings.review_count | times: 1
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.trustpilot.heading' | t
+  endif
+
+  assign profile_url = blank
+  if domain != blank
+    assign profile_url = 'https://nl.trustpilot.com/review/' | append: domain
+  endif
+
+  comment
+    Alles moet er staan. Een score zonder aantal, of een aantal zonder profiel
+    om het na te kijken, is geen bewijs maar een bewering.
+  endcomment
+  assign renderable = false
+  if section.settings.enabled and profile != blank and profile_url != blank and score != blank and count > 0
+    assign renderable = true
+  endif
+%}
+
+{%- if renderable -%}
+  <section class="nawm-section nawm-trustpilot ctx-dawn" id="trustpilot">
+    <div class="nawm-wrap nawm-trustpilot__inner">
+      <h2 class="nawm-trustpilot__heading">{{ heading }}</h2>
+
+      {%- comment -%}
+        De statische regel is de basis en blijft staan als de widget niet laadt
+        — door een blokkade, door een storing, of doordat de bezoeker geen
+        toestemming heeft gegeven. Hij is nooit een plaatshouder die leeg blijft.
+      {%- endcomment -%}
+      <p class="nawm-trustpilot__line">
+        <a href="{{ profile_url }}" rel="nofollow noopener" target="_blank">
+          {{- 'nawm.trustpilot.line' | t: score: score, count: count -}}
+          <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
+        </a>
+      </p>
+
+      <div
+        class="nawm-trustpilot__widget"
+        data-nawm-trustpilot
+        data-businessunit-id="{{ profile | escape }}"
+        data-template-id="{{ section.settings.template_id | escape }}"
+        data-locale="nl-NL"
+        data-domain="{{ domain | escape }}"
+      ></div>
+    </div>
+  </section>
+
+  <script src="{{ 'nawm-trustpilot.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- elsif request.design_mode -%}
+  {%- comment -%}
+    In de theme-editor laat de sectie zien waaróm hij niets toont, zodat het
+    niet lijkt alsof er iets stuk is. Op de winkel zelf staat er niets.
+  {%- endcomment -%}
+  <section class="nawm-section nawm-trustpilot ctx-dawn">
+    <div class="nawm-wrap nawm-trustpilot__inner">
+      <p class="verify">{{ 'nawm.trustpilot.editor_note' | t }}</p>
+    </div>
+  </section>
+{%- endif -%}
+
+{% stylesheet %}
+  .nawm-trustpilot__inner {
+    max-width: 46rem;
+    text-align: center;
+  }
+
+  .nawm-trustpilot__heading {
+    font-size: var(--fs-h3);
+  }
+
+  .nawm-trustpilot__line {
+    margin-block-start: var(--sp-3);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: .04em;
+    color: var(--fg-soft);
+  }
+
+  .nawm-trustpilot__line a {
+    color: inherit;
+  }
+
+  /* De widget krijgt pas hoogte als hij ook echt geladen is. Een gereserveerd
+     leeg vlak dat nooit vult, ziet eruit als een fout. */
+  .nawm-trustpilot__widget:not(:empty) {
+    margin-block-start: clamp(1.5rem, 4vw, 2rem);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Trustpilot",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Staat uit tot er een echt Trustpilot-profiel met echte beoordelingen is. Een keurmerk zonder profiel erachter is misrepresentatie, geen vertrouwenssignaal. Ontbreekt één van de velden, dan toont de sectie niets — ook niet aangezet."
+    },
+    {
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Trustpilot tonen",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "domain",
+      "label": "Domein in Trustpilot",
+      "info": "Bijvoorbeeld nawm.nl — zonder https:// en zonder slash."
+    },
+    {
+      "type": "text",
+      "id": "profile_id",
+      "label": "Business unit-id",
+      "info": "Te vinden in het Trustpilot Business-portaal onder Integrations."
+    },
+    {
+      "type": "text",
+      "id": "template_id",
+      "label": "Widget-template-id",
+      "default": "5419b6ffb0d04a076446a9af"
+    },
+    {
+      "type": "text",
+      "id": "score",
+      "label": "Score",
+      "info": "Zoals Trustpilot hem toont, bijvoorbeeld 4,6. Werk hem bij zodra hij verandert."
+    },
+    {
+      "type": "number",
+      "id": "review_count",
+      "label": "Aantal beoordelingen"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Trustpilot"
+    }
+  ]
+}
+{% endschema %}

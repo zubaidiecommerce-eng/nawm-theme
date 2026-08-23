@@ -1,10 +1,18 @@
 {% doc %}
   Eén reviewkaart uit metaobject `nawm_review`. BUILD SPEC §5.7 / §8.2.
 
-  Harde regel: een review zonder bron-url en datum rendert niet. Die guard zit
-  hier in Liquid en niet in de redactie, zodat hij niet per ongeluk overgeslagen
-  kan worden. Citaten worden letterlijk overgenomen — nooit ingekort zonder dat
-  zichtbaar te maken met […], nooit herschreven, nooit vertaald.
+  Harde regel: een beoordeling zonder herkomst en datum rendert niet. Die guard
+  staat hier in Liquid en niet in de redactie, zodat hij niet per ongeluk
+  overgeslagen kan worden. Citaten worden letterlijk overgenomen — nooit
+  ingekort zonder dat zichtbaar te maken met […], nooit herschreven, nooit
+  vertaald.
+
+  De herkomst blijft in het metaobject staan en verlaat de server niet: `bron`
+  en `bron_url` zijn de interne controle waarmee elk citaat terug te vinden is,
+  maar ze komen niet in de HTML. De kaart zegt daarom "Geverifieerde aankoop"
+  in plaats van een verkoopkanaal bij naam te noemen. Wat dat kost: de lezer kan
+  het citaat niet zelf natrekken. Wat het oplevert: er staat geen andere winkel
+  op de productpagina waar hij naartoe kan klikken.
 
   De sterren komen per beoordeling uit het veld `sterren` en niet uit het
   gemiddelde: vijf sterren tekenen boven een driesterrenreview is precies het
@@ -16,7 +24,6 @@
 
 {%- liquid
   assign quote = review.citaat.value | default: review.citaat
-  assign source = review.bron.value | default: review.bron
   assign source_url = review.bron_url.value | default: review.bron_url
   assign date = review.datum.value | default: review.datum
   assign name = review.naam.value | default: review.naam
@@ -54,7 +61,10 @@
       <p class="nawm-review__title">{{ title }}</p>
     {%- endif -%}
 
-    <blockquote class="nawm-review__quote" cite="{{ source_url }}">{{ quote }}</blockquote>
+    {%- comment -%}
+      Geen `cite`-attribuut: dat zou de bron-url alsnog in de HTML zetten.
+    {%- endcomment -%}
+    <blockquote class="nawm-review__quote">{{ quote }}</blockquote>
 
     {%- comment -%}
       De klantfoto staat tussen het citaat en de bronregel: een foto van iemand
@@ -96,10 +106,7 @@
 
     <figcaption class="nawm-review__meta nawm-mono">
       {%- if name != blank -%}{{ name }} · {% endif -%}
-      <a href="{{ source_url }}" rel="nofollow noopener" target="_blank">
-        {{- source | default: 'bron' -}}
-        <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
-      </a>
+      <span class="nawm-review__verified">{{ 'nawm.proof.verified' | t }}</span>
       · <time datetime="{{ date | date: '%Y-%m-%d' }}">{{ date | date: '%-d %B %Y' }}</time>
     </figcaption>
   </figure>

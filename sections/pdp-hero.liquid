@@ -354,7 +354,13 @@
           en niet erin, zodat de observer niet meebeweegt met het formulier.
         {%- endcomment -%}
         <div class="pdp-hero__cta" data-pdp-hero-cta>
-          {% render 'pdp-buy', product: pdp_product, id: 'pdp-hero-form', shipping: true %}
+          {% render 'pdp-buy',
+            product: pdp_product,
+            id: 'pdp-hero-form',
+            shipping: true,
+            volume: true,
+            payments: true
+          %}
         </div>
         {%- comment -%}
           Voorraad en verzenddeadline. Allebei uitsluitend op echte data: het
@@ -395,7 +401,7 @@
             {%- if warranty_years > 0 -%}
               {{ 'nawm.pdp.common.warranty_years' | t: years: warranty_years }}
             {%- else -%}
-              {% render 'nawm-verify', field: 'warranty_years', note: 'garantietermijn — identiek aan verpakking en bol-listing' %}
+              {% render 'nawm-verify', field: 'warranty_years', note: 'garantietermijn — identiek aan wat er op de verpakking staat' %}
             {%- endif -%}
           </li>
           <li>

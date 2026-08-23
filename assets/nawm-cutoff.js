@@ -55,8 +55,8 @@ if (el) {
 
     target.textContent =
       h > 0
-        ? templates.full.replace('{h}', String(h)).replace('{m}', String(m))
-        : templates.minutesOnly.replace('{m}', String(m));
+        ? templates.full.replace('HOURS', String(h)).replace('MINUTES', String(m))
+        : templates.minutesOnly.replace('MINUTES', String(m));
   };
 
   render();

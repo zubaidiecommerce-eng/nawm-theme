@@ -54,6 +54,95 @@
   text-wrap: pretty;
 }
 
+/* ----------------------------------------------------- staffel in het koopblok */
+
+/* Twee opties naast elkaar, direct boven de knop. Ze staan hier en niet alleen
+   verderop in de cadeausectie, omdat de tweede koper zijn besluit neemt op het
+   moment dat hij de prijs voor het eerst ziet — niet acht secties later. */
+.pdp-buy__volume {
+  margin: 0 0 var(--sp-3);
+  padding: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-2);
+}
+
+.pdp-buy__qty {
+  display: grid;
+  gap: 2px;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease);
+}
+
+.pdp-buy__qty-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pdp-buy__qty-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-small);
+  color: var(--fg);
+}
+
+.pdp-buy__qty-badge {
+  padding: 1px 6px;
+  border-radius: var(--r-pill);
+  background: var(--nawm-ember);
+  color: var(--nawm-dawn);
+  font-family: var(--ff-mono);
+  font-size: .6875rem;
+  letter-spacing: .04em;
+}
+
+.pdp-buy__qty-price {
+  font-size: 1.0625rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+
+.pdp-buy__qty:has(.pdp-buy__qty-radio:checked) {
+  border-color: var(--nawm-ember);
+  background: color-mix(in oklab, var(--nawm-amber) 15%, var(--nawm-dawn));
+  box-shadow: inset 0 0 0 1px var(--nawm-ember);
+}
+
+.pdp-buy__qty:has(.pdp-buy__qty-radio:focus-visible) {
+  outline: 2px solid var(--nawm-amber);
+  outline-offset: 3px;
+}
+
+/* Het bedrag op de knop volgt de aangevinkte optie. Zonder JavaScript, dus er
+   is geen frame waarin de knop het verkeerde totaal toont. */
+.pdp-buy__form:has(.pdp-buy__qty-radio[value="2"]:checked) .pdp-buy__total--one,
+.pdp-buy__form:has(.pdp-buy__qty-radio[value="1"]:checked) .pdp-buy__total--two {
+  display: none;
+}
+
+/* Kent de browser `:has()` niet, dan zou hij beide bedragen tonen. Daarom is
+   het tweede bedrag standaard verborgen en wordt het alleen zichtbaar gemaakt
+   door de regel hierboven, die dezelfde ondersteuning vereist. */
+@supports not selector(:has(*)) {
+  .pdp-buy__total--two {
+    display: none;
+  }
+
+  .pdp-buy__volume {
+    display: none;
+  }
+}
+
 /* --------------------------------------------------------------- betaallogo's */
 
 .pdp-payments__label {
@@ -92,6 +181,20 @@
   height: 100%;
   width: auto;
   display: block;
+}
+
+/* De logorij in de hero staat onder de microcopy en krijgt daar een scheidslijn,
+   zodat hij bij de knop hoort en niet bij de tekst eronder. */
+.pdp-buy .pdp-payments {
+  margin-block-start: var(--sp-4);
+  padding-block-start: var(--sp-4);
+  border-block-start: 1px solid var(--line);
+}
+
+.pdp-buy .pdp-payments__label {
+  text-align: center;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
 }
 
 /* -------------------------------------------------------------------- sterren */
