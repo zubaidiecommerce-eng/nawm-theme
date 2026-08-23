@@ -1,0 +1,369 @@
+{% comment %}
+  De winkelwagenpagina in het NAWM-idioom.
+
+  Hij stond tot nu toe op Horizon's standaardsectie: een tabel, een grijs
+  totaalblok en een lijst "You may also like" met de enige andere producten in
+  de winkel. Bij één product is die lijst leeg of onzin, en de rest zag eruit
+  als een winkelwagen van een willekeurige winkel.
+
+  Wat deze pagina wel doet is precies wat de lade doet, want het is dezelfde
+  bezoeker op hetzelfde twijfelmoment: de voortgang naar gratis verzending, de
+  upsell naar twee stuks, de leverdatum, de vertrouwensregel en de
+  betaallogo's. Die zitten in `nawm-cart-extras`, zodat lade en pagina niet uit
+  elkaar kunnen lopen.
+
+  Wat er bewust níét staat:
+    · geen kortingscodeveld — een leeg codeveld stuurt iemand naar Google
+    · geen "verder winkelen" naar /collections/all, want er is één product
+    · geen aftelklok op de winkelwagen zelf. De verzenddeadline staat er als
+      feit; een klok die de winkelwagen laat knipperen is druk, geen informatie
+{% endcomment %}
+
+{% liquid
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.cart.heading' | t
+  endif
+%}
+
+<section class="nawm-section nawm-cart-page ctx-dawn" id="winkelwagen">
+  <div class="nawm-wrap">
+    {%- if cart.item_count == 0 -%}
+      {% render 'nawm-cart-empty' %}
+    {%- else -%}
+      <div class="nawm-cart-page__head">
+        {%- assign cart_eyebrow = 'nawm.cart.eyebrow' | t -%}
+        {% render 'nawm-eyebrow', text: cart_eyebrow %}
+        <h1>{{ heading }}</h1>
+      </div>
+
+      <form action="{{ routes.cart_url }}" method="post" novalidate class="nawm-cart-page__grid">
+        <div class="nawm-cart-page__items">
+          <ul class="nawm-cart-page__list">
+            {%- for item in cart.items -%}
+              <li class="nawm-cart-line">
+                <a class="nawm-cart-line__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+                  {%- if item.image != blank -%}
+                    {{
+                      item.image
+                      | image_url: width: 320
+                      | image_tag:
+                        widths: '160,320',
+                        sizes: '96px',
+                        alt: '',
+                        loading: 'lazy',
+                        decoding: 'async'
+                    }}
+                  {%- endif -%}
+                </a>
+
+                <div class="nawm-cart-line__body">
+                  <a class="nawm-cart-line__title" href="{{ item.url }}">{{ item.product.title }}</a>
+
+                  {%- unless item.product.has_only_default_variant -%}
+                    <p class="nawm-cart-line__variant">{{ item.variant.title }}</p>
+                  {%- endunless -%}
+
+                  {%- comment -%}
+                    De cadeauoptie uit het koopblok komt hier terug als line item
+                    property. Hij moet zichtbaar zijn: iemand die hem aanvinkte
+                    wil bij het afrekenen zien dat het ook echt zo verstuurd
+                    wordt. Shopify's eigen `_`-properties blijven verborgen.
+                  {%- endcomment -%}
+                  {%- for property in item.properties -%}
+                    {%- if property.last != blank and property.first.first != '_' -%}
+                      <p class="nawm-cart-line__property nawm-mono">
+                        {{ property.first }}: {{ property.last }}
+                      </p>
+                    {%- endif -%}
+                  {%- endfor -%}
+
+                  {%- if item.line_level_discount_allocations.size > 0 -%}
+                    {%- for allocation in item.line_level_discount_allocations -%}
+                      <p class="nawm-cart-line__discount nawm-mono">
+                        {{ allocation.discount_application.title }}
+                        · −{{ allocation.amount | money }}
+                      </p>
+                    {%- endfor -%}
+                  {%- endif -%}
+
+                  <div class="nawm-cart-line__controls">
+                    <label class="nawm-visually-hidden" for="qty-{{ forloop.index }}">
+                      {{ 'nawm.cart.quantity_label' | t }}
+                    </label>
+                    <input
+                      class="nawm-cart-line__qty"
+                      id="qty-{{ forloop.index }}"
+                      type="number"
+                      name="updates[]"
+                      value="{{ item.quantity }}"
+                      min="0"
+                      step="1"
+                      inputmode="numeric"
+                    >
+
+                    <a
+                      class="nawm-cart-line__remove"
+                      href="{{ item.url_to_remove }}"
+                    >{{ 'nawm.cart.remove' | t }}</a>
+                  </div>
+                </div>
+
+                <p class="nawm-cart-line__price nawm-mono">
+                  {{- item.final_line_price | money -}}
+                  {%- if item.original_line_price > item.final_line_price -%}
+                    <s class="nawm-cart-line__was">{{ item.original_line_price | money }}</s>
+                  {%- endif -%}
+                </p>
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          {%- comment -%}
+            De knop is er voor wie JavaScript uit heeft of het veld met het
+            toetsenbord invult. Met JavaScript werkt het aantal vanzelf bij, en
+            dan blijft deze knop staan zonder in de weg te zitten.
+          {%- endcomment -%}
+          <button type="submit" name="update" class="nawm-cta nawm-cta--ghost nawm-cart-page__update">
+            {{ 'nawm.cart.update' | t }}
+          </button>
+        </div>
+
+        <aside class="nawm-cart-page__summary">
+          <div class="nawm-cart-page__totals">
+            {%- if cart.cart_level_discount_applications.size > 0 -%}
+              {%- for discount in cart.cart_level_discount_applications -%}
+                <p class="nawm-cart-page__row nawm-cart-page__row--discount">
+                  <span>{{ discount.title }}</span>
+                  <span class="nawm-mono">−{{ discount.total_allocated_amount | money }}</span>
+                </p>
+              {%- endfor -%}
+            {%- endif -%}
+
+            <p class="nawm-cart-page__row nawm-cart-page__row--total">
+              <span>{{ 'nawm.cart.total' | t }}</span>
+              <span class="nawm-mono">{{ cart.total_price | money }}</span>
+            </p>
+
+            <p class="nawm-cart-page__tax">{{ 'nawm.cart.tax_note' | t }}</p>
+          </div>
+
+          <button type="submit" name="checkout" class="nawm-cta nawm-cta--full" data-nawm-event="begin_checkout">
+            {{ 'nawm.cart.checkout' | t }}
+          </button>
+
+          {% render 'nawm-cart-extras' %}
+        </aside>
+      </form>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .nawm-cart-page__head {
+    max-width: 40rem;
+  }
+
+  .nawm-cart-page__grid {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    display: grid;
+    gap: clamp(2rem, 5vw, 3rem);
+    align-items: start;
+  }
+
+  @media (min-width: 900px) {
+    .nawm-cart-page__grid {
+      grid-template-columns: minmax(0, 1fr) 22rem;
+    }
+
+    .nawm-cart-page__summary {
+      position: sticky;
+      top: calc(var(--nawm-header-height, 4.5rem) + var(--sp-4));
+    }
+  }
+
+  .nawm-cart-page__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-4);
+  }
+
+  /* ------------------------------------------------------------ één regel */
+
+  .nawm-cart-line {
+    display: grid;
+    grid-template-columns: 88px minmax(0, 1fr) auto;
+    gap: var(--sp-3) var(--sp-4);
+    align-items: start;
+    padding-block-end: var(--sp-4);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .nawm-cart-line:last-child {
+    border-block-end: 0;
+    padding-block-end: 0;
+  }
+
+  .nawm-cart-line__media {
+    display: block;
+    border-radius: var(--r-card);
+    overflow: hidden;
+    background: color-mix(in oklab, var(--nawm-dawn) 88%, var(--ink-day));
+  }
+
+  .nawm-cart-line__media img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .nawm-cart-line__title {
+    font-family: var(--ff-display);
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--fg);
+    text-decoration: none;
+  }
+
+  .nawm-cart-line__title:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .nawm-cart-line__variant,
+  .nawm-cart-line__property {
+    margin: var(--sp-1) 0 0;
+    font-size: var(--fs-small);
+    color: var(--fg-soft);
+  }
+
+  .nawm-cart-line__discount {
+    margin: var(--sp-1) 0 0;
+    font-size: var(--fs-mono);
+    color: var(--nawm-ember);
+  }
+
+  .nawm-cart-line__controls {
+    margin-block-start: var(--sp-3);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+
+  .nawm-cart-line__qty {
+    inline-size: 4.5rem;
+    min-block-size: 44px;
+    padding: var(--sp-1) var(--sp-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-data);
+    background: #fff;
+    color: var(--ink-day);
+    font-family: var(--ff-mono);
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .nawm-cart-line__remove {
+    font-size: var(--fs-small);
+    color: var(--fg-soft);
+    text-underline-offset: 3px;
+  }
+
+  .nawm-cart-line__remove:hover {
+    color: var(--nawm-ember);
+  }
+
+  .nawm-cart-line__price {
+    font-size: 1.125rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
+    text-align: end;
+  }
+
+  .nawm-cart-line__was {
+    display: block;
+    margin-block-start: 2px;
+    font-size: var(--fs-mono);
+    color: var(--fg-soft);
+  }
+
+  @media (max-width: 599px) {
+    .nawm-cart-line {
+      grid-template-columns: 72px minmax(0, 1fr);
+    }
+
+    /* Op een smal scherm hoort het bedrag onder de titel en niet in een derde
+       kolom die de titel tot twee woorden per regel knijpt. */
+    .nawm-cart-line__price {
+      grid-column: 2;
+      text-align: start;
+    }
+  }
+
+  .nawm-cart-page__update {
+    margin-block-start: var(--sp-4);
+  }
+
+  /* ------------------------------------------------------------ het totaal */
+
+  .nawm-cart-page__summary {
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 92%, #fff);
+  }
+
+  .nawm-cart-page__row {
+    margin: 0 0 var(--sp-2);
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-3);
+    font-size: var(--fs-small);
+    color: var(--fg-soft);
+  }
+
+  .nawm-cart-page__row--discount {
+    color: var(--nawm-ember);
+  }
+
+  .nawm-cart-page__row--total {
+    padding-block-start: var(--sp-3);
+    border-block-start: 1px solid var(--line);
+    font-family: var(--ff-display);
+    font-size: 1.5rem;
+    color: var(--fg);
+  }
+
+  .nawm-cart-page__row--total .nawm-mono {
+    font-size: 1.5rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nawm-cart-page__tax {
+    margin: 0 0 var(--sp-4);
+    font-size: var(--fs-mono);
+    font-family: var(--ff-mono);
+    color: var(--fg-soft);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Winkelwagen",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De voortgangsbalk, de upsell, de leverdatum en de betaallogo's komen uit hetzelfde snippet als de winkelwagenlade, zodat lade en pagina nooit iets anders zeggen."
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    }
+  ]
+}
+{% endschema %}
