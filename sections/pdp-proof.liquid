@@ -157,7 +157,31 @@
           ></p>
         {%- endif -%}
 
+        {%- comment -%}
+          Twee doorlopen. Beoordelingen over wakker worden staan vooraan: dat is
+          waar deze bezoeker op afkomt. Beoordelingen over levertijd zeggen niets
+          over het bezwaar dat hem tegenhoudt. Er wordt niets verborgen — de
+          rest volgt er direct achter, inclusief de kritische.
+        {%- endcomment -%}
         <ul class="pdp-proof__list">
+          {%- assign priority = 'wakker worden,geluid,avondgebruik,instellen' | split: ',' -%}
+          {%- for theme_name in priority -%}
+            {%- for review in reviews -%}
+              {%- liquid
+                assign quote = review.citaat.value | default: review.citaat
+                assign source_url = review.bron_url.value | default: review.bron_url
+                assign date = review.datum.value | default: review.datum
+                assign theme_label = review.thema.value | default: review.thema
+              -%}
+              {%- if quote != blank and source_url != blank and date != blank and theme_label == theme_name -%}
+                <li class="pdp-proof__card" data-review-theme="{{ theme_label | escape }}">
+                  {% render 'nawm-review-card', review: review, uid: forloop.index %}
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+
+          {%- comment -%} Beoordelingen zonder thema, zodat er niet één wegvalt. {%- endcomment -%}
           {%- for review in reviews -%}
             {%- liquid
               assign quote = review.citaat.value | default: review.citaat
@@ -165,8 +189,8 @@
               assign date = review.datum.value | default: review.datum
               assign theme_label = review.thema.value | default: review.thema
             -%}
-            {%- if quote != blank and source_url != blank and date != blank -%}
-              <li class="pdp-proof__card" data-review-theme="{{ theme_label | escape }}">
+            {%- if quote != blank and source_url != blank and date != blank and theme_label == blank -%}
+              <li class="pdp-proof__card" data-review-theme="">
                 {% render 'nawm-review-card', review: review, uid: forloop.index %}
               </li>
             {%- endif -%}

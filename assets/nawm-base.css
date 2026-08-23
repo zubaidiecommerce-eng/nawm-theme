@@ -1238,3 +1238,167 @@ html.nawm-pdp .pdp-hero {
   object-fit: cover;
   border-radius: var(--r-data);
 }
+
+/* --------------------------------------------------------- winkelwagen */
+
+/* De lade erft Horizon's kleuren, dus de tokens worden hier expliciet gezet;
+   anders valt de NAWM-typografie terug op de themadefaults. */
+.nawm-cart,
+.nawm-cart-empty {
+  --fg: var(--ink-day);
+  --fg-soft: var(--ink-day-soft);
+  --line: rgb(26 23 16 / .12);
+
+  font-family: var(--ff-body);
+  color: var(--fg);
+}
+
+.nawm-cart {
+  display: grid;
+  gap: var(--sp-4);
+  padding: var(--sp-4) 0;
+  border-block-start: 1px solid var(--line);
+}
+
+.nawm-cart__progress-text {
+  margin: 0 0 var(--sp-2);
+  font-size: var(--fs-small);
+  color: var(--fg-soft);
+}
+
+.nawm-cart__progress-text--done {
+  color: var(--nawm-ember);
+  font-weight: 500;
+}
+
+.nawm-cart__track {
+  block-size: 6px;
+  border-radius: var(--r-pill);
+  background: color-mix(in oklab, var(--ink-day) 10%, transparent);
+  overflow: hidden;
+}
+
+.nawm-cart__fill {
+  block-size: 100%;
+  border-radius: var(--r-pill);
+  background: linear-gradient(90deg, var(--nawm-ember), var(--nawm-amber));
+  transition: inline-size var(--dur-slow) var(--ease);
+}
+
+.nawm-cart__upsell {
+  margin: 0;
+  padding: var(--sp-3);
+  border: 1px dashed var(--nawm-peach);
+  border-radius: var(--r-card);
+  background: color-mix(in oklab, var(--nawm-amber) 10%, transparent);
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.nawm-cart__upsell-text {
+  margin: 0;
+  font-size: var(--fs-small);
+}
+
+.nawm-cart__upsell .nawm-cta {
+  min-height: 44px;
+}
+
+.nawm-cart__delivery,
+.nawm-cart__trust {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--fg-soft);
+}
+
+.nawm-cart .pdp-payments__list {
+  justify-content: flex-start;
+}
+
+/* ------------------------------------------------------ lege winkelwagen */
+
+.nawm-cart-empty {
+  display: grid;
+  gap: var(--sp-4);
+  padding-block: var(--sp-4);
+}
+
+.nawm-cart-empty__heading {
+  margin: 0;
+  font-family: var(--ff-display);
+  font-variation-settings: "opsz" 96, "SOFT" 0, "WONK" 0;
+  font-weight: 300;
+  font-size: var(--fs-h3);
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  color: var(--fg);
+}
+
+.nawm-cart-empty__card {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: var(--sp-3);
+  align-items: center;
+  padding: var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+
+@media (hover: hover) {
+  .nawm-cart-empty__card:hover {
+    border-color: var(--nawm-amber);
+    transform: translateY(-2px);
+  }
+}
+
+.nawm-cart-empty__card img {
+  display: block;
+  width: 80px;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--r-data);
+}
+
+.nawm-cart-empty__meta {
+  display: grid;
+  gap: 2px;
+}
+
+.nawm-cart-empty__title {
+  font-weight: 500;
+}
+
+.nawm-cart-empty__price {
+  color: var(--fg-soft);
+}
+
+.nawm-cart-empty__cta {
+  grid-column: 1 / -1;
+  min-height: 44px;
+}
+
+.nawm-cart-empty__body {
+  margin: 0;
+  font-size: var(--fs-small);
+  color: var(--fg-soft);
+}
+
+/* Statusregel na toevoegen. */
+.nawm-cart-added {
+  margin: 0 0 var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-data);
+  background: color-mix(in oklab, var(--nawm-amber) 18%, transparent);
+  font-size: var(--fs-small);
+  color: var(--ink-day);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-cart__fill,
+  .nawm-cart-empty__card {
+    transition: none;
+  }
+}

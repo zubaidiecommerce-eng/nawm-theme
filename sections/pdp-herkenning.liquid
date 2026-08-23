@@ -1,0 +1,243 @@
+{% comment %}
+  PDP-sectie: de spiegel. Geen bezwaar uit §2, wel de emotionele instap.
+  Zie conversiespec v2 §2.1.
+
+  Zonder dit moment leest de rest als reclame. Vier stellingen die de bezoeker
+  kan aantikken; de uitkomst eronder is persoonlijk.
+
+  De belangrijkste van de drie uitkomsten is die bij nul: iemand wegsturen die
+  niet in de doelgroep zit. Dat is dezelfde beweging als "Herken je jezelf
+  rechts? Bestel hem dan niet" — en precies daardoor gelooft de lezer de andere
+  twee uitkomsten. Zwak die regel niet af.
+
+  De uitkomstteksten staan in de schema-settings en niet in de JS, zodat ze
+  aanpasbaar zijn zonder deploy.
+
+  Toegankelijkheid: gewone checkboxes in een group met een label, en de uitkomst
+  in een `aria-live="polite"`-regio. Er wordt niets geanimeerd bij het
+  verschijnen — dit is een moment van herkenning, geen effect.
+{% endcomment %}
+
+{% liquid
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.pdp.mirror.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.pdp.mirror.heading' | t
+  endif
+
+  assign result_none = section.settings.result_none
+  if result_none == blank
+    assign result_none = 'nawm.pdp.mirror.result_0' | t
+  endif
+
+  assign result_low = section.settings.result_low
+  if result_low == blank
+    assign result_low = 'nawm.pdp.mirror.result_low' | t
+  endif
+
+  assign result_high = section.settings.result_high
+  if result_high == blank
+    assign result_high = 'nawm.pdp.mirror.result_high' | t
+  endif
+
+  assign statements = 's1,s2,s3,s4' | split: ','
+%}
+
+<script src="{{ 'nawm-mirror.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+<section
+  class="nawm-section pdp-mirror ctx-dawn"
+  id="herkenning"
+  data-nawm-mirror
+  data-result-none="{{ result_none | escape }}"
+  data-result-low="{{ result_low | escape }}"
+  data-result-high="{{ result_high | escape }}"
+>
+  <div class="nawm-wrap pdp-mirror__inner">
+    <div class="pdp-head pdp-head--wide nawm-reveal">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h2 id="pdp-mirror-heading">{{ heading }}</h2>
+    </div>
+
+    <ul class="pdp-mirror__list" role="group" aria-labelledby="pdp-mirror-heading">
+      {%- for key in statements -%}
+        {%- liquid
+          assign k = 'nawm.pdp.mirror.' | append: key
+          assign delay = forloop.index0 | times: 60
+        -%}
+        <li class="nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
+          <label class="pdp-mirror__item">
+            <input type="checkbox" class="pdp-mirror__check" data-mirror-check>
+            <span class="pdp-mirror__box" aria-hidden="true"></span>
+            <span class="pdp-mirror__text">{{ k | t }}</span>
+          </label>
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    <p class="pdp-mirror__result" data-mirror-result aria-live="polite"></p>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pdp-mirror__inner {
+    max-width: 46rem;
+  }
+
+  .pdp-mirror__list {
+    list-style: none;
+    margin: clamp(2rem, 5vw, 3rem) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  /* Het hele blok is het klikvlak, niet alleen het vakje: op een telefoon met
+     één duim moet je niet hoeven mikken. */
+  .pdp-mirror__item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--sp-3);
+    align-items: center;
+    padding: var(--sp-4);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
+    cursor: pointer;
+    transition:
+      border-color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+
+  .pdp-mirror__check {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .pdp-mirror__box {
+    inline-size: 26px;
+    block-size: 26px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--r-data);
+    display: grid;
+    place-items: center;
+    transition: border-color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+  }
+
+  .pdp-mirror__box::after {
+    content: "";
+    inline-size: 12px;
+    block-size: 7px;
+    border-inline-start: 2px solid var(--nawm-dawn);
+    border-block-end: 2px solid var(--nawm-dawn);
+    rotate: -45deg;
+    translate: 0 -2px;
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+
+  .pdp-mirror__item:has(.pdp-mirror__check:checked) {
+    border-color: var(--nawm-amber);
+    background: color-mix(in oklab, var(--nawm-amber) 14%, var(--nawm-dawn));
+  }
+
+  .pdp-mirror__item:has(.pdp-mirror__check:checked) .pdp-mirror__box {
+    border-color: var(--nawm-ember);
+    background: var(--nawm-ember);
+  }
+
+  .pdp-mirror__item:has(.pdp-mirror__check:checked) .pdp-mirror__box::after {
+    opacity: 1;
+  }
+
+  .pdp-mirror__item:has(.pdp-mirror__check:focus-visible) {
+    outline: 2px solid var(--nawm-amber);
+    outline-offset: 3px;
+  }
+
+  @media (hover: hover) {
+    .pdp-mirror__item:hover {
+      transform: translateX(3px);
+      border-color: color-mix(in oklab, var(--nawm-amber) 55%, var(--line));
+    }
+  }
+
+  /* De uitkomst verschijnt zonder animatie: dit is een moment van herkenning,
+     geen effect. Hij houdt zijn hoogte gereserveerd zodat er niets verspringt. */
+  .pdp-mirror__result {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    min-block-size: 3.5em;
+    max-width: 52ch;
+    font-family: var(--ff-display);
+    font-size: var(--fs-h3);
+    font-weight: 300;
+    line-height: 1.3;
+    letter-spacing: -.01em;
+    color: var(--fg);
+    text-wrap: balance;
+  }
+
+  .pdp-mirror__result:empty {
+    min-block-size: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pdp-mirror__item,
+    .pdp-mirror__box,
+    .pdp-mirror__box::after {
+      transition: none;
+    }
+
+    .pdp-mirror__item:hover {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP herkenning",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De emotionele instap. De uitkomst bij nul aangevinkte stellingen stuurt iemand weg die niet in de doelgroep zit — dat is geen verspilling maar precies wat de andere twee uitkomsten geloofwaardig maakt. Niet afzwakken."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "result_none",
+      "label": "Uitkomst bij 0 aangevinkt"
+    },
+    {
+      "type": "textarea",
+      "id": "result_low",
+      "label": "Uitkomst bij 1 of 2"
+    },
+    {
+      "type": "textarea",
+      "id": "result_high",
+      "label": "Uitkomst bij 3 of 4"
+    }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · PDP herkenning"
+    }
+  ]
+}
+{% endschema %}

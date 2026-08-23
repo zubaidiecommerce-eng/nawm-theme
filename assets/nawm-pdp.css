@@ -343,3 +343,47 @@ body.pdp-sticky-active .content-for-layout {
   background: currentColor;
   clip-path: polygon(0 35%, 30% 35%, 55% 12%, 55% 88%, 30% 65%, 0 65%);
 }
+
+/* ------------------------------------------------- voorraad en deadline */
+
+.nawm-stock {
+  margin-block-start: var(--sp-3);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-small);
+  color: var(--fg-soft);
+}
+
+.nawm-stock__dot {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.nawm-stock--ok .nawm-stock__dot {
+  background: #3F8F5B;
+}
+
+/* Amber en niet rood: lage voorraad is informatie, geen alarm. */
+.nawm-stock--low {
+  color: var(--nawm-ember);
+}
+
+.nawm-stock--low .nawm-stock__dot {
+  background: var(--nawm-ember);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--nawm-ember) 20%, transparent);
+}
+
+.nawm-stock--out {
+  color: var(--fg-soft);
+}
+
+.nawm-cutoff {
+  margin-block-start: var(--sp-2);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: .04em;
+  color: var(--fg-soft);
+}

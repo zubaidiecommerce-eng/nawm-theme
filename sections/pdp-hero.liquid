@@ -34,7 +34,6 @@
   endif
 
   assign images = pdp_product.images
-  assign variant = pdp_product.selected_or_first_available_variant
 
   assign eyebrow = section.settings.eyebrow
   if eyebrow == blank
@@ -100,9 +99,6 @@
   assign wake_sounds = pdp_product.metafields.nawm.wake_sounds_count.value
   assign manual = pdp_product.metafields.nawm.manual_pdf
 
-  capture delivery_date
-    render 'pdp-delivery-date'
-  endcapture
 %}
 
 {% render 'nawm-manual-gate', manual: manual %}
@@ -268,8 +264,13 @@
 
         <p class="nawm-lede pdp-hero__sub">{{ subheading }}</p>
 
+        {%- comment -%}
+          De sterren staan pal boven de prijs, niet ergens in een regel tekst.
+          Op een telefoon is dit het eerste vertrouwenssignaal dat hij ziet
+          zonder te scrollen. Zie conversiespec v2 §4.2.
+        {%- endcomment -%}
         {%- if settings.review_score != blank and settings.review_count != blank -%}
-          <a class="pdp-hero__rating" href="#beoordelingen">
+          <a class="pdp-hero__rating pdp-hero__rating--prominent" href="#beoordelingen">
             {% render 'pdp-stars', score: settings.review_score, id: 'pdp-hero-stars' %}
             <span class="nawm-mono">
               {{-
@@ -355,21 +356,13 @@
         <div class="pdp-hero__cta" data-pdp-hero-cta>
           {% render 'pdp-buy', product: pdp_product, id: 'pdp-hero-form', shipping: true %}
         </div>
-
         {%- comment -%}
-          Voorraad alleen wanneer hij daadwerkelijk bijgehouden wordt en onder
-          de drempel zit. Een verzonnen aantal is een misleidende handelspraktijk
-          en kost precies het vertrouwen dat de rest van de pagina opbouwt.
+          Voorraad en verzenddeadline. Allebei uitsluitend op echte data: het
+          voorraadsnippet rendert niets zonder voorraadregistratie, en de teller
+          verdwijnt zodra de deadline van vandaag voorbij is.
         {%- endcomment -%}
-        {%- if settings.show_stock_notice
-          and variant.inventory_management != blank
-          and variant.inventory_quantity > 0
-          and variant.inventory_quantity <= settings.stock_threshold
-        -%}
-          <p class="nawm-mono pdp-hero__stock">
-            {{ 'nawm.pdp.hero.stock_low' | t: count: variant.inventory_quantity }}
-          </p>
-        {%- endif -%}
+        {% render 'nawm-stock', product: pdp_product, threshold: settings.stock_threshold %}
+        {% render 'nawm-cutoff', class: 'pdp-hero__cutoff' %}
 
         <ul class="pdp-hero__guarantee">
           <li>
@@ -418,21 +411,6 @@
             {{ 'nawm.pdp.common.support_nl' | t }}
           </li>
         </ul>
-
-        {%- comment -%}
-          De besteldeadline erbij maakt deze regel iets anders dan de microcopy
-          onder de knop: daar staat de datum, hier staat ook tot hoe laat je
-          erover kunt doen. Zonder deadline zou hij de microcopy herhalen, en
-          dan blijft hij weg.
-        {%- endcomment -%}
-        {%- if settings.order_deadline_time != blank and delivery_date != blank -%}
-          <p class="nawm-small pdp-hero__delivery">
-            {{
-              'nawm.pdp.hero.delivery'
-              | t: time: settings.order_deadline_time, date: delivery_date
-            }}
-          </p>
-        {%- endif -%}
       </div>
     </div>
   </div>
@@ -604,7 +582,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--sp-2);
-    margin-block-start: var(--sp-4);
+    margin-block-start: var(--sp-5);
     color: var(--fg);
     text-decoration: none;
     border-block-end: 1px solid var(--line);
@@ -615,8 +593,18 @@
     border-block-end-color: var(--nawm-amber);
   }
 
+  /* De sterren zijn hier groter dan elders op de pagina: ze doen het werk van
+     een kop, niet van een voetnoot. */
+  .pdp-hero__rating--prominent .pdp-stars svg {
+    width: 108px;
+  }
+
+  .pdp-hero__rating--prominent span {
+    font-size: 1rem;
+  }
+
   .pdp-hero__price {
-    margin-block-start: var(--sp-4);
+    margin-block-start: var(--sp-2);
     font-family: var(--ff-mono);
     font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);
     font-variant-numeric: tabular-nums;

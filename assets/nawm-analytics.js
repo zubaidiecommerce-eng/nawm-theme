@@ -73,6 +73,8 @@ onView('#specificaties', 'open_specifications');
    op de landingspagina heet dezelfde sectie #offer. Beide vuren view_offer, en
    `once` zorgt dat het er één blijft als ze ooit op dezelfde pagina staan. */
 onView('[data-nawm-pdp]', 'view_pdp');
+onView('[data-nawm-strip]', 'video_strip_view');
+onView('[data-nawm-mirror]', 'mirror_view');
 onView('#aanbod', 'view_offer');
 onView('[data-pdp-specs]', 'open_specs');
 
