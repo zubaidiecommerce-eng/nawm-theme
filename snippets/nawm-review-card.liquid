@@ -24,6 +24,7 @@
   assign theme_label = review.thema.value | default: review.thema
   assign stars = review.sterren.value | default: review.sterren
   assign photo = review.foto.value
+  assign photos = review.fotos.value
 
   comment
     Vooraf samenstellen: Shopify past filters niet toe op argumenten van een
@@ -61,7 +62,24 @@
       dan ook, maar hij hoort ná het citaat te komen — anders leest de kaart als
       een advertentie in plaats van als een beoordeling.
     {%- endcomment -%}
-    {%- if photo != blank -%}
+    {%- if photos != blank -%}
+      <ul class="nawm-review__photos">
+        {%- for item in photos -%}
+          <li>
+            {{
+              item
+              | image_url: width: 720
+              | image_tag:
+                widths: '240,360,720',
+                sizes: '(min-width: 900px) 11rem, 40vw',
+                alt: '',
+                loading: 'lazy',
+                decoding: 'async'
+            }}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- elsif photo != blank -%}
       <div class="nawm-review__photo">
         {{
           photo

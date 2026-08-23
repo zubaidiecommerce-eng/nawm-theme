@@ -1115,3 +1115,126 @@ html.nawm-page .pdp-hero,
 html.nawm-page .nawm-hero {
   padding-block-start: calc(var(--header-group-height, 104px) + clamp(1.5rem, 4vw, 3rem));
 }
+
+/* ------------------------------------------------- horizontaal overlopen */
+
+/* Eén blok met een negatieve marge maakte de hele pagina breder dan het
+   scherm, waardoor je op mobiel naar rechts kon scrollen naar niets. Die marge
+   is weg, en dit is het vangnet voor de volgende keer.
+
+   `clip` en niet `hidden`: hidden maakt van het element een scroll-container,
+   en dan werkt `position: sticky` erbinnen niet meer — precies wat het
+   koopblok en de header nodig hebben. Verticaal blijft `visible`. */
+html.nawm-page .page-wrapper {
+  overflow-x: clip;
+}
+
+/* De header ligt alleen op de landingspagina over de hero heen. Op de
+   productpagina staat hij in de normale stroom, dus daar hoort geen extra
+   ruimte. */
+html.nawm-page .nawm-hero {
+  padding-block-start: calc(var(--header-group-height, 104px) + clamp(1.5rem, 4vw, 3rem));
+}
+
+html.nawm-pdp .pdp-hero {
+  padding-block-start: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* ------------------------------------------------------ betaallogo's fix */
+
+/* De logo's werden half getoond: Horizon zet `max-width: 100%` op elke svg, en
+   in een grid-cel met een vaste hoogte knijpt dat de breedte af. Expliciete
+   maatvoering lost dat op. */
+.pdp-payments__item {
+  overflow: visible;
+}
+
+.pdp-payments__item svg {
+  display: block;
+  block-size: 100%;
+  inline-size: auto;
+  max-inline-size: none;
+  max-block-size: none;
+}
+
+/* ------------------------------------------------------------- ademruimte */
+
+/* De afsluitende regel van de wel-of-niet-sectie plakte op mobiel tegen de
+   laatste bullet. Die zin is het sterkste vertrouwenssignaal van de pagina en
+   verdient een eigen adempauze. */
+.pdp-fit__closing {
+  margin-block-start: clamp(2.5rem, 8vw, 3rem);
+}
+
+/* De handleidingknop stond te dicht op de opsomming erboven. */
+.nawm-inbox__docs--cta {
+  margin-block-start: clamp(3rem, 8vw, 4.5rem);
+}
+
+/* Het koopblok: prijs, knop en garanties zaten op elkaar geplakt. */
+.nawm-offer__cta {
+  display: grid;
+  gap: var(--sp-4);
+}
+
+.nawm-offer__per-day,
+.nawm-offer__price,
+.nawm-offer__shipping,
+.nawm-offer__delivery,
+.nawm-offer__guarantees {
+  margin: 0;
+}
+
+.nawm-offer__price {
+  line-height: 1;
+}
+
+/* Prijs en verzendregel horen bij elkaar en staan daarom dichter op elkaar dan
+   de rest van het blok. */
+.nawm-offer__shipping {
+  margin-block-start: calc(var(--sp-4) * -1 + var(--sp-2));
+}
+
+.nawm-offer__guarantees {
+  padding-block-start: var(--sp-4);
+}
+
+/* ------------------------------------------------- band met beoordelingen */
+
+/* Op desktop loopt de band vanzelf en hoort er geen schuifbalk te staan: die
+   nodigt uit tot handmatig scrollen terwijl de band juist zelf beweegt.
+   `clip` houdt de inhoud binnen zonder een scroll-container te maken.
+   Op touch blijft vegen wél werken — daar is het de natuurlijke bediening. */
+@media (min-width: 750px) {
+  .nawm-proof__marquee.is-animated {
+    overflow-x: clip;
+  }
+}
+
+@media (max-width: 749px) {
+  .nawm-proof__marquee {
+    scrollbar-width: none;
+  }
+
+  .nawm-proof__marquee::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Meerdere klantfoto's naast elkaar onder één beoordeling. */
+.nawm-review__photos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr));
+  gap: var(--sp-2);
+}
+
+.nawm-review__photos img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--r-data);
+}

@@ -390,7 +390,8 @@
           }
         },
         "old_way": "Je telefoon: nul seconden van slaap naar alarm.",
-        "new_way": "NAWM: dertig minuten van donker naar wakker."
+        "new_way": "NAWM: dertig minuten van donker naar wakker.",
+        "clip_label": "Bij {{ time }}"
       },
       "fit": {
         "eyebrow": "Voor wie wel, voor wie niet",
@@ -467,7 +468,9 @@
         "video_missing": "De timelapse van het verkoopmodel staat nog niet klaar.",
         "video_alt": "Timelapse van de zonsopgang op het verkoopmodel",
         "sounds_label": "Natuurgeluiden",
-        "sounds_note": "Welke hiervan je als wekgeluid kunt kiezen, staat bij de specificaties."
+        "sounds_note": "Welke hiervan je als wekgeluid kunt kiezen, staat bij de specificaties.",
+        "play_sound": "Beluister {{ sound }}",
+        "stop_sound": "Stop"
       },
       "proof": {
         "eyebrow": "Wat kopers zeggen",
@@ -598,7 +601,8 @@
         "vat_label": "Btw-nummer",
         "email_label": "E-mail",
         "response": "Vragen vóór je bestelt? Mail ons — we antwoorden meestal binnen {{ time }}.",
-        "body": "<p>NAWM verkoopt één product: deze wake-up light. We leveren hem met een Nederlandstalige handleiding die je vóór je bestelling al kunt lezen, een EU-stekker in de doos, en klantenservice die je in het Nederlands te woord staat.</p><p>We begonnen hiermee omdat een wekker die je uit je slaap rukt de ochtend zwaarder maakt dan nodig — en omdat de handleidingen in deze categorie vrijwel altijd onleesbaar zijn.</p>"
+        "body_1": "NAWM verkoopt één product: deze wake-up light. We leveren hem met een Nederlandstalige handleiding die je vóór je bestelling al kunt lezen, een EU-stekker in de doos, en klantenservice die je in het Nederlands te woord staat.",
+        "body_2": "We begonnen hiermee omdat een wekker die je uit je slaap rukt de ochtend zwaarder maakt dan nodig — en omdat de handleidingen in deze categorie vrijwel altijd onleesbaar zijn."
       },
       "clips": {
         "eyebrow": "In beeld",
@@ -658,6 +662,14 @@
         "closeup": "Het apparaat, van dichtbij",
         "label_render": "Animatie",
         "label_recording": "Opname van het verkoopmodel"
+      },
+      "beforeafter": {
+        "eyebrow": "Twee ochtenden",
+        "heading": "Zo ziet het verschil eruit",
+        "before_label": "Nu",
+        "after_label": "Met NAWM",
+        "before_caption": "Koud schermlicht onder het dekbed, tot je ogen dichtvallen.",
+        "after_caption": "Licht dat opbouwt, en een geluid dat pas als laatste komt."
       }
     },
     "announcement": {
@@ -711,6 +723,21 @@
     "seo": {
       "home_title": "NAWM Wake-Up Light — word wakker met licht, niet met schrikken",
       "home_description": "Zonsopgang van 10 tot 60 minuten, 20 helderheidsstanden en 7 wekgeluiden. Nederlandstalige handleiding, 30 dagen retour, gratis retourzending."
+    },
+    "contact": {
+      "eyebrow": "Contact",
+      "heading": "Stel je vraag",
+      "body": "Twijfel je of de wake-up light bij je past, of loop je ergens tegenaan? Mail ons of gebruik het formulier. We antwoorden in het Nederlands.",
+      "address_label": "Adres",
+      "response_label": "Reactietijd",
+      "no_phone": "We werken zonder telefonische klantenservice, zodat één persoon alle vragen zorgvuldig kan beantwoorden in plaats van half. Op werkdagen komt een mail doorgaans binnen enkele uren terug.",
+      "name_label": "Je naam",
+      "email_label": "Je e-mailadres",
+      "order_label": "Bestelnummer (als je er een hebt)",
+      "message_label": "Je vraag",
+      "submit": "Verstuur",
+      "success": "Bedankt. Je bericht is binnen en we antwoorden zo snel mogelijk.",
+      "error": "Er ging iets mis bij het versturen. Controleer je e-mailadres en probeer het opnieuw."
     }
   },
   "blocks": {

@@ -332,3 +332,14 @@ body.pdp-sticky-active .content-for-layout {
 .pdp-gallery__clip .nawm-clip__caption {
   margin-block-start: var(--sp-2);
 }
+
+/* Een chip met een audiofragment krijgt een luidsprekertje, zodat zichtbaar is
+   dat er iets te horen valt. Chips zonder fragment blijven gewone keuzeknoppen. */
+.nawm-chip[data-sound-src]::before {
+  content: "";
+  inline-size: 12px;
+  block-size: 12px;
+  margin-inline-end: var(--sp-1);
+  background: currentColor;
+  clip-path: polygon(0 35%, 30% 35%, 55% 12%, 55% 88%, 30% 65%, 0 65%);
+}

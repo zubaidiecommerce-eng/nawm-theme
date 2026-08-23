@@ -10,6 +10,14 @@
   if template.name == 'index'
     assign nawm_page = true
   endif
+
+  comment
+    De contactpagina draait op een eigen NAWM-sectie en heeft dus dezelfde
+    tokens en typografie nodig. Geen productpagina, dus geen nawm_pdp.
+  endcomment
+  if template.name == 'page' and template.suffix == 'contact'
+    assign nawm_page = true
+  endif
   comment
     Twee suffixen. `nawm` is de huidige; `wake-up-light` blijft staan omdat het
     live thema dat bestand sinds 20 augustus niet meer van GitHub ophaalt —
