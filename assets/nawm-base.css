@@ -7,6 +7,30 @@ html.nawm-page {
   background: var(--nawm-midnight);
 }
 
+/* Pagina's zonder de vaste lucht — contact, winkelwagen — staan op dawn. Zonder
+   deze regel viel donkere tekst op een midnight grond: onleesbaar, en niet op
+   te lossen in de sectie zelf omdat html de laatste laag is die zichtbaar
+   blijft onder een sectie die het scherm niet vult. */
+html.nawm-light,
+html.nawm-light body {
+  background: var(--nawm-dawn);
+}
+
+/* Deze pagina's staan in de ochtend. Zonder deze twee waarden zouden kleuren
+   die van --dawn afhangen op hun nachtstand blijven staan, terwijl er geen
+   nacht meer te zien is. */
+html.nawm-light {
+  --dawn: 1;
+  --sky: 1;
+}
+
+/* De secties op zo'n pagina schilderen hun eigen grond, zodat de tekstkleur uit
+   ctx-dawn altijd op de bijbehorende achtergrond staat en niet op wat Horizon
+   er toevallig onder zet. */
+html.nawm-light .nawm-section.ctx-dawn {
+  background: var(--nawm-dawn);
+}
+
 html.nawm-page body {
   background: transparent;
   font-family: var(--ff-body);
@@ -160,40 +184,78 @@ html.nawm-page .shopify-section:has(.nawm-section) {
 
 /* ---------------------------------------------------------------------- CTA */
 
+/* Eén knopvorm voor de hele winkel, en hij keert om met zijn context: op een
+   lichte sectie bijna zwart, op een donkere sectie warm gebroken wit. Dat is
+   het contrast dat een knop nodig heeft zonder dat er een gekleurd vlak in de
+   pagina ligt.
+
+   Het merkaccent zit in de pijl en in de rand bij hover, niet in het vlak
+   zelf. Een amberkleurige pil met een verloop erover las als een
+   uitverkoopknop; deze moet lezen als een besluit. */
 .nawm-cta {
-  --cta-bg: var(--nawm-amber);
-  --cta-fg: var(--ink-day);
+  --cta-bg: var(--ink-day);
+  --cta-fg: var(--nawm-dawn);
+  --cta-accent: var(--nawm-amber);
+  --cta-ring: rgb(255 255 255 / .14);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--sp-2);
-  min-height: 56px;
+  gap: .7em;
+  min-height: 58px;
   padding: var(--sp-3) var(--sp-5);
-  border: 1px solid transparent;
-  border-radius: var(--r-pill);
+  border: 0;
+  border-radius: 12px;
   background: var(--cta-bg);
+  box-shadow: inset 0 0 0 1px var(--cta-ring);
   color: var(--cta-fg);
-  font-family: var(--ff-body);
-  font-size: 1.0625rem;
-  font-weight: 600;
+
+  /* Mono in plaats van de bodytekst. De knop draagt bijna altijd een bedrag,
+     en cijfers in tabulaire mono staan stil in plaats van te verspringen. De
+     lichte spatiëring geeft de tekst lucht; dat is wat een knop duur maakt. */
+  font-family: var(--ff-mono);
+  font-size: .9375rem;
+  font-weight: 500;
   line-height: 1.2;
-  letter-spacing: -.01em;
+  letter-spacing: .03em;
+  font-variant-numeric: tabular-nums;
+
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease), box-shadow var(--dur) var(--ease);
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    transform var(--dur-fast) var(--ease);
 }
-.nawm-cta:hover { box-shadow: var(--glow-amber); }
+
+/* Op een donkere sectie draait de knop om, zodat hij nooit in zijn ondergrond
+   verdwijnt. Het accent gaat mee: amber op zwart, ember op licht. */
+.ctx-night .nawm-cta {
+  --cta-bg: var(--nawm-dawn);
+  --cta-fg: var(--ink-day);
+  --cta-accent: var(--nawm-ember);
+  --cta-ring: rgb(26 23 16 / .12);
+}
+
+/* Uitverkocht is geen uitgegrijsde knop maar een mededeling. Een halftransparant
+   zwart vlak werd een grijze klont die nergens meer bij hoorde; dit leest als
+   wat het is: een vak dat je niet kunt indrukken. */
 .nawm-cta[disabled],
-.nawm-cta[aria-disabled="true"] { opacity: .55; cursor: not-allowed; box-shadow: none; }
+.nawm-cta[aria-disabled="true"] {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--fg-soft);
+  cursor: not-allowed;
+  transform: none;
+}
 
 .nawm-cta--ghost {
   --cta-bg: transparent;
   --cta-fg: var(--fg);
-  border-color: var(--line);
+  box-shadow: inset 0 0 0 1px var(--line);
   font-weight: 500;
 }
-.nawm-cta--ghost:hover { box-shadow: none; background: color-mix(in oklab, var(--fg) 8%, transparent); }
 
 .nawm-cta--full { width: 100%; }
 
@@ -649,6 +711,16 @@ html.nawm-page #header-component:not([transparent]) {
   border-block-end: 1px solid rgb(255 255 255 / .08);
 }
 
+/* Op een lichte pagina mag de balk niet transparant zijn: de menutekst is daar
+   licht, en licht op cream is onleesbaar. Hij krijgt dus altijd zijn eigen
+   ondergrond, ook als Horizon hem transparant wil hebben. */
+html.nawm-light #header-component,
+html.nawm-light #header-component[transparent] {
+  background: color-mix(in oklab, var(--nawm-midnight) 96%, transparent);
+  backdrop-filter: blur(8px);
+  border-block-end: 1px solid rgb(255 255 255 / .08);
+}
+
 html.nawm-page #header-component .header__logo img,
 html.nawm-page #header-component .header__logo svg {
   /* Het logo is donker aangeleverd; op de nachtheader moet het licht zijn. */
@@ -986,62 +1058,56 @@ html.nawm-pdp .pdp-evening {
 
 /* ------------------------------------------------------------- de koopknop */
 
-/* De knop is het zwaartepunt van elke sectie waar hij in staat, en mag daar ook
-   naar uitzien. Een warme verloop met een lichte bovenrand geeft hem diepte
-   zonder dat hij als een 3D-knop uit 2009 leest; de pijl schuift mee bij hover. */
-.nawm-cta {
-  background-image: linear-gradient(
-    180deg,
-    color-mix(in oklab, var(--cta-bg) 88%, #fff) 0%,
-    var(--cta-bg) 55%,
-    color-mix(in oklab, var(--cta-bg) 92%, #000) 100%
-  );
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / .45);
-  transition:
-    transform var(--dur-fast) var(--ease),
-    box-shadow var(--dur) var(--ease),
-    filter var(--dur-fast) var(--ease);
-}
-
+/* De pijl draagt het merkaccent en schuift mee bij hover. Hij hoort alleen op
+   de primaire knop: een ghost-knop met een pijl leest als twee gelijkwaardige
+   wegen, en dat is precies wat we niet willen. */
 .nawm-cta::after {
   content: "";
   flex: none;
-  inline-size: 18px;
-  block-size: 10px;
-  margin-inline-start: -.15em;
-  background: currentColor;
-  clip-path: polygon(0 45%, 62% 45%, 62% 22%, 100% 50%, 62% 78%, 62% 55%, 0 55%);
+  inline-size: 16px;
+  block-size: 9px;
+  background: var(--cta-accent);
+  clip-path: polygon(0 46%, 64% 46%, 64% 24%, 100% 50%, 64% 76%, 64% 54%, 0 54%);
   transition: translate var(--dur) var(--ease);
+}
+
+.nawm-cta--ghost::after,
+.nawm-cta[aria-disabled="true"]::after,
+.nawm-cta[disabled]::after {
+  display: none;
 }
 
 @media (hover: hover) {
   .nawm-cta:hover {
-    transform: translateY(-2px);
-    filter: saturate(1.06);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / .5), var(--glow-amber);
+    background: color-mix(in oklab, var(--cta-bg) 88%, var(--cta-accent));
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklab, var(--cta-accent) 70%, transparent),
+      0 12px 32px -20px var(--cta-bg);
+    transform: translateY(-1px);
   }
 
   .nawm-cta:hover::after {
     translate: 4px 0;
   }
+
+  /* De tegenknop krijgt dezelfde randkleur maar blijft liggen: hij mag niet
+     evenveel aandacht trekken als de knop ernaast. */
+  .nawm-cta--ghost:hover {
+    background: color-mix(in oklab, var(--fg) 7%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--cta-accent) 55%, var(--line));
+    transform: none;
+  }
+
+  .nawm-cta[disabled]:hover,
+  .nawm-cta[aria-disabled="true"]:hover {
+    background: var(--cta-bg);
+    box-shadow: inset 0 0 0 1px var(--cta-ring);
+    transform: none;
+  }
 }
 
 .nawm-cta:active {
   transform: translateY(0);
-}
-
-/* De ghost-variant is een tegenknop en hoort geen verloop of pijl te hebben. */
-.nawm-cta--ghost {
-  background-image: none;
-  box-shadow: none;
-}
-
-.nawm-cta--ghost::after {
-  display: none;
-}
-
-.nawm-cta[aria-disabled="true"]::after {
-  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
