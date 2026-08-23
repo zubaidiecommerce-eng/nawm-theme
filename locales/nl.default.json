@@ -663,7 +663,7 @@
     "announcement": {
       "delivery": "Vandaag vóór {{ time }} besteld, {{ date }} in huis",
       "returns": "{{ days }} dagen retour — retourzending gratis",
-      "shipping": "Verzending € 4,95"
+      "free_shipping": "Gratis verzending vanaf {{ amount }}"
     },
     "popup": {
       "eyebrow": "{{ percentage }}% korting op je eerste bestelling",

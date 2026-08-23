@@ -65,17 +65,25 @@
     de thumbnails lezen alle drie dit ene getal, zodat "afbeelding 7 van 8"
     nooit kan verwijzen naar een slide die er niet is.
   endcomment
-  assign slide_count = images.size
-  if slide_count == 0
-    assign slide_count = placeholder_slugs.size
-  elsif slide_count > 6
-    assign slide_count = 6
+  assign photo_count = images.size
+  if photo_count > 6
+    assign photo_count = 6
   endif
 
   comment
-    De twee animaties in de galerij tellen mee als slide, anders klopt de
-    indicator niet met wat je kunt scrollen.
+    Staan er geen foto's én geen animaties, dan vullen de placeholders uit de
+    beeldbrief de galerij — maar alleen in de theme-editor. Op de live pagina
+    hoort daar niets te staan.
   endcomment
+  assign use_placeholders = false
+  if photo_count == 0 and section.settings.clip_closeup == blank and section.settings.clip_room == blank
+    assign use_placeholders = true
+  endif
+
+  assign slide_count = photo_count
+  if use_placeholders
+    assign slide_count = placeholder_slugs.size
+  endif
   if section.settings.clip_closeup != blank
     assign slide_count = slide_count | plus: 1
   endif
@@ -107,6 +115,17 @@
 >
   <div class="nawm-wrap pdp-hero__grid">
     {%- comment -%} ---------------------------------------------------- galerij {%- endcomment -%}
+    {%- comment -%}
+      De galerij is één geordende reeks: eerst de close-up-animatie, dan de
+      productfoto's, dan de animatie van de kamer die wakker wordt. De
+      thumbnails lopen door exact dezelfde reeks, zodat slide en thumbnail
+      altijd bij elkaar horen.
+
+      Dat was eerder niet zo: de thumbnails telden met een losse teller door de
+      foto's heen terwijl de animaties er als extra slides bij kwamen. Zodra er
+      een video werd toegevoegd, wees `images[index]` naar niets en gaf Shopify
+      "invalid url input" — precies waar de pagina op stukliep.
+    {%- endcomment -%}
     <div class="pdp-gallery" data-pdp-gallery>
       <div
         class="pdp-gallery__track"
@@ -115,11 +134,6 @@
         tabindex="0"
         aria-label="{{ 'nawm.pdp.hero.gallery_label' | t }}"
       >
-        {%- comment -%}
-          Animatie 4 — het apparaat van dichtbij — staat als tweede slide.
-          Waargenomen kwaliteit verkoopt bij een merk dat niemand kent, en een
-          trage close-up doet daar meer tegen bezwaar B3 dan drie alinea's.
-        {%- endcomment -%}
         {%- if section.settings.clip_closeup != blank -%}
           <div class="pdp-gallery__slide" data-gallery-slide tabindex="-1">
             {% render 'nawm-clip',
@@ -133,45 +147,31 @@
           </div>
         {%- endif -%}
 
-        {%- if images.size > 0 -%}
-          {%- for image in images limit: 6 -%}
-            {%- comment -%}
-              De alt-tekst wordt vooraf samengesteld: Shopify past filters niet
-              toe op argumenten van een render-tag.
-            {%- endcomment -%}
-            {%- assign image_alt = image.alt | default: pdp_product.title -%}
-            <div class="pdp-gallery__slide" data-gallery-slide tabindex="-1">
-              {% render 'nawm-figure',
-                image: image,
-                alt: image_alt,
-                sizes: '(min-width: 1024px) 46vw, 100vw',
-                eager: forloop.first,
-                class: 'pdp-gallery__figure'
-              %}
-            </div>
-          {%- endfor -%}
-        {%- else -%}
+        {%- for image in images limit: 6 -%}
+          {%- assign image_alt = image.alt | default: pdp_product.title -%}
+          <div class="pdp-gallery__slide" data-gallery-slide tabindex="-1">
+            {% render 'nawm-figure',
+              image: image,
+              alt: image_alt,
+              sizes: '(min-width: 1024px) 46vw, 100vw',
+              eager: forloop.first,
+              class: 'pdp-gallery__figure'
+            %}
+          </div>
+        {%- endfor -%}
+
+        {%- if use_placeholders -%}
           {%- for slug in placeholder_slugs -%}
             {%- liquid
               assign alt_key = 'nawm.pdp.hero.image_alt.' | append: placeholder_alts[forloop.index0]
               assign alt_text = alt_key | t
             -%}
             <div class="pdp-gallery__slide" data-gallery-slide tabindex="-1">
-              {% render 'nawm-figure',
-                slug: slug,
-                alt: alt_text,
-                ratio: '4 / 5',
-                class: 'pdp-gallery__figure'
-              %}
+              {% render 'nawm-figure', slug: slug, alt: alt_text, ratio: '4 / 5', class: 'pdp-gallery__figure' %}
             </div>
           {%- endfor -%}
         {%- endif -%}
 
-        {%- comment -%}
-          Animatie 1 — de kamer wordt wakker — sluit de galerij af. Bezwaar B1:
-          werkt dit echt? Dit is het laatste dat je ziet voordat je naar de
-          knop kijkt.
-        {%- endcomment -%}
         {%- if section.settings.clip_room != blank -%}
           <div class="pdp-gallery__slide" data-gallery-slide tabindex="-1">
             {% render 'nawm-clip',
@@ -192,47 +192,63 @@
         <p class="nawm-mono pdp-gallery__position">{{ position }}</p>
 
         <ul class="pdp-gallery__thumbs">
-          {%- for index in (1..slide_count) -%}
+          {%- if section.settings.clip_closeup != blank -%}
+            <li>
+              <button type="button" class="pdp-gallery__thumb" data-gallery-thumb aria-current="true">
+                {%- if section.settings.clip_closeup_poster != blank -%}
+                  {{
+                    section.settings.clip_closeup_poster
+                    | image_url: width: 160
+                    | image_tag: widths: '80,160', sizes: '80px', alt: '', loading: 'lazy'
+                  }}
+                {%- else -%}
+                  {% render 'nawm-icon-play' %}
+                {%- endif -%}
+                <span class="nawm-visually-hidden">
+                  {{ 'nawm.pdp.animations.closeup' | t }}
+                </span>
+              </button>
+            </li>
+          {%- endif -%}
+
+          {%- for image in images limit: 6 -%}
             <li>
               <button
                 type="button"
                 class="pdp-gallery__thumb"
                 data-gallery-thumb
-                aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+                aria-current="{% if forloop.first and section.settings.clip_closeup == blank %}true{% else %}false{% endif %}"
               >
-                {%- comment -%}
-          Animatie 4 — het apparaat van dichtbij — staat als tweede slide.
-          Waargenomen kwaliteit verkoopt bij een merk dat niemand kent, en een
-          trage close-up doet daar meer tegen bezwaar B3 dan drie alinea's.
-        {%- endcomment -%}
-        {%- if section.settings.clip_closeup != blank -%}
-          <div class="pdp-gallery__slide" data-gallery-slide tabindex="-1">
-            {% render 'nawm-clip',
-              video: section.settings.clip_closeup,
-              poster: section.settings.clip_closeup_poster,
-              ratio: '1 / 1',
-              kind: 'recording',
-              caption_key: 'nawm.pdp.animations.closeup',
-              class: 'pdp-gallery__clip'
-            %}
-          </div>
-        {%- endif -%}
-
-        {%- if images.size > 0 -%}
-                  {{
-                    images[forloop.index0]
-                    | image_url: width: 160
-                    | image_tag: widths: '80,160', sizes: '80px', alt: '', loading: 'lazy'
-                  }}
-                {%- else -%}
-                  <span class="pdp-gallery__thumb-blank" aria-hidden="true">{{ forloop.index }}</span>
-                {%- endif -%}
+                {{
+                  image
+                  | image_url: width: 160
+                  | image_tag: widths: '80,160', sizes: '80px', alt: '', loading: 'lazy'
+                }}
                 <span class="nawm-visually-hidden">
                   {{ 'nawm.pdp.hero.gallery_thumb' | t: index: forloop.index }}
                 </span>
               </button>
             </li>
           {%- endfor -%}
+
+          {%- if section.settings.clip_room != blank -%}
+            <li>
+              <button type="button" class="pdp-gallery__thumb" data-gallery-thumb aria-current="false">
+                {%- if section.settings.clip_room_poster != blank -%}
+                  {{
+                    section.settings.clip_room_poster
+                    | image_url: width: 160
+                    | image_tag: widths: '80,160', sizes: '80px', alt: '', loading: 'lazy'
+                  }}
+                {%- else -%}
+                  {% render 'nawm-icon-play' %}
+                {%- endif -%}
+                <span class="nawm-visually-hidden">
+                  {{ 'nawm.pdp.animations.room_wakes' | t }}
+                </span>
+              </button>
+            </li>
+          {%- endif -%}
         </ul>
       {%- endif -%}
     </div>
@@ -448,11 +464,6 @@
 {%- endif -%}
 
 {% stylesheet %}
-  .pdp-hero {
-    /* De hero draagt de knop; de sectiepadding erboven mag hem niet wegduwen. */
-    padding-block-start: clamp(2rem, 5vw, 4rem);
-  }
-
   .pdp-hero__grid {
     display: grid;
     gap: clamp(2rem, 5vw, 3.5rem);

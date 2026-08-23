@@ -1104,3 +1104,14 @@ html.nawm-pdp .pdp-evening {
   padding-inline: var(--sp-6);
   font-size: 1.0625rem;
 }
+
+/* ------------------------------------------------ ruimte onder de header */
+
+/* De header is transparant op de NAWM-sjablonen en ligt dus óver de eerste
+   sectie. Zonder deze ruimte schuift de balk bovenaan over de productfoto's
+   heen. `--header-group-height` wordt vóór de eerste paint gemeten in
+   theme.liquid; de fallback dekt het geval dat die meting niet loopt. */
+html.nawm-page .pdp-hero,
+html.nawm-page .nawm-hero {
+  padding-block-start: calc(var(--header-group-height, 104px) + clamp(1.5rem, 4vw, 3rem));
+}

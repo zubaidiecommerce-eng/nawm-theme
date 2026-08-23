@@ -22,7 +22,14 @@
   @param {string} [class] - Extra klassen.
 {% enddoc %}
 
+{%- comment -%}
+  Het script staat hier en niet in de sectie, omdat clips op drie verschillende
+  secties voorkomen. Een module met dezelfde URL wordt door de browser één keer
+  uitgevoerd, dus meerdere clips leveren geen dubbel werk op.
+{%- endcomment -%}
 {%- if video != blank -%}
+  <script src="{{ 'nawm-clip.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
   {%- liquid
     assign label_key = 'nawm.pdp.animations.label_render'
     if kind == 'recording'
