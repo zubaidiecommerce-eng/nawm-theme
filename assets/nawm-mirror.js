@@ -1,13 +1,17 @@
 /**
- * nawm-mirror.js — de herkenningssectie.
+ * nawm-mirror.js — de herkenningssectie. Zie fix & uitbreiding v3, punt 9.
  *
- * Telt aangevinkte stellingen en schrijft de bijbehorende uitkomst. De drie
- * teksten komen uit data-attributen op de sectie, niet uit dit bestand: ze zijn
- * copy, en copy hoort in de theme-editor te staan.
+ * Kijkt naar wélke stellingen zijn aangevinkt, niet naar hoeveel. Elke
+ * stelling draagt een as in `data-axis`: avond of ochtend. Daaruit volgt één
+ * van vier profielen, en bij elk profiel hoort een blok dat al in de HTML
+ * staat. Dit bestand doet niets anders dan het juiste blok tonen.
  *
- * Het event `mirror_result` vertelt later precies hoe herkenbaar het
- * advertentiepubliek is — bij hoeveel mensen slaan drie of vier stellingen aan.
- * Dat is direct bruikbaar in je advertentiecopy.
+ * De teksten staan daarom niet hier maar in de sectie: het is copy, en copy
+ * hoort in de theme-editor te staan.
+ *
+ * Voordat er iets is aangeraakt blijft alles verborgen. Anders zou de sectie
+ * iemand die net binnenkomt meteen vertellen dat hij het product niet nodig
+ * heeft.
  */
 
 const section = document.querySelector('[data-nawm-mirror]');
@@ -15,46 +19,52 @@ const section = document.querySelector('[data-nawm-mirror]');
 if (section) {
   const checks = [...section.querySelectorAll('[data-mirror-check]')];
   const result = section.querySelector('[data-mirror-result]');
+  const outcomes = result ? [...result.querySelectorAll('[data-outcome]')] : [];
 
-  if (checks.length > 0 && result) {
-    const texts = {
-      none: section.dataset.resultNone || '',
-      low: section.dataset.resultLow || '',
-      high: section.dataset.resultHigh || '',
+  if (checks.length > 0 && outcomes.length > 0) {
+    /* Alles dicht tot de eerste klik. Dit gebeurt in JS en niet in Liquid,
+       zodat iemand zonder JavaScript de blokken gewoon allemaal ziet staan in
+       plaats van een lege sectie. */
+    for (const outcome of outcomes) outcome.hidden = true;
+
+    const profileOf = () => {
+      const checked = checks.filter((input) => input.checked);
+      if (checked.length === 0) return 'none';
+
+      const evening = checked.some((input) => input.dataset.axis === 'avond');
+      const morning = checked.some((input) => input.dataset.axis === 'ochtend');
+
+      if (evening && morning) return 'both';
+      return evening ? 'avond' : 'ochtend';
     };
 
     /* Eén melding per bezoek, met de eindstand. Bij elke klik een event sturen
-       levert ruis op in plaats van inzicht. */
+       levert ruis op in plaats van inzicht. Na twee weken vertelt dit welk
+       profiel het advertentiepubliek heeft, en dat is direct bruikbaar in de
+       advertentiecopy. */
     let reportTimer = 0;
     let lastReported = null;
 
-    const report = (score) => {
+    const report = (profile) => {
       clearTimeout(reportTimer);
       reportTimer = setTimeout(() => {
-        if (score === lastReported) return;
-        lastReported = score;
+        if (profile === lastReported) return;
+        lastReported = profile;
         if (typeof window.nawmTrack === 'function') {
-          window.nawmTrack('mirror_result', { score });
+          window.nawmTrack('mirror_result', { profile });
         }
       }, 1200);
     };
 
     const update = () => {
-      const score = checks.filter((input) => input.checked).length;
-
-      /* Niets aangevinkt en nog niets aangeraakt: geen uitkomst tonen. Anders
-         zou de sectie iemand die net binnenkomt meteen wegsturen. */
       const touched = section.dataset.touched === 'true';
-      if (score === 0 && !touched) {
-        result.textContent = '';
-        return;
+      const profile = profileOf();
+
+      for (const outcome of outcomes) {
+        outcome.hidden = !touched || outcome.dataset.outcome !== profile;
       }
 
-      if (score === 0) result.textContent = texts.none;
-      else if (score <= 2) result.textContent = texts.low;
-      else result.textContent = texts.high;
-
-      report(score);
+      if (touched) report(profile);
     };
 
     for (const input of checks) {
