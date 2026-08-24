@@ -1,10 +1,14 @@
 /**
  * nawm-manual-gate.js — de handleiding achter een e-mailadres.
  *
- * De links naar de handleiding blijven gewone links naar de PDF. Dit script
- * vangt de klik af en zet er het venster voor in de plaats. Laadt het script
- * niet, dan opent de link gewoon de handleiding — dat is de bedoeling: een
- * bezoeker die de handleiding wil lezen mag niet stranden op een script.
+ * Sinds v3 is er één ingang: de knop uit `nawm-manual-cta`. Die knop staat op
+ * `hidden` in de HTML en wordt hier zichtbaar gemaakt, zodat er zonder dit
+ * script geen knop staat die niets doet. In dat geval toont de `<noscript>`
+ * ernaast de directe link — een bezoeker die de handleiding wil lezen mag
+ * nooit stranden op een script dat niet laadt.
+ *
+ * De oude directe links met `data-nawm-manual` worden nog steeds afgevangen,
+ * voor het geval er ergens één achterblijft.
  *
  * Wie zijn adres al eens gaf, gaat er nooit meer langs. Dat wordt lokaal
  * onthouden, want een tweede keer vragen om iets wat je al hebt gekregen is
@@ -16,6 +20,7 @@ const PENDING = 'nawm:manual-pending';
 
 const gate = document.querySelector('[data-nawm-manual-gate]');
 const links = document.querySelectorAll('[data-nawm-manual]');
+const buttons = document.querySelectorAll('[data-manual-open]');
 
 function unlocked() {
   try {
@@ -34,7 +39,13 @@ function unlock() {
   }
 }
 
-if (gate && typeof gate.showModal === 'function' && links.length > 0) {
+/* De knoppen staan verborgen in de HTML. Pas als dit script draait én er een
+   venster is om te openen, zijn ze een echte knop. */
+if (gate && typeof gate.showModal === 'function') {
+  for (const button of buttons) button.hidden = false;
+}
+
+if (gate && typeof gate.showModal === 'function' && (links.length > 0 || buttons.length > 0)) {
   const formState = gate.querySelector('[data-gate-state="form"]');
   const successState = gate.querySelector('[data-gate-state="success"]');
 
@@ -65,6 +76,16 @@ if (gate && typeof gate.showModal === 'function' && links.length > 0) {
     link.addEventListener('click', (event) => {
       if (unlocked()) return; /* Al gegeven: de link doet gewoon zijn werk. */
       event.preventDefault();
+      gate.showModal();
+    });
+  }
+
+  /* De knop heeft geen href, dus hier valt niets te onderdrukken. Wie zijn
+     adres al gaf, krijgt meteen het bevestigingsvenster met de download in
+     plaats van het formulier opnieuw. */
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      if (unlocked()) showSuccess();
       gate.showModal();
     });
   }

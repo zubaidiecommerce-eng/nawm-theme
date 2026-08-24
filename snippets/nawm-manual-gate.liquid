@@ -75,15 +75,27 @@
       <h2 class="nawm-popup__heading">{{ 'nawm.gate.success_heading' | t }}</h2>
       <p class="nawm-popup__lede">{{ 'nawm.gate.success_body' | t }}</p>
 
-      <a
-        class="nawm-cta nawm-cta--full"
-        href="{{ manual.value.url }}"
-        target="_blank"
-        rel="noopener"
-        data-nawm-event="open_manual"
-      >
-        {{- 'nawm.gate.success_cta' | t -}}
-      </a>
+      {%- comment -%}
+        De spec wil de link uitsluitend in de bevestigingsmail, zodat het
+        opgegeven adres ook echt moet kloppen. Dat kan alleen zodra die mail
+        bestaat: de winkel verstuurt hem nu niet, dus zonder link hier krijgt
+        niemand iets. De schakelaar staat daarom standaard op de werkende
+        variant. Zet hem om onder Thema-instellingen zodra de download in de
+        bestelbevestiging of in een Flow-mail staat.
+      {%- endcomment -%}
+      {%- if settings.manual_delivery == 'email' -%}
+        <p class="nawm-popup__fine">{{ 'nawm.gate.success_email_only' | t }}</p>
+      {%- else -%}
+        <a
+          class="nawm-cta nawm-cta--full"
+          href="{{ manual.value.url }}"
+          target="_blank"
+          rel="noopener"
+          data-nawm-event="open_manual"
+        >
+          {{- 'nawm.gate.success_cta' | t -}}
+        </a>
+      {%- endif -%}
     </div>
   </dialog>
 
