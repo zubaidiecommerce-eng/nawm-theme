@@ -96,14 +96,20 @@
   color: var(--fg);
 }
 
+/* De badge breekt niet en krimpt niet; de regel eromheen breekt wel af. Op
+   360px paste "10% korting" anders niet in het vlak en viel hij in tweeën. */
 .pdp-buy__qty-badge {
-  padding: 1px 6px;
+  display: inline-block;
+  flex: none;
+  padding: .2rem .5rem;
   border-radius: var(--r-pill);
-  background: var(--nawm-ember);
-  color: var(--nawm-dawn);
+  background: color-mix(in oklab, var(--nawm-amber), transparent 78%);
+  color: var(--ink-day);
   font-family: var(--ff-mono);
   font-size: .6875rem;
-  letter-spacing: .04em;
+  line-height: 1.4;
+  letter-spacing: .02em;
+  white-space: nowrap;
 }
 
 .pdp-buy__qty-price {
@@ -155,32 +161,44 @@
 .pdp-payments__list {
   list-style: none;
   margin: var(--sp-3) 0 0;
-  padding: 0;
+  padding-block: var(--sp-1);
+  padding-inline: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: var(--sp-2);
+  overflow: visible;
 }
 
+/* Geen grid met een vaste hoogte meer. Een inline svg in zo'n cel kreeg een
+   baselinemarge onder zich en werd daardoor onderaan afgesneden — dat was het
+   "half getoond". De svg staat nu op display: block en de hoogte zit op de svg
+   zelf in plaats van op het vak eromheen. */
 .pdp-payments__item {
-  display: grid;
-  place-items: center;
-  height: 26px;
+  display: flex;
+  align-items: center;
   opacity: .75;
+  overflow: visible;
 }
 
 /* iDEAL: eerst en ongeveer 1,4× zo hoog. PDP SPEC §5.1. */
 .pdp-payments__item.is-primary {
   order: -1;
-  height: 36px;
   opacity: 1;
 }
 
 .pdp-payments__item svg {
-  height: 100%;
-  width: auto;
   display: block;
+  block-size: 26px;
+  inline-size: auto;
+  max-inline-size: none;
+  max-block-size: none;
+  object-fit: contain;
+}
+
+.pdp-payments__item.is-primary svg {
+  block-size: 36px;
 }
 
 /* De logorij in de hero staat onder de microcopy en krijgt daar een scheidslijn,
@@ -232,22 +250,35 @@
 
 /* De balk verschijnt pas zodra de CTA in de hero uit beeld is en verdwijnt
    zodra de laatste CTA in beeld komt. Een balk die er meteen staat, leest als
-   een advertentie. Zie assets/pdp-sticky-cta.js en PDP SPEC §4.1. */
+   een advertentie. Zie assets/pdp-sticky-cta.js en PDP SPEC §4.1.
+
+   De hoogte staat in een variabele omdat twee plekken hem moeten kennen: de
+   balk zelf en de ruimte die eronder gereserveerd wordt. Er stond eerder een
+   `max-height: 64px` op terwijl de knop alleen al 48px hoog is plus padding —
+   de balk knelde zijn eigen inhoud af, en dat was de vreemde overlap. */
 .pdp-sticky {
+  --pdp-sticky-h: 76px;
+
   position: fixed;
   inset-inline: 0;
   inset-block-end: 0;
-  z-index: 30;
-  display: flex;
+  z-index: 60;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: var(--sp-3);
-  max-height: 64px;
+  min-block-size: var(--pdp-sticky-h);
   padding: var(--sp-2) var(--gutter);
   padding-block-end: calc(var(--sp-2) + env(safe-area-inset-bottom));
-  background: color-mix(in oklab, var(--nawm-dawn) 94%, #fff);
-  border-block-start: 1px solid var(--nawm-peach);
-  box-shadow: 0 -8px 24px -16px rgb(26 23 16 / .3);
-  transform: translateY(110%);
+
+  /* Dekkend, niet halftransparant. Een balk waar de tekst doorheen schemert
+     leest als een storing. De blur is er alleen voor de rand van het beeld. */
+  background: var(--nawm-dawn);
+  backdrop-filter: blur(12px);
+  border-block-start: 1px solid var(--line);
+  box-shadow: 0 -8px 24px -18px rgb(26 23 16 / .35);
+
+  transform: translateY(100%);
   visibility: hidden;
   transition: transform var(--dur) var(--ease), visibility var(--dur);
 }
@@ -258,25 +289,35 @@
 }
 
 .pdp-sticky__meta {
-  flex: 1;
   min-width: 0;
   margin: 0;
   color: var(--ink-day);
   line-height: 1.25;
 }
 
+/* De productnaam verdwijnt op een smal scherm. Hij voegt niets toe — de
+   bezoeker weet welk product hij bekijkt — en `NAWM Wake u…` met een ellipsis
+   ziet er slordiger uit dan helemaal niets. */
 .pdp-sticky__name {
-  display: block;
-  font-size: var(--fs-small);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .pdp-sticky__name {
+    display: block;
+    font-size: var(--fs-small);
+    color: var(--ink-day-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .pdp-sticky__price {
   display: block;
   font-family: var(--ff-mono);
-  font-size: 1rem;
+  font-size: 1.0625rem;
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
 
@@ -285,17 +326,24 @@
   display: block;
 }
 
+/* In de balk is de knop een van twee elementen naast elkaar, geen zwaartepunt.
+   Hij krijgt daarom de kleine maat en de bodyfont: mono op 1rem vulde de halve
+   balk en drukte de prijs weg. */
 .pdp-sticky .nawm-cta {
   min-height: 48px;
   width: auto;
   padding-inline: var(--sp-4);
-  font-size: 1rem;
+  font-family: var(--ff-body);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  letter-spacing: 0;
+  white-space: nowrap;
 }
 
 /* De balk mag geen inhoud afdekken. De hoogte wordt gereserveerd zodra hij
-   zichtbaar is, zodat er geen layout shift ontstaat bij het verschijnen. */
+   zichtbaar is, met hetzelfde getal als de balk zelf gebruikt. */
 body.pdp-sticky-active .content-for-layout {
-  padding-block-end: calc(64px + env(safe-area-inset-bottom));
+  padding-block-end: calc(76px + env(safe-area-inset-bottom));
 }
 
 @media (min-width: 750px) {
