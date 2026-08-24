@@ -152,6 +152,14 @@
               {%- endif -%}
             </div>
 
+            {%- comment -%}
+              Alleen wanneer er ook echt fragmenten hangen. Een uitnodiging om
+              te luisteren naar niets is erger dan geen uitnodiging.
+            {%- endcomment -%}
+            {%- if sounds != blank and previews != blank -%}
+              <p class="nawm-small pdp-demo__listen">{{ 'nawm.pdp.demo.listen_hint' | t }}</p>
+            {%- endif -%}
+
             {%- if sounds != blank and pdp_product.metafields.nawm.wake_sounds_list.value == blank -%}
               <p class="nawm-small pdp-demo__sounds-note">
                 <a href="#specificaties">{{ 'nawm.pdp.demo.sounds_note' | t }}</a>
@@ -263,6 +271,28 @@
 
   .pdp-demo__note {
     margin-block-start: var(--sp-2);
+  }
+
+  /* De chip die klinkt krijgt een amber rand en een klein pauzeteken, zodat je
+     ziet welke aanstaat én dat een tweede tik hem stopt. */
+  .nawm-chip[data-sound-playing] {
+    border-color: var(--nawm-amber);
+    box-shadow: inset 0 0 0 1px var(--nawm-amber);
+  }
+
+  .nawm-chip[data-sound-playing]::after {
+    content: "";
+    display: inline-block;
+    inline-size: 8px;
+    block-size: 10px;
+    margin-inline-start: var(--sp-1);
+    border-inline: 3px solid currentColor;
+    vertical-align: -1px;
+  }
+
+  .pdp-demo .pdp-demo__listen {
+    margin-block-start: var(--sp-2);
+    color: var(--fg-soft);
   }
 
   .pdp-demo__sounds-note {

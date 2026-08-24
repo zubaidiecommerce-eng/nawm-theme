@@ -140,9 +140,20 @@ class NawmSunrise extends HTMLElement {
   playPreview(chip) {
     const src = chip.dataset.soundSrc;
 
+    /* Tweede tik op hetzelfde geluid stopt het. Zonder die uitweg kun je een
+       fragment alleen kwijtraken door een ander te starten, en dat is precies
+       het verschil tussen prettig en irritant. */
+    const wasPlaying = this.audio && !this.audio.paused && this.playingChip === chip;
+
     if (this.audio) {
       this.audio.pause();
       this.audio.currentTime = 0;
+    }
+
+    if (wasPlaying) {
+      this.playingChip = null;
+      this.markPlaying();
+      return;
     }
 
     if (!src) return;
@@ -150,13 +161,30 @@ class NawmSunrise extends HTMLElement {
     if (!this.audio) {
       this.audio = new Audio();
       this.audio.preload = 'none';
+      /* Na afloop is er niets meer aan; de markering hoort dan ook weg. */
+      this.audio.addEventListener('ended', () => {
+        this.playingChip = null;
+        this.markPlaying();
+      });
     }
 
     if (this.audio.src !== src) this.audio.src = src;
-    this.audio.play().catch(() => {
+    this.audio.play().then(() => {
+      this.playingChip = chip;
+      this.markPlaying();
+    }).catch(() => {
       /* De browser mag weigeren, bijvoorbeeld zonder eerdere interactie. Dat is
          geen fout die de pagina moet halen. */
     });
+  }
+
+  /* Welk geluid er klinkt staat los van welk geluid er gekozen is: je kunt een
+     ander fragment beluisteren zonder je keuze te veranderen. Daarom een eigen
+     markering en niet aria-pressed, dat de selectie al draagt. */
+  markPlaying() {
+    for (const chip of this.chips) {
+      chip.toggleAttribute('data-sound-playing', chip === this.playingChip);
+    }
   }
 
   /* Via nawmTrack, zodat het event de consent-wachtrij van nawm-analytics.js
