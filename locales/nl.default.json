@@ -355,7 +355,7 @@
           },
           "u4": {
             "benefit": "Meteen te gebruiken",
-            "feature": "Nederlandse handleiding, EU-stekker in de doos",
+            "feature": "Nederlandse handleiding en EU-stekker in de doos, Sleep–Wake Guide per e-mail",
             "proof": "handleiding hier te downloaden"
           }
         },
@@ -390,8 +390,6 @@
             "body": "Jouw gekozen natuurgeluid of de radio, op het volume dat jij instelt."
           }
         },
-        "old_way": "Je telefoon: nul seconden van slaap naar alarm.",
-        "new_way": "NAWM: dertig minuten van donker naar wakker.",
         "clip_label": "Bij {{ time }}"
       },
       "fit": {
@@ -471,7 +469,8 @@
         "sounds_label": "Natuurgeluiden",
         "sounds_note": "Welke hiervan je als wekgeluid kunt kiezen, staat bij de specificaties.",
         "play_sound": "Beluister {{ sound }}",
-        "stop_sound": "Stop"
+        "stop_sound": "Stop",
+        "listen_hint": "Tik om te luisteren — zet je geluid aan. Nog een tik stopt het."
       },
       "proof": {
         "eyebrow": "Wat kopers zeggen",
@@ -512,7 +511,9 @@
           "shipping": "Verzending binnen Nederland",
           "returns": "{{ days }} dagen retourrecht",
           "warranty": "{{ years }} jaar garantie",
-          "included": "inbegrepen"
+          "included": "inbegrepen",
+          "guide": "NAWM Sleep–Wake Guide",
+          "guide_note": "digitaal, per e-mail na je bestelling"
         },
         "price_difference_heading": "Waarom deze prijs",
         "risk_heading": "En als het niks voor je is",
@@ -675,24 +676,66 @@
       },
       "mirror": {
         "eyebrow": "Even eerlijk",
-        "heading": "Klinkt dit bekend?",
-        "s1": "Ik lig te scrollen tot mijn ogen dichtvallen",
-        "s2": "Mijn alarm voelt elke ochtend als een schok",
-        "s3": "Ik snooze minstens één keer",
-        "s4": "Het eerste uur van mijn dag is verspild",
-        "result_0": "Dan zit je goed. Serieus — dit product lost een probleem op dat jij niet hebt.",
-        "result_low": "Herkenbaar. Meestal zit het in het begin en het einde van je nacht, niet in de uren ertussen.",
-        "result_high": "Dan ligt het niet aan jouw discipline. Je avond heeft geen eindpunt en je ochtend geen aanloop. Dat is precies wat hieronder staat."
+        "heading": "Herken je hier iets in?",
+        "setup_label": "Zo zou jij hem instellen",
+        "statements": {
+          "s1": {
+            "text": "Ik lig te scrollen tot mijn ogen dichtvallen",
+            "axis": "avond"
+          },
+          "s2": {
+            "text": "Mijn alarm voelt elke ochtend als een schok",
+            "axis": "ochtend"
+          },
+          "s3": {
+            "text": "Ik stel mijn bedtijd elke avond weer uit",
+            "axis": "avond"
+          },
+          "s4": {
+            "text": "Ik snooze minstens één keer",
+            "axis": "ochtend"
+          },
+          "s5": {
+            "text": "Mijn kamer is ’s avonds fel verlicht tot ik het licht uitdoe",
+            "axis": "avond"
+          },
+          "s6": {
+            "text": "Het eerste uur van mijn dag is verspild",
+            "axis": "ochtend"
+          }
+        },
+        "results": {
+          "none": {
+            "title": "Dan zit je goed",
+            "body": "Serieus: dit product lost een probleem op dat jij niet hebt. Scheelt je € 59,95.",
+            "setup": ""
+          },
+          "avond": {
+            "title": "Je avond heeft geen eindpunt",
+            "body": "Je wordt op zich wel wakker, maar je gaat te laat naar bed en dat begint elke avond opnieuw. Wat bij jou het meest uitmaakt, is niet de wekfunctie maar het nachtlicht: een vast moment waarop het licht verandert en je telefoon weggaat.",
+            "setup": "Nachtlicht op amber, stand 3 · sleeptimer 30 minuten · zonsopgang 20 minuten"
+          },
+          "ochtend": {
+            "title": "De landing is te hard",
+            "body": "Je avond gaat prima. Het probleem zit in de seconde waarin je alarm afgaat: van diep slapen naar klaarwakker, zonder aanloop. Daar is de zonsopgang voor, en die mag bij jou aan de lange kant.",
+            "setup": "Zonsopgang 40 minuten · wekgeluid Vogel #1 op laag volume · tweede alarm voor het weekend"
+          },
+          "both": {
+            "title": "Allebei de overgangen ontbreken",
+            "body": "Je avond stopt niet en je ochtend begint met een schok. Dat is niet gebrek aan discipline, dat is een dag zonder randen. Bij jou doet het apparaat aan beide kanten werk.",
+            "setup": "Nachtlicht stand 3 met sleeptimer · zonsopgang 30 minuten · wekgeluid Regen · week- en weekendalarm apart"
+          }
+        }
       },
       "strip": {
-        "eyebrow": "In beeld",
-        "heading": "Vier keer zes seconden",
+        "eyebrow": "Zo werkt hij echt",
+        "heading": "Vier dingen, van dichtbij",
         "label_impression": "Sfeerimpressie",
         "label_recording": "Opname van het verkoopmodel",
-        "c1": "Zo loopt het licht op",
-        "c2": "Zo donker blijft je kamer",
-        "c3": "Van scherm naar licht",
-        "c4": "Opname van het verkoopmodel"
+        "c1": "Het display gaat volledig uit",
+        "c2": "Acht kleuren, twintig standen",
+        "c3": "Twee alarmen in twintig seconden",
+        "c4": "USB-poort om je telefoon te laden"
       },
       "costs": {
         "eyebrow": "De prijs",
@@ -766,8 +809,9 @@
       "skip": "Liever zonder mailadres? Open de handleiding direct",
       "success_eyebrow": "Klaar",
       "success_heading": "Je handleiding staat open.",
-      "success_body": "Hij staat ook in je inbox, zodat je hem later terugvindt.",
-      "success_cta": "Handleiding openen"
+      "success_body": "Hij is onderweg naar je inbox. Kijk ook even in je spam als hij er over een paar minuten nog niet is.",
+      "success_cta": "Handleiding openen",
+      "success_email_only": "We sturen hem nu naar je toe. Hij staat binnen een paar minuten in je inbox — kijk anders even in je spam."
     },
     "trust": {
       "heading": "Waarom je hier veilig bestelt",
@@ -837,6 +881,18 @@
       "heading": "Wat klanten elders over ons schrijven",
       "line": "{{ score }} op Trustpilot, op basis van {{ count }} beoordelingen",
       "editor_note": "Trustpilot staat uit, of domein, business unit-id, score of aantal ontbreekt. Op de winkel toont deze sectie dan niets."
+    },
+    "manual": {
+      "cta": "Ontvang de handleiding per e-mail",
+      "cta_direct": "Open de handleiding (PDF)"
+    },
+    "guide": {
+      "eyebrow": "Bij elke bestelling",
+      "heading": "De Sleep–Wake Guide",
+      "body": "Van je laatste scroll tot je eerste licht, op één pagina. Acht momenten, elk met één ding om te doen. Je krijgt hem per e-mail zodra je bestelling binnen is.",
+      "image_alt": "De Sleep–Wake Guide: acht momenten van je laatste scroll tot je eerste licht.",
+      "zoom_label": "Bekijk de gids groter",
+      "close": "Sluiten"
     }
   },
   "blocks": {
