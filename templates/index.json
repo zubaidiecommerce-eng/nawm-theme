@@ -132,6 +132,14 @@
       "settings": {
         "body": ""
       }
+    },
+    "nawm_guide": {
+      "type": "nawm-guide",
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "body": ""
+      }
     }
   },
   "order": [
@@ -143,6 +151,7 @@
     "nawm_sunrise_demo",
     "nawm_proof",
     "nawm_inbox",
+    "nawm_guide",
     "nawm_specs",
     "nawm_compare",
     "nawm_trust",
