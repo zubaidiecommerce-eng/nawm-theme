@@ -69,17 +69,11 @@
 
     <div class="pdp-setup__manual nawm-reveal">
       {%- if manual.value != blank -%}
-        <a
-          class="nawm-cta pdp-setup__manual-button"
-          href="{{ manual.value.url }}"
-          data-nawm-event="open_manual"
-          data-nawm-manual
-          target="_blank"
-          rel="noopener"
-        >
-          {{- 'nawm.pdp.setup.manual_cta' | t -}}
-          <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
-        </a>
+        {% render 'nawm-manual-cta',
+          manual: manual,
+          extra_class: 'pdp-setup__manual-button',
+          label_key: 'nawm.pdp.setup.manual_cta'
+        %}
       {%- else -%}
         <p class="pdp-setup__manual-link">
           {% render 'nawm-verify',

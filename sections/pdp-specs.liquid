@@ -253,12 +253,17 @@
     </details>
 
     {%- if nawm.manual_pdf.value != blank -%}
+      {%- comment -%}
+        Stond hier als kale tekstlink. Dezelfde knop als op de andere twee
+        plekken, want drie uitvoeringen van hetzelfde aanbod maken alle drie
+        minder geloofwaardig.
+      {%- endcomment -%}
       <p class="pdp-specs__manual">
-        <a href="{{ nawm.manual_pdf.value.url }}" data-nawm-event="open_manual"
-                data-nawm-manual target="_blank" rel="noopener">
-          {{- 'nawm.pdp.specs.manual_link' | t -}}
-          <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
-        </a>
+        {% render 'nawm-manual-cta',
+          manual: nawm.manual_pdf,
+          variant: 'ghost',
+          label_key: 'nawm.pdp.specs.manual_link'
+        %}
       </p>
     {%- endif -%}
   </div>

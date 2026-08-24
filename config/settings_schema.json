@@ -2240,6 +2240,24 @@
       },
       {
         "type": "header",
+        "content": "Handleiding"
+      },
+      {
+        "type": "paragraph",
+        "content": "De handleiding zit overal achter hetzelfde e-mailformulier. Zet de aflevering op 'Alleen per e-mail' zodra de downloadlink in een Shopify-melding of Flow-mail staat — tot die tijd zou niemand hem krijgen."
+      },
+      {
+        "type": "select",
+        "id": "manual_delivery",
+        "label": "Aflevering van de handleiding",
+        "options": [
+          { "value": "direct", "label": "Download in het venster na het invullen" },
+          { "value": "email", "label": "Alleen per e-mail (vereist een ingerichte mail)" }
+        ],
+        "default": "direct"
+      },
+      {
+        "type": "header",
         "content": "Productpagina · reviewverdeling"
       },
       {

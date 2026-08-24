@@ -85,16 +85,6 @@
         </li>
       {%- endfor -%}
     </ol>
-
-    {%- comment -%}
-      Twee regels tegenover elkaar. Het contrast doet het argument, dus er
-      hoort geen derde regel bij en geen toelichting onder.
-    {%- endcomment -%}
-
-    <div class="pdp-mechanism__contrast nawm-reveal">
-      <p class="pdp-mechanism__old">{{ 'nawm.pdp.mechanism.old_way' | t }}</p>
-      <p class="pdp-mechanism__new">{{ 'nawm.pdp.mechanism.new_way' | t }}</p>
-    </div>
   </div>
 </section>
 
@@ -253,28 +243,6 @@
     }
   }
 
-  .pdp-mechanism__contrast {
-    margin-block-start: clamp(2.5rem, 6vw, 4rem);
-    padding-block-start: var(--sp-4);
-    border-block-start: 1px solid var(--line);
-    display: grid;
-    gap: var(--sp-2);
-    max-width: 52ch;
-  }
-
-  .pdp-mechanism__old {
-    color: var(--nawm-cool);
-  }
-
-  .pdp-mechanism__new {
-    color: var(--nawm-amber);
-  }
-
-  .pdp-mechanism__contrast p {
-    font-size: var(--fs-h3);
-    line-height: 1.3;
-    letter-spacing: -.01em;
-  }
 {% endstylesheet %}
 
 {% schema %}

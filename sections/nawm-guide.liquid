@@ -1,0 +1,230 @@
+{% comment %}
+  De Sleep–Wake Guide op de homepage. Fix & uitbreiding v3, punt 10.3.
+
+  Eén compact blok tussen "Wat je krijgt" en de specificaties. Twee kolommen,
+  laag en rustig. De pagina is lang genoeg; dit is een detail dat je meekrijgt,
+  geen aanbod dat verkocht moet worden.
+
+  Daarom staat er ook geen knop. Een knop maakt er een aanbod van; zonder knop
+  leest het als iets wat er gewoon bij zit, en dat leest luxer.
+
+  Het beeld is klikbaar naar een vergroting in een dialog — nooit naar de PDF
+  zelf. De gids hoort bij de bestelling en komt per e-mail; hem hier alsnog
+  weggeven zou de belofte in het aanbod tegenspreken.
+
+  Zonder afbeelding rendert de sectie niets. Een blok dat uitlegt dat er nog
+  een beeld ontbreekt, hoort niet op een verkooppagina.
+{% endcomment %}
+
+{% liquid
+  assign image = section.settings.image
+
+  assign eyebrow = section.settings.eyebrow
+  if eyebrow == blank
+    assign eyebrow = 'nawm.guide.eyebrow' | t
+  endif
+
+  assign heading = section.settings.heading
+  if heading == blank
+    assign heading = 'nawm.guide.heading' | t
+  endif
+
+  assign body = section.settings.body
+  if body == blank
+    assign body = 'nawm.guide.body' | t
+  endif
+
+  assign alt = image.alt
+  if alt == blank
+    assign alt = 'nawm.guide.image_alt' | t
+  endif
+%}
+
+{%- if image != blank -%}
+  <section class="nawm-section nawm-guide ctx-dawn" id="gids">
+    <div class="nawm-wrap nawm-guide__grid">
+      <div class="nawm-guide__media nawm-reveal">
+        <button
+          type="button"
+          class="nawm-guide__zoom"
+          data-guide-zoom
+          aria-haspopup="dialog"
+          aria-controls="nawm-guide-dialog"
+        >
+          {{
+            image
+            | image_url: width: 880
+            | image_tag:
+              widths: '280,440,660,880',
+              sizes: '(min-width: 900px) 280px, 70vw',
+              alt: alt,
+              loading: 'lazy',
+              decoding: 'async'
+          }}
+          <span class="nawm-visually-hidden">{{ 'nawm.guide.zoom_label' | t }}</span>
+        </button>
+      </div>
+
+      <div class="nawm-guide__body nawm-reveal" style="--reveal-delay: 80ms;">
+        {% render 'nawm-eyebrow', text: eyebrow %}
+        <h2 class="nawm-guide__heading">{{ heading }}</h2>
+        <p class="nawm-guide__text">{{ body }}</p>
+      </div>
+    </div>
+  </section>
+
+  <dialog class="nawm-guide__dialog" id="nawm-guide-dialog" data-guide-dialog>
+    <form method="dialog" class="nawm-guide__dismiss">
+      <button type="submit" class="nawm-guide__close" value="close" aria-label="{{ 'nawm.guide.close' | t }}">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+      </button>
+    </form>
+
+    {{
+      image
+      | image_url: width: 1600
+      | image_tag:
+        widths: '600,900,1200,1600',
+        sizes: '(min-width: 900px) 70vw, 92vw',
+        alt: alt,
+        loading: 'lazy',
+        decoding: 'async',
+        class: 'nawm-guide__full'
+    }}
+  </dialog>
+
+  <script src="{{ 'nawm-guide.js' | asset_url }}" type="module" fetchpriority="low"></script>
+{%- endif -%}
+
+{% stylesheet %}
+  .nawm-guide__grid {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+    align-items: center;
+  }
+
+  @media (min-width: 750px) {
+    .nawm-guide__grid {
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: clamp(2rem, 5vw, 3.5rem);
+    }
+  }
+
+  .nawm-guide__zoom {
+    display: block;
+    inline-size: 100%;
+    max-inline-size: 280px;
+    padding: 0;
+    border: 1px solid var(--nawm-peach);
+    border-radius: var(--r-card);
+    background: none;
+    overflow: hidden;
+    cursor: zoom-in;
+    box-shadow: 0 20px 44px -32px rgb(26 23 16 / .45);
+    transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+
+  .nawm-guide__zoom img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  @media (hover: hover) {
+    .nawm-guide__zoom:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 26px 52px -30px rgb(26 23 16 / .5);
+    }
+  }
+
+  .nawm-guide .nawm-guide__heading {
+    margin-block-start: var(--sp-2);
+    font-size: var(--fs-h3);
+  }
+
+  .nawm-guide .nawm-guide__text {
+    margin-block-start: var(--sp-3);
+    max-width: 52ch;
+    color: var(--fg);
+  }
+
+  /* ---------------------------------------------------------- vergroting */
+
+  .nawm-guide__dialog {
+    inline-size: min(92vw, 60rem);
+    max-block-size: 92dvh;
+    padding: var(--sp-3);
+    border: 0;
+    border-radius: var(--r-card);
+    background: var(--nawm-dawn);
+    color: var(--ink-day);
+  }
+
+  .nawm-guide__dialog::backdrop {
+    background: rgb(11 18 32 / .78);
+  }
+
+  .nawm-guide__dismiss {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .nawm-guide__close {
+    inline-size: 40px;
+    block-size: 40px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: var(--r-pill);
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .nawm-guide__full {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    max-block-size: 78dvh;
+    object-fit: contain;
+    border-radius: var(--r-data);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nawm-guide__zoom {
+      transition: none;
+    }
+
+    .nawm-guide__zoom:hover {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Sleep-Wake Guide",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De gids komt per e-mail na de bestelling en zit niet in de doos. Houd dat overal expliciet. Het beeld opent een vergroting, nooit de PDF zelf — die hoort bij de bestelling. Zonder afbeelding toont de sectie niets."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "De infographic",
+      "info": "Staand beeld. Wordt op de pagina ongeveer 280px breed getoond en opent in een vergroting."
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "textarea", "id": "heading", "label": "Kop" },
+    { "type": "textarea", "id": "body", "label": "Tekst" }
+  ],
+  "presets": [
+    {
+      "name": "NAWM · Sleep-Wake Guide"
+    }
+  ]
+}
+{% endschema %}

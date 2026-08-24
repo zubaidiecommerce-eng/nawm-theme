@@ -1,21 +1,31 @@
 {% comment %}
   PDP-sectie: de spiegel. Geen bezwaar uit §2, wel de emotionele instap.
-  Zie conversiespec v2 §2.1.
+  Zie conversiespec v2 §2.1 en fix & uitbreiding v3, punt 9.
 
-  Zonder dit moment leest de rest als reclame. Vier stellingen die de bezoeker
-  kan aantikken; de uitkomst eronder is persoonlijk.
+  Herbouwd. De oude versie telde hoevéél vinkjes er stonden en gaf drie
+  uitkomsten. Dat merkt een bezoeker binnen twee klikken, en dan werkt het
+  tegen je: het voelt als een trucje.
 
-  De belangrijkste van de drie uitkomsten is die bij nul: iemand wegsturen die
-  niet in de doelgroep zit. Dat is dezelfde beweging als "Herken je jezelf
-  rechts? Bestel hem dan niet" — en precies daardoor gelooft de lezer de andere
-  twee uitkomsten. Zwak die regel niet af.
+  Deze versie kijkt naar wélke stellingen zijn aangevinkt. Elke stelling hangt
+  aan een as — avond of ochtend — en de uitkomst benoemt het patroon. De
+  stellingen staan door elkaar, zodat het geen zichtbare test is.
 
-  De uitkomstteksten staan in de schema-settings en niet in de JS, zodat ze
-  aanpasbaar zijn zonder deploy.
+  De startinstelling onder elke uitkomst is het hele punt. De lezer krijgt niet
+  alleen te horen wat voor type hij is, maar hoe hij het apparaat zou instellen.
+  Dan heeft hij het in zijn hoofd al in gebruik. Haal die regel niet weg om
+  ruimte te winnen — dan blijft er een persoonlijkheidstestje over.
+
+  De uitkomst bij nul blijft iemand wegsturen die niet in de doelgroep zit. Dat
+  is geen verspilling maar precies wat de andere drie geloofwaardig maakt.
+
+  Stellingen en uitkomsten staan in schema-settings met een locale-fallback, en
+  niet in blokken. Deze sectie wordt statisch gerenderd vanuit
+  templates/product.nawm.liquid, en een statisch gerenderde sectie krijgt geen
+  blokken — `section.blocks` is daar altijd leeg. Blokken zouden dus een lege
+  sectie opleveren.
 
   Toegankelijkheid: gewone checkboxes in een group met een label, en de uitkomst
-  in een `aria-live="polite"`-regio. Er wordt niets geanimeerd bij het
-  verschijnen — dit is een moment van herkenning, geen effect.
+  in een `aria-live="polite"`-regio.
 {% endcomment %}
 
 {% liquid
@@ -29,59 +39,111 @@
     assign heading = 'nawm.pdp.mirror.heading' | t
   endif
 
-  assign result_none = section.settings.result_none
-  if result_none == blank
-    assign result_none = 'nawm.pdp.mirror.result_0' | t
-  endif
-
-  assign result_low = section.settings.result_low
-  if result_low == blank
-    assign result_low = 'nawm.pdp.mirror.result_low' | t
-  endif
-
-  assign result_high = section.settings.result_high
-  if result_high == blank
-    assign result_high = 'nawm.pdp.mirror.result_high' | t
-  endif
-
-  assign statements = 's1,s2,s3,s4' | split: ','
+  comment
+    Zes stellingen, elk met een as. De volgorde in deze lijst is de volgorde op
+    de pagina, en die is bewust gemengd: avond, ochtend, avond, ochtend, avond,
+    ochtend. Zet ze niet op as bij elkaar — dan wordt zichtbaar dat het een
+    test is, en dan vult niemand hem eerlijk in.
+  endcomment
+  assign keys = 's1,s2,s3,s4,s5,s6' | split: ','
+  assign profiles = 'none,avond,ochtend,both' | split: ','
 %}
 
 <script src="{{ 'nawm-mirror.js' | asset_url }}" type="module" fetchpriority="low"></script>
 
-<section
-  class="nawm-section pdp-mirror ctx-dawn"
-  id="herkenning"
-  data-nawm-mirror
-  data-result-none="{{ result_none | escape }}"
-  data-result-low="{{ result_low | escape }}"
-  data-result-high="{{ result_high | escape }}"
->
-  <div class="nawm-wrap pdp-mirror__inner">
-    <div class="pdp-head pdp-head--wide nawm-reveal">
-      {% render 'nawm-eyebrow', text: eyebrow %}
-      <h2 id="pdp-mirror-heading">{{ heading }}</h2>
+  <section
+    class="nawm-section pdp-mirror ctx-dawn"
+    id="herkenning"
+    data-nawm-mirror
+  >
+    <div class="nawm-wrap pdp-mirror__inner">
+      <div class="pdp-head pdp-head--wide nawm-reveal">
+        {% render 'nawm-eyebrow', text: eyebrow %}
+        <h2 id="pdp-mirror-heading">{{ heading }}</h2>
+      </div>
+
+      <ul class="pdp-mirror__list" role="group" aria-labelledby="pdp-mirror-heading">
+        {%- for key in keys -%}
+          {%- liquid
+            assign setting_key = 'statement_' | append: key
+            assign text = section.settings[setting_key]
+            if text == blank
+              assign locale_key = 'nawm.pdp.mirror.statements.' | append: key | append: '.text'
+              assign text = locale_key | t
+            endif
+
+            assign axis_key = 'axis_' | append: key
+            assign axis = section.settings[axis_key]
+            if axis == blank
+              assign axis_locale = 'nawm.pdp.mirror.statements.' | append: key | append: '.axis'
+              assign axis = axis_locale | t
+            endif
+
+            assign delay = forloop.index0 | times: 60
+          -%}
+          {%- if text != blank -%}
+            <li class="nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
+              <label class="pdp-mirror__item">
+                <input
+                  type="checkbox"
+                  class="pdp-mirror__check"
+                  data-mirror-check
+                  data-axis="{{ axis }}"
+                >
+                <span class="pdp-mirror__box" aria-hidden="true"></span>
+                <span class="pdp-mirror__text">{{ text }}</span>
+              </label>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+
+      {%- comment -%}
+        De vier uitkomsten staan alle vier in de HTML en worden door de JS op
+        `hidden` gezet. Zo staan ze in de broncode voor wie geen JavaScript
+        heeft — die leest ze alle vier, wat rommelig is maar niet kapot.
+      {%- endcomment -%}
+      <div class="pdp-mirror__result" data-mirror-result aria-live="polite">
+        {%- for profile in profiles -%}
+          {%- liquid
+            assign base = 'nawm.pdp.mirror.results.' | append: profile
+
+            assign title_setting = 'result_' | append: profile | append: '_title'
+            assign title = section.settings[title_setting]
+            if title == blank
+              assign k = base | append: '.title'
+              assign title = k | t
+            endif
+
+            assign body_setting = 'result_' | append: profile | append: '_body'
+            assign body = section.settings[body_setting]
+            if body == blank
+              assign k = base | append: '.body'
+              assign body = k | t
+            endif
+
+            assign setup_setting = 'result_' | append: profile | append: '_setup'
+            assign setup = section.settings[setup_setting]
+            if setup == blank
+              assign k = base | append: '.setup'
+              assign setup = k | t
+            endif
+          -%}
+          <div class="pdp-mirror__outcome" data-outcome="{{ profile }}">
+            <h3 class="pdp-mirror__outcome-title">{{ title }}</h3>
+            <p class="pdp-mirror__outcome-body">{{ body }}</p>
+
+            {%- if setup != blank -%}
+              <p class="pdp-mirror__setup nawm-mono">
+                <span class="pdp-mirror__setup-label">{{ 'nawm.pdp.mirror.setup_label' | t }}</span>
+                {{ setup }}
+              </p>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
     </div>
-
-    <ul class="pdp-mirror__list" role="group" aria-labelledby="pdp-mirror-heading">
-      {%- for key in statements -%}
-        {%- liquid
-          assign k = 'nawm.pdp.mirror.' | append: key
-          assign delay = forloop.index0 | times: 60
-        -%}
-        <li class="nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
-          <label class="pdp-mirror__item">
-            <input type="checkbox" class="pdp-mirror__check" data-mirror-check>
-            <span class="pdp-mirror__box" aria-hidden="true"></span>
-            <span class="pdp-mirror__text">{{ k | t }}</span>
-          </label>
-        </li>
-      {%- endfor -%}
-    </ul>
-
-    <p class="pdp-mirror__result" data-mirror-result aria-live="polite"></p>
-  </div>
-</section>
+  </section>
 
 {% stylesheet %}
   .pdp-mirror__inner {
@@ -168,23 +230,60 @@
     }
   }
 
-  /* De uitkomst verschijnt zonder animatie: dit is een moment van herkenning,
-     geen effect. Hij houdt zijn hoogte gereserveerd zodat er niets verspringt. */
+  /* ------------------------------------------------------------- uitkomst */
+
   .pdp-mirror__result {
     margin-block-start: clamp(2rem, 5vw, 3rem);
-    min-block-size: 3.5em;
-    max-width: 52ch;
+  }
+
+  /* De uitkomst verschijnt met een zachte fade en niets meer. Dit is een moment
+     van herkenning; een animatie die er aandacht voor vraagt, haalt het weg. */
+  .pdp-mirror__outcome {
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    border: 1px solid var(--nawm-peach);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 92%, #fff);
+    animation: pdp-mirror-in 300ms var(--ease) both;
+  }
+
+  @keyframes pdp-mirror-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .pdp-mirror .pdp-mirror__outcome-title {
+    margin: 0;
     font-family: var(--ff-display);
     font-size: var(--fs-h3);
     font-weight: 300;
-    line-height: 1.3;
+    line-height: 1.2;
     letter-spacing: -.01em;
     color: var(--fg);
-    text-wrap: balance;
   }
 
-  .pdp-mirror__result:empty {
-    min-block-size: 0;
+  .pdp-mirror .pdp-mirror__outcome-body {
+    margin-block-start: var(--sp-3);
+    max-width: 56ch;
+    color: var(--fg);
+  }
+
+  /* De startinstelling is het hele punt van deze sectie en mag er dus uitzien
+     als iets wat je overneemt: een aparte regel, mono, met een haarlijn erboven. */
+  .pdp-mirror .pdp-mirror__setup {
+    margin-block-start: var(--sp-4);
+    padding-block-start: var(--sp-3);
+    border-block-start: 1px solid var(--line);
+    font-size: var(--fs-mono);
+    line-height: 1.6;
+    letter-spacing: .02em;
+    color: var(--fg);
+  }
+
+  .pdp-mirror__setup-label {
+    display: block;
+    color: var(--nawm-ember);
+    text-transform: uppercase;
+    letter-spacing: .14em;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -197,6 +296,10 @@
     .pdp-mirror__item:hover {
       transform: none;
     }
+
+    .pdp-mirror__outcome {
+      animation: none;
+    }
   }
 {% endstylesheet %}
 
@@ -206,7 +309,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "De emotionele instap. De uitkomst bij nul aangevinkte stellingen stuurt iemand weg die niet in de doelgroep zit — dat is geen verspilling maar precies wat de andere twee uitkomsten geloofwaardig maakt. Niet afzwakken."
+      "content": "De uitkomst hangt af van wélke stellingen zijn aangevinkt, niet van hoeveel. Zes stellingen, om en om avond en ochtend. Zet ze niet op as bij elkaar — dan wordt zichtbaar dat het een test is. Laat een veld leeg voor de tekst uit locales/nl.default.json."
     },
     {
       "type": "text",
@@ -219,19 +322,208 @@
       "label": "Kop"
     },
     {
-      "type": "textarea",
-      "id": "result_none",
-      "label": "Uitkomst bij 0 aangevinkt"
+      "type": "header",
+      "content": "Stellingen"
     },
     {
       "type": "textarea",
-      "id": "result_low",
-      "label": "Uitkomst bij 1 of 2"
+      "id": "statement_s1",
+      "label": "Stelling 1"
+    },
+    {
+      "type": "select",
+      "id": "axis_s1",
+      "label": "As 1",
+      "options": [
+        {
+          "value": "avond",
+          "label": "Avond — het gaat over inslapen"
+        },
+        {
+          "value": "ochtend",
+          "label": "Ochtend — het gaat over wakker worden"
+        }
+      ],
+      "default": "avond"
     },
     {
       "type": "textarea",
-      "id": "result_high",
-      "label": "Uitkomst bij 3 of 4"
+      "id": "statement_s2",
+      "label": "Stelling 2"
+    },
+    {
+      "type": "select",
+      "id": "axis_s2",
+      "label": "As 2",
+      "options": [
+        {
+          "value": "avond",
+          "label": "Avond — het gaat over inslapen"
+        },
+        {
+          "value": "ochtend",
+          "label": "Ochtend — het gaat over wakker worden"
+        }
+      ],
+      "default": "ochtend"
+    },
+    {
+      "type": "textarea",
+      "id": "statement_s3",
+      "label": "Stelling 3"
+    },
+    {
+      "type": "select",
+      "id": "axis_s3",
+      "label": "As 3",
+      "options": [
+        {
+          "value": "avond",
+          "label": "Avond — het gaat over inslapen"
+        },
+        {
+          "value": "ochtend",
+          "label": "Ochtend — het gaat over wakker worden"
+        }
+      ],
+      "default": "avond"
+    },
+    {
+      "type": "textarea",
+      "id": "statement_s4",
+      "label": "Stelling 4"
+    },
+    {
+      "type": "select",
+      "id": "axis_s4",
+      "label": "As 4",
+      "options": [
+        {
+          "value": "avond",
+          "label": "Avond — het gaat over inslapen"
+        },
+        {
+          "value": "ochtend",
+          "label": "Ochtend — het gaat over wakker worden"
+        }
+      ],
+      "default": "ochtend"
+    },
+    {
+      "type": "textarea",
+      "id": "statement_s5",
+      "label": "Stelling 5"
+    },
+    {
+      "type": "select",
+      "id": "axis_s5",
+      "label": "As 5",
+      "options": [
+        {
+          "value": "avond",
+          "label": "Avond — het gaat over inslapen"
+        },
+        {
+          "value": "ochtend",
+          "label": "Ochtend — het gaat over wakker worden"
+        }
+      ],
+      "default": "avond"
+    },
+    {
+      "type": "textarea",
+      "id": "statement_s6",
+      "label": "Stelling 6"
+    },
+    {
+      "type": "select",
+      "id": "axis_s6",
+      "label": "As 6",
+      "options": [
+        {
+          "value": "avond",
+          "label": "Avond — het gaat over inslapen"
+        },
+        {
+          "value": "ochtend",
+          "label": "Ochtend — het gaat over wakker worden"
+        }
+      ],
+      "default": "ochtend"
+    },
+    {
+      "type": "header",
+      "content": "Uitkomst · niets aangevinkt"
+    },
+    {
+      "type": "text",
+      "id": "result_none_title",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "result_none_body",
+      "label": "Tekst"
+    },
+    {
+      "type": "header",
+      "content": "Uitkomst · alleen avond"
+    },
+    {
+      "type": "text",
+      "id": "result_avond_title",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "result_avond_body",
+      "label": "Tekst"
+    },
+    {
+      "type": "textarea",
+      "id": "result_avond_setup",
+      "label": "Zo zou jij hem instellen",
+      "info": "De concrete startinstelling. Dit is wat de sectie van een testje in een gebruiksaanwijzing verandert — laat hem niet leeg."
+    },
+    {
+      "type": "header",
+      "content": "Uitkomst · alleen ochtend"
+    },
+    {
+      "type": "text",
+      "id": "result_ochtend_title",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "result_ochtend_body",
+      "label": "Tekst"
+    },
+    {
+      "type": "textarea",
+      "id": "result_ochtend_setup",
+      "label": "Zo zou jij hem instellen",
+      "info": "De concrete startinstelling. Dit is wat de sectie van een testje in een gebruiksaanwijzing verandert — laat hem niet leeg."
+    },
+    {
+      "type": "header",
+      "content": "Uitkomst · allebei"
+    },
+    {
+      "type": "text",
+      "id": "result_both_title",
+      "label": "Kop"
+    },
+    {
+      "type": "textarea",
+      "id": "result_both_body",
+      "label": "Tekst"
+    },
+    {
+      "type": "textarea",
+      "id": "result_both_setup",
+      "label": "Zo zou jij hem instellen",
+      "info": "De concrete startinstelling. Dit is wat de sectie van een testje in een gebruiksaanwijzing verandert — laat hem niet leeg."
     }
   ],
   "presets": [

@@ -141,9 +141,17 @@
     }
   }
 
-  .pdp-fortnight__closing {
-    margin-block-start: clamp(2.5rem, 6vw, 3.5rem);
-    max-width: 52ch;
+  /* Twee klassen diep, en dat is nodig: `.nawm-section p` staat op (0,1,1) en
+     verslaat een enkele klasse, waardoor `margin: 0` won en deze zin tegen het
+     laatste tijdlijnitem plakte.
+
+     De haarlijn erboven doet meer dan ruimte maken: hij markeert dat deze zin
+     niet bij nacht 14 hoort maar bij de hele sectie. */
+  .pdp-fortnight .pdp-fortnight__closing {
+    margin-block-start: var(--sp-6);
+    padding-block-start: var(--sp-5);
+    border-block-start: 1px solid var(--line);
+    max-width: 46ch;
     font-family: var(--ff-display);
     font-size: var(--fs-h3);
     font-weight: 300;

@@ -92,16 +92,11 @@
     {%- if manual != blank or guide != blank -%}
       <p class="nawm-inbox__docs nawm-inbox__docs--cta">
         {%- if manual != blank -%}
-          <a
-            href="{{ manual | file_url }}"
-            class="nawm-cta nawm-inbox__doc"
-            data-nawm-event="open_manual"
-            data-nawm-manual
-            target="_blank"
-            rel="noopener"
-          >
-            {{- 'nawm.inbox.manual_link' | t -}}
-          </a>
+          {% render 'nawm-manual-cta',
+            manual: product.metafields.nawm.manual_pdf,
+            extra_class: 'nawm-inbox__doc',
+            label_key: 'nawm.inbox.manual_link'
+          %}
         {%- endif -%}
       </p>
     {%- else -%}

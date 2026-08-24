@@ -87,6 +87,16 @@
             <dd class="nawm-mono"></dd>
           </div>
         {%- endif -%}
+        {%- comment -%}
+          De gids komt per e-mail na de bestelling en zit niet in de doos. Dat
+          staat er letterlijk bij, in dezelfde kolom waar bij de andere regels
+          "inbegrepen" staat. De doosinhoud is net gecorrigeerd; die winst gaat
+          niet verloren aan een regel die suggereert dat er iets meekomt.
+        {%- endcomment -%}
+        <div class="pdp-offer__value-row">
+          <dt>{{ 'nawm.pdp.offer.value.guide' | t }}</dt>
+          <dd class="nawm-mono">{{ 'nawm.pdp.offer.value.guide_note' | t }}</dd>
+        </div>
         <div class="pdp-offer__value-row">
           <dt>{{ 'nawm.pdp.offer.value.accessories' | t }}</dt>
           <dd class="nawm-mono">{{ included }}</dd>

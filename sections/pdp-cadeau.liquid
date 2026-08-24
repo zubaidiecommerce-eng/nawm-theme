@@ -204,14 +204,19 @@
     color: var(--fg);
   }
 
+  /* Breekt nooit af en krimpt nooit; de regel eromheen mag wel afbreken. */
   .pdp-gift__badge {
-    padding: 2px var(--sp-2);
+    display: inline-block;
+    flex: none;
+    padding: .2rem .625rem;
     border-radius: var(--r-pill);
-    background: var(--nawm-ember);
-    color: var(--nawm-dawn);
+    background: color-mix(in oklab, var(--nawm-amber), transparent 78%);
+    color: var(--ink-day);
     font-family: var(--ff-mono);
-    font-size: var(--fs-mono);
-    letter-spacing: .04em;
+    font-size: .75rem;
+    line-height: 1.4;
+    letter-spacing: .02em;
+    white-space: nowrap;
   }
 
   .pdp-gift__total {

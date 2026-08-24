@@ -1,11 +1,20 @@
 {% comment %}
   PDP-sectie: de videostrip. Bewijs voor iemand die scant in plaats van leest.
-  Zie conversiespec v2 §2.4.
+  Zie conversiespec v2 §2.4 en fix & uitbreiding v3, punt 8.
 
-  Vier clips van zes tot acht seconden in een horizontale strip met scroll-snap.
-  Het label onder elke clip is niet decoratief: drie ervan heten
-  "Sfeerimpressie" en de vierde "Opname van het verkoopmodel". Dat onderscheid
-  is precies de reden dat de vierde als bewijs mag gelden. Verwissel ze nooit.
+  Deze sectie staat NIET in templates/product.nawm.liquid. Hij stond er wel, met
+  drie clips die alle drie elders op de pagina al te zien waren, onder een kop
+  die er vier beloofde. Een strip die herhaalt wat je net gezien hebt, verzwakt
+  het origineel.
+
+  Wat hij moet worden voordat hij terugkomt: vier opnames van het échte
+  apparaat, elk vier tot zes seconden, met een label dat een vraag beantwoordt.
+  Geen sfeer maar bewijs — en dat is precies wat deze plek op de pagina nodig
+  heeft. De vier onderwerpen staan in de instellingen hieronder.
+
+  Alle vier zijn opnames van het verkoopmodel. Er zit dus geen sfeerimpressie
+  meer bij, en het label zegt dat ook. Zet er nooit een gerenderde animatie
+  tussen zonder het label mee te veranderen.
 
   Techniek: `preload="none"` en een posterbeeld, zodat vier video's niet vier
   bestanden binnenhalen voordat iemand kijkt. De clips spelen af zodra ze in
@@ -59,7 +68,7 @@
             video: section.settings.clip_1,
             poster: section.settings.clip_1_poster,
             ratio: '9 / 16',
-            kind: 'render',
+            kind: 'recording',
             caption_key: 'nawm.pdp.strip.c1'
           %}
         </li>
@@ -71,7 +80,7 @@
             video: section.settings.clip_2,
             poster: section.settings.clip_2_poster,
             ratio: '9 / 16',
-            kind: 'render',
+            kind: 'recording',
             caption_key: 'nawm.pdp.strip.c2'
           %}
         </li>
@@ -83,7 +92,7 @@
             video: section.settings.clip_3,
             poster: section.settings.clip_3_poster,
             ratio: '9 / 16',
-            kind: 'render',
+            kind: 'recording',
             caption_key: 'nawm.pdp.strip.c3'
           %}
         </li>
@@ -142,7 +151,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Vier clips van zes tot acht seconden. De eerste drie zijn sfeerimpressies, de vierde is de opname van het verkoopmodel — dat onderscheid staat onder elke clip en is de reden dat de vierde als bewijs telt. De sectie blijft weg zolang er geen clip staat."
+      "content": "Deze sectie staat niet op de productpagina. Zet de regel in templates/product.nawm.liquid terug zodra alle vier de opnames er zijn. Vier korte opnames van het échte apparaat, elk vier tot zes seconden, elk met een label dat een vraag beantwoordt. Geen gerenderde animaties: het label zegt bij alle vier dat het een opname is."
     },
     {
       "type": "text",
@@ -157,29 +166,29 @@
     {
       "type": "video",
       "id": "clip_1",
-      "label": "1 · Zo loopt het licht op",
-      "info": "Sfeerimpressie."
+      "label": "1 · Het display gaat volledig uit",
+      "info": "Van vol naar helemaal donker. Dit beantwoordt het meest gestelde bezwaar."
     },
     { "type": "image_picker", "id": "clip_1_poster", "label": "Posterbeeld 1" },
     {
       "type": "video",
       "id": "clip_2",
-      "label": "2 · Zo donker blijft je kamer",
-      "info": "Sfeerimpressie."
+      "label": "2 · Acht kleuren, twintig standen",
+      "info": "Door de lichtkleuren draaien. Dit laat zien wat je 's avonds hebt."
     },
     { "type": "image_picker", "id": "clip_2_poster", "label": "Posterbeeld 2" },
     {
       "type": "video",
       "id": "clip_3",
-      "label": "3 · Van scherm naar licht",
-      "info": "Sfeerimpressie."
+      "label": "3 · Twee alarmen in twintig seconden",
+      "info": "Alarm 1 en 2 instellen, week en weekend. Dit beantwoordt \"is het ingewikkeld?\"."
     },
     { "type": "image_picker", "id": "clip_3_poster", "label": "Posterbeeld 3" },
     {
       "type": "video",
       "id": "clip_4",
-      "label": "4 · Opname van het verkoopmodel",
-      "info": "De echte timelapse. Dit is het enige bewijsbeeld in de strip."
+      "label": "4 · USB-poort om je telefoon te laden",
+      "info": "De achterkant met de poorten, telefoon erin. Een functie die nu alleen in tekst staat."
     },
     { "type": "image_picker", "id": "clip_4_poster", "label": "Posterbeeld 4" }
   ],

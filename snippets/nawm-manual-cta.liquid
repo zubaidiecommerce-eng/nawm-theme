@@ -1,0 +1,64 @@
+{% doc %}
+  De enige toegangsweg tot de handleiding. Fix & uitbreiding v3, punt 2.
+
+  Er waren drie ingangen met drie verschillende regels: in het koopblok en in de
+  specificaties een directe PDF-link, in de instelsectie een knop, en boven aan
+  de pagina een formulier dat om een e-mailadres vroeg voor hetzelfde bestand.
+  Dat maakte het formulier zinloos — wie doorheeft dat de PDF twee schermen
+  lager gratis is, vult niets in.
+
+  Eén regel, overal: je geeft je adres. Het aanbod is sterk genoeg, en de
+  adressenlijst is op dit moment het waardevolste wat de winkel opbouwt.
+
+  Daarom is dit een `<button>` en geen link: een `href` naar de PDF staat in de
+  broncode én in het contextmenu, en dan is de poort een gordijn. De knop opent
+  het venster uit `nawm-manual-gate`.
+
+  Zonder JavaScript verschijnt de knop niet en staat er in plaats daarvan de
+  directe link. Een knop die niets doet is erger dan geen poort: een bezoeker
+  die de handleiding wil lezen mag nooit stranden.
+
+  @param {object} manual - Het file_reference-metafield met de handleiding.
+  @param {string} [label_key] - Locale-sleutel van het label. Standaard nawm.manual.cta.
+  @param {string} [variant] - 'ghost' voor de tegenknop-uitvoering.
+  @param {string} [extra_class] - Extra klasse op de knop.
+{% enddoc %}
+
+{%- liquid
+  assign manual_file = manual.value | default: manual
+  assign key = label_key | default: 'nawm.manual.cta'
+
+  assign classes = 'nawm-cta nawm-manual-cta'
+  if variant == 'ghost'
+    assign classes = 'nawm-cta nawm-cta--ghost nawm-manual-cta'
+  endif
+  if extra_class != blank
+    assign classes = classes | append: ' ' | append: extra_class
+  endif
+-%}
+
+{%- if manual_file != blank -%}
+  <button
+    type="button"
+    class="{{ classes }}"
+    data-manual-open
+    aria-haspopup="dialog"
+    aria-controls="nawm-manual-gate"
+    data-nawm-event="open_manual_gate"
+    hidden
+  >
+    {{ key | t }}
+  </button>
+
+  <noscript>
+    <a
+      class="{{ classes }}"
+      href="{{ manual_file.url }}"
+      target="_blank"
+      rel="noopener"
+    >
+      {{- 'nawm.manual.cta_direct' | t -}}
+      <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
+    </a>
+  </noscript>
+{%- endif -%}

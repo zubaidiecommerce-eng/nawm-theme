@@ -331,16 +331,17 @@
             <strong>{{ 'nawm.pdp.hero.usp.u4.benefit' | t }}</strong>
             <span class="pdp-hero__usp-feature">{{ 'nawm.pdp.hero.usp.u4.feature' | t }}</span>
             {%- if manual.value != blank -%}
-              <a
-                class="pdp-hero__usp-proof"
-                href="{{ manual.value.url }}"
-                data-nawm-event="open_manual"
-                target="_blank"
-                rel="noopener"
-              >
-                {{- 'nawm.pdp.hero.usp.u4.proof' | t -}}
-                <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
-              </a>
+              {%- comment -%}
+                Was de enige plek waar de PDF nog rechtstreeks openging: deze
+                link droeg wel het event maar niet het haakje waar de poort aan
+                hangt. Nu dezelfde knop als overal.
+              {%- endcomment -%}
+              {% render 'nawm-manual-cta',
+                manual: manual,
+                variant: 'ghost',
+                extra_class: 'pdp-hero__usp-button',
+                label_key: 'nawm.pdp.hero.usp.u4.proof'
+              %}
             {%- else -%}
               <span class="pdp-hero__usp-proof">
                 {% render 'nawm-verify', field: 'manual_pdf', note: 'Nederlandstalige handleiding als PDF' %}
