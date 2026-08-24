@@ -13,6 +13,10 @@
  *     terugkomt; anders vecht de observer met de bezoeker
  *   · bij prefers-reduced-motion start er niets vanzelf. Beweging die je niet
  *     kunt stoppen is een toegankelijkheidsprobleem, geen stijlkeuze
+ *   · een clip zonder loop keert na afloop terug naar zijn posterbeeld. Bij een
+ *     gerenderde clip verschillen het eerste en laatste frame, en dan zie je
+ *     bij elke herhaling een sprong — dat was de haperende video in het
+ *     koopblok. Stilstaand beeld is beter dan een zichtbare naad.
  *
  * `preload="none"` staat op het element zelf. De browser haalt de video dus
  * pas op als hij hem echt nodig heeft.
@@ -65,6 +69,18 @@ for (const video of players) {
     sync();
   });
   video.addEventListener('pause', sync);
+
+  /* Terug naar het posterbeeld. `load()` zet de video terug in zijn
+     begintoestand en toont daarmee weer de poster; alleen `currentTime = 0`
+     laat het laatste frame staan. Scrollt de bezoeker er later opnieuw langs,
+     dan start hij gewoon opnieuw. */
+  if (video.hasAttribute('data-clip-once')) {
+    video.addEventListener('ended', () => {
+      video.currentTime = 0;
+      video.load();
+      sync();
+    });
+  }
 
   if ('IntersectionObserver' in window) {
     new IntersectionObserver(

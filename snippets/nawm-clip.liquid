@@ -19,8 +19,23 @@
   @param {string} [caption] - Al vertaald bijschrift.
   @param {string} [kind] - 'render' (animatie) of 'recording' (opname).
   @param {string} [captions] - Bestandsnaam van het .vtt-bestand in assets/.
+  @param {boolean} [loop] - Herhalen. Standaard uit; zie hieronder.
   @param {string} [class] - Extra klassen.
 {% enddoc %}
+
+{%- comment -%}
+  Loop staat standaard uit. Bij een gerenderde clip verschillen het eerste en
+  het laatste frame bijna altijd, en dan zie je bij elke herhaling een sprong.
+  Daar kwam de haperende video in het koopblok vandaan.
+
+  Zonder loop speelt de clip één keer en keert hij terug naar zijn posterbeeld.
+  Dat is stil in plaats van hikkend, en het is de goedkoopste oplossing: er
+  hoeft geen bestand opnieuw gerenderd te worden.
+
+  Zet `loop: true` alleen bij een clip waarvan het eerste en laatste frame
+  identiek zijn. Blijft er dan nog een sprong zichtbaar, dan zit het in het
+  bestand en niet in het thema — knip de laatste acht tot twaalf frames eraf.
+{%- endcomment -%}
 
 {%- comment -%}
   Het script staat hier en niet in de sectie, omdat clips op drie verschillende
@@ -48,7 +63,7 @@
         preload="none"
         playsinline
         muted
-        loop
+        {% if loop %}loop{% else %}data-clip-once{% endif %}
         data-clip-autoplay
         {% if poster != blank %}
           poster="{{ poster | image_url: width: 1080 }}"
