@@ -136,6 +136,20 @@ html.nawm-page .shopify-section:has(.nawm-section) {
 .nawm-section p { margin: 0; color: var(--fg-soft); }
 .nawm-section a { color: inherit; }
 
+/* Uitzondering, en een belangrijke: de regel hierboven heeft specificiteit
+   (0,1,1) en verslaat daarmee `.nawm-cta` (0,1,0). Elke knop die een link is,
+   erfde daardoor de tekstkleur van zijn sectie in plaats van zijn eigen kleur
+   te houden — donkere tekst op een donkere knop in het licht, lichte tekst op
+   een lichte knop in het donker. Dat is precies wat er op de instelsectie
+   gebeurde: een zwarte balk waarin niets te lezen viel.
+
+   De knop bepaalt zijn eigen kleur en erft nooit. Deze selector staat bewust
+   op (0,2,1) zodat de volgorde in het bestand er niet toe doet. */
+.nawm-section a.nawm-cta,
+.nawm-section a.nawm-cta:visited {
+  color: var(--cta-fg);
+}
+
 .nawm-body { max-width: 62ch; }
 .nawm-body > * + * { margin-block-start: var(--sp-3); }
 
@@ -1204,23 +1218,6 @@ html.nawm-page .nawm-hero {
 
 html.nawm-pdp .pdp-hero {
   padding-block-start: clamp(1.5rem, 4vw, 3rem);
-}
-
-/* ------------------------------------------------------ betaallogo's fix */
-
-/* De logo's werden half getoond: Horizon zet `max-width: 100%` op elke svg, en
-   in een grid-cel met een vaste hoogte knijpt dat de breedte af. Expliciete
-   maatvoering lost dat op. */
-.pdp-payments__item {
-  overflow: visible;
-}
-
-.pdp-payments__item svg {
-  display: block;
-  block-size: 100%;
-  inline-size: auto;
-  max-inline-size: none;
-  max-block-size: none;
 }
 
 /* ------------------------------------------------------------- ademruimte */
