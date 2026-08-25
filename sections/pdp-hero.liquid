@@ -99,6 +99,17 @@
   assign wake_sounds = pdp_product.metafields.nawm.wake_sounds_count.value
   assign manual = pdp_product.metafields.nawm.manual_pdf
 
+  comment
+    Wat het per ochtend kost, berekend uit de prijs en de themasetting
+    `afschrijvingsdagen`. Het snippet levert een leeg resultaat zodra er niets
+    te rekenen valt; `strip` haalt de witruimte van de capture eraf, zodat
+    `blank` ook echt blank is.
+  endcomment
+  capture per_morning
+    render 'nawm-per-morning', product: pdp_product
+  endcapture
+  assign per_morning = per_morning | strip
+
 %}
 
 {% render 'nawm-manual-gate', manual: manual %}
@@ -284,6 +295,20 @@
         <p class="pdp-hero__price">
           {% render 'nawm-price', product: pdp_product %}
         </p>
+
+        {%- comment -%}
+          Koopblok: kosten per ochtend. Voorkomt de prijsschok op de plek waar
+          hij ontstaat — niet pas in de prijssectie, zes schermen lager.
+
+          Eén regel, en niet de volledige drieledige presentatie: die blijft
+          staan waar hij staat. Hier is één regel genoeg om de prijs in
+          perspectief te zetten zonder de aandacht van de knop weg te trekken.
+        {%- endcomment -%}
+        {%- if per_morning != blank -%}
+          <p class="price-context">
+            {{ 'nawm.price.per_morning' | t: amount: per_morning }}
+          </p>
+        {%- endif -%}
 
         <ul class="pdp-hero__usps" aria-label="{{ 'nawm.pdp.hero.usp_label' | t }}">
           <li>

@@ -257,11 +257,15 @@
         Stond hier als kale tekstlink. Dezelfde knop als op de andere twee
         plekken, want drie uitvoeringen van hetzelfde aanbod maken alle drie
         minder geloofwaardig.
+
+        En dat stond er wel, maar het klopte niet: hier stond `variant: 'ghost'`
+        en zonder maatklasse, dus dezelfde knop zag er hier als derde uitvoering
+        uit. Nu echt identiek aan "Wat je krijgt" en de instelsectie.
       {%- endcomment -%}
       <p class="pdp-specs__manual">
         {% render 'nawm-manual-cta',
           manual: nawm.manual_pdf,
-          variant: 'ghost',
+          extra_class: 'nawm-cta--manual',
           label_key: 'nawm.pdp.specs.manual_link'
         %}
       </p>
@@ -339,9 +343,14 @@
     max-width: 44rem;
   }
 
-  .pdp-specs__manual {
-    margin-block-start: var(--sp-4);
-    font-size: var(--fs-small);
+  /* Geen `font-size` meer: dat gold voor de tekstlink die hier ooit stond en
+     zou nu tegen de maat van de knop in werken. Wel meer lucht, want een knop
+     van 60px vlak onder een accordeon plakt vast.
+
+     Twee klassen, want dit is een `<p>` en `.nawm-section p { margin: 0 }`
+     staat op (0,1,1). De marge die hier stond, kwam er dus nooit uit. */
+  .pdp-specs .pdp-specs__manual {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
   }
 {% endstylesheet %}
 

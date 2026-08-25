@@ -95,8 +95,12 @@
     font-size: var(--fs-h3);
   }
 
-  .pdp-fit__closing {
-    margin-block-start: clamp(2rem, 5vw, 3rem);
+  /* Twee klassen, want dit is een `<p>` en `.nawm-section p` staat op (0,1,1).
+     Op één klasse verloor deze regel zowel zijn marge als zijn kleur: de zin
+     stond zonder adempauze en in het zachte grijs van gewone bodytekst, terwijl
+     hij juist de slotzin van de sectie is. */
+  .pdp-fit .pdp-fit__closing {
+    margin-block-start: clamp(2.5rem, 8vw, 3rem);
     max-width: 56ch;
     font-family: var(--ff-display);
     font-size: var(--fs-h3);

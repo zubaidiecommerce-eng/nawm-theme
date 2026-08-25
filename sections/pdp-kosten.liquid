@@ -36,11 +36,16 @@
 
   assign warranty_years = settings.warranty_years | times: 1
 
-  assign per_morning = blank
-  if pdp_product.price > 0
-    assign cents_per_day = pdp_product.price | divided_by: 365
-    assign per_morning = cents_per_day | money
-  endif
+  comment
+    Stond hier als losse deling door 365, net als in twee andere secties en
+    sinds v4 ook in het koopblok. Vier plekken die uit elkaar kunnen lopen zodra
+    de periode wijzigt. Nu één berekening, gevoed door de themasetting
+    `afschrijvingsdagen`. Zie snippets/nawm-per-morning.liquid.
+  endcomment
+  capture per_morning
+    render 'nawm-per-morning', product: pdp_product
+  endcapture
+  assign per_morning = per_morning | strip
 
   assign reasons = 'e1,e2,e3' | split: ','
 %}

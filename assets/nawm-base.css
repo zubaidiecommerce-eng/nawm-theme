@@ -143,11 +143,26 @@ html.nawm-page .shopify-section:has(.nawm-section) {
    een lichte knop in het donker. Dat is precies wat er op de instelsectie
    gebeurde: een zwarte balk waarin niets te lezen viel.
 
-   De knop bepaalt zijn eigen kleur en erft nooit. Deze selector staat bewust
-   op (0,2,1) zodat de volgorde in het bestand er niet toe doet. */
-.nawm-section a.nawm-cta,
+   v3 dekte alleen `a.nawm-cta` af, en dat was te smal. De handleidingsknop in
+   "Wat je krijgt" is een `<button>`, geen link, en kreeg zijn kleur van een
+   extra klasse uit de sectie-stylesheet (`.nawm-inbox__doc { color: var(--fg) }`).
+   Gelijke specificiteit, maar sectie-CSS staat in de body en dus ná dit
+   bestand — dus won `--fg`. In ctx-dawn is `--fg` bijna zwart en `--cta-bg`
+   óók: zwarte tekst op een zwarte balk. Precies het gemelde beeld.
+
+   Daarom nu breed: elk element met `.nawm-cta` bepaalt zijn eigen kleur en
+   erft nooit. `:where()` telt niet mee voor specificiteit, dus deze selectors
+   staan op (0,2,0) en (0,2,1) — hoog genoeg om elke losse hulpklasse uit een
+   sectie te verslaan, laag genoeg om door een bewuste `.ctx-*`-regel of een
+   variant-klasse met twee klassen overschreven te worden. */
+.nawm-section :where(a, button, span, input).nawm-cta,
 .nawm-section a.nawm-cta:visited {
   color: var(--cta-fg);
+
+  /* Breekt een eventuele gradient-text-truc: zonder dit blijft
+     `-webkit-text-fill-color: transparent` uit een erfelijke regel staan en
+     is de tekst onzichtbaar, hoe goed `color` ook is. */
+  -webkit-text-fill-color: currentColor;
 }
 
 .nawm-body { max-width: 62ch; }
@@ -168,6 +183,21 @@ html.nawm-page .shopify-section:has(.nawm-section) {
 }
 
 .nawm-small { font-size: var(--fs-small); color: var(--fg-soft); }
+
+/* De prijs in perspectief, op de plek waar de schok ontstaat: direct onder het
+   bedrag in het koopblok. Mono en zacht, zodat hij de knop eronder niet
+   beconcurreert — hij hoort gelezen te worden, niet opgemerkt.
+
+   Selector op (0,2,0) en niet (0,1,0), want `.nawm-section p` staat op (0,1,1)
+   en zou de marge er anders weer af halen. */
+.nawm-section .price-context {
+  margin-block-start: .25rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: .04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-soft);
+}
 
 /* ----------------------------------------------------------------- eyebrow */
 
@@ -221,8 +251,10 @@ html.nawm-page .shopify-section:has(.nawm-section) {
   border: 0;
   border-radius: 12px;
   background: var(--cta-bg);
+  background-clip: border-box;
   box-shadow: inset 0 0 0 1px var(--cta-ring);
   color: var(--cta-fg);
+  -webkit-text-fill-color: currentColor;
 
   /* Mono in plaats van de bodytekst. De knop draagt bijna altijd een bedrag,
      en cijfers in tabulaire mono staan stil in plaats van te verspringen. De
@@ -1169,9 +1201,12 @@ html.nawm-pdp .pdp-evening {
 
 /* De handleidingknop is een van de sterkste vertrouwenssignalen van de pagina
    en hoort dus als knop te staan, gecentreerd en met lucht eromheen — niet als
-   linkje onder een lijst. */
-.nawm-inbox__docs--cta {
-  margin-block-start: clamp(2rem, 5vw, 3rem);
+   linkje onder een lijst.
+
+   Twee klassen, want dit is een `<p>` en `.nawm-section p { margin: 0 }` staat
+   op (0,1,1). Op één klasse kwam de lucht erboven er nooit uit. */
+.nawm-section .nawm-inbox__docs--cta {
+  margin-block-start: clamp(3rem, 8vw, 4.5rem);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -1179,7 +1214,11 @@ html.nawm-pdp .pdp-evening {
   text-align: center;
 }
 
-.nawm-inbox__docs--cta .nawm-cta {
+/* Eén maat voor de handleidingsknop, op alle drie de plekken waar hij groot
+   staat: "Wat je krijgt", de instelsectie en de specificaties. Stond eerder
+   drie keer los gedefinieerd — twee keer hetzelfde en één keer helemaal niet,
+   waardoor dezelfde knop er per sectie anders uitzag. */
+.nawm-cta--manual {
   min-height: 60px;
   padding-inline: var(--sp-6);
   font-size: 1.0625rem;
@@ -1222,17 +1261,14 @@ html.nawm-pdp .pdp-hero {
 
 /* ------------------------------------------------------------- ademruimte */
 
-/* De afsluitende regel van de wel-of-niet-sectie plakte op mobiel tegen de
-   laatste bullet. Die zin is het sterkste vertrouwenssignaal van de pagina en
-   verdient een eigen adempauze. */
-.pdp-fit__closing {
-  margin-block-start: clamp(2.5rem, 8vw, 3rem);
-}
+/* Hier stonden twee marges die er nooit uit kwamen: de adempauze boven de
+   slotzin van de wel-of-niet-sectie, en die boven de handleidingsknop. Allebei
+   op één klasse, allebei op een `<p>`, en `.nawm-section p { margin: 0 }` staat
+   op (0,1,1) — specificiteit wint van volgorde, dus geen van beide deed iets.
 
-/* De handleidingknop stond te dicht op de opsomming erboven. */
-.nawm-inbox__docs--cta {
-  margin-block-start: clamp(3rem, 8vw, 4.5rem);
-}
+   Ze staan nu op twee klassen bij de rest van hun blok: `.pdp-fit__closing` in
+   sections/pdp-fit.liquid en `.nawm-inbox__docs--cta` hierboven. Zet hier geen
+   nieuwe marge op één klasse neer; die verdwijnt weer. */
 
 /* Het koopblok: prijs, knop en garanties zaten op elkaar geplakt. */
 .nawm-offer__cta {
