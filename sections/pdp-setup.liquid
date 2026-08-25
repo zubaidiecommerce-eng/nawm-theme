@@ -71,7 +71,7 @@
       {%- if manual.value != blank -%}
         {% render 'nawm-manual-cta',
           manual: manual,
-          extra_class: 'pdp-setup__manual-button',
+          extra_class: 'nawm-cta--manual',
           label_key: 'nawm.pdp.setup.manual_cta'
         %}
       {%- else -%}
@@ -127,11 +127,8 @@
     background: color-mix(in oklab, var(--nawm-amber) 14%, var(--nawm-dawn));
   }
 
-  .pdp-setup__manual-button {
-    min-height: 60px;
-    padding-inline: var(--sp-6);
-    font-size: 1.0625rem;
-  }
+  /* De maat van deze knop staat nu als `.nawm-cta--manual` in nawm-base.css,
+     zodat de handleidingsknop op alle drie de plekken dezelfde is. */
 
   .pdp-setup__manual-link {
     margin: 0;

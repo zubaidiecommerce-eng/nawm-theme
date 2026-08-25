@@ -143,11 +143,26 @@ html.nawm-page .shopify-section:has(.nawm-section) {
    een lichte knop in het donker. Dat is precies wat er op de instelsectie
    gebeurde: een zwarte balk waarin niets te lezen viel.
 
-   De knop bepaalt zijn eigen kleur en erft nooit. Deze selector staat bewust
-   op (0,2,1) zodat de volgorde in het bestand er niet toe doet. */
-.nawm-section a.nawm-cta,
+   v3 dekte alleen `a.nawm-cta` af, en dat was te smal. De handleidingsknop in
+   "Wat je krijgt" is een `<button>`, geen link, en kreeg zijn kleur van een
+   extra klasse uit de sectie-stylesheet (`.nawm-inbox__doc { color: var(--fg) }`).
+   Gelijke specificiteit, maar sectie-CSS staat in de body en dus ná dit
+   bestand — dus won `--fg`. In ctx-dawn is `--fg` bijna zwart en `--cta-bg`
+   óók: zwarte tekst op een zwarte balk. Precies het gemelde beeld.
+
+   Daarom nu breed: elk element met `.nawm-cta` bepaalt zijn eigen kleur en
+   erft nooit. `:where()` telt niet mee voor specificiteit, dus deze selectors
+   staan op (0,2,0) en (0,2,1) — hoog genoeg om elke losse hulpklasse uit een
+   sectie te verslaan, laag genoeg om door een bewuste `.ctx-*`-regel of een
+   variant-klasse met twee klassen overschreven te worden. */
+.nawm-section :where(a, button, span, input).nawm-cta,
 .nawm-section a.nawm-cta:visited {
   color: var(--cta-fg);
+
+  /* Breekt een eventuele gradient-text-truc: zonder dit blijft
+     `-webkit-text-fill-color: transparent` uit een erfelijke regel staan en
+     is de tekst onzichtbaar, hoe goed `color` ook is. */
+  -webkit-text-fill-color: currentColor;
 }
 
 .nawm-body { max-width: 62ch; }
@@ -221,8 +236,10 @@ html.nawm-page .shopify-section:has(.nawm-section) {
   border: 0;
   border-radius: 12px;
   background: var(--cta-bg);
+  background-clip: border-box;
   box-shadow: inset 0 0 0 1px var(--cta-ring);
   color: var(--cta-fg);
+  -webkit-text-fill-color: currentColor;
 
   /* Mono in plaats van de bodytekst. De knop draagt bijna altijd een bedrag,
      en cijfers in tabulaire mono staan stil in plaats van te verspringen. De
@@ -1179,7 +1196,11 @@ html.nawm-pdp .pdp-evening {
   text-align: center;
 }
 
-.nawm-inbox__docs--cta .nawm-cta {
+/* Eén maat voor de handleidingsknop, op alle drie de plekken waar hij groot
+   staat: "Wat je krijgt", de instelsectie en de specificaties. Stond eerder
+   drie keer los gedefinieerd — twee keer hetzelfde en één keer helemaal niet,
+   waardoor dezelfde knop er per sectie anders uitzag. */
+.nawm-cta--manual {
   min-height: 60px;
   padding-inline: var(--sp-6);
   font-size: 1.0625rem;
