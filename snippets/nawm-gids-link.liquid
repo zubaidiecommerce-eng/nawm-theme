@@ -1,0 +1,30 @@
+{% doc %}
+  Een link naar een gidsartikel dat er misschien nog niet is.
+
+  De pijlerteksten verwijzen naar artikelen uit andere clusters — §5.4 staat
+  dat toe en het is precies wat een cluster met een cluster verbindt. Maar de
+  artikelen worden in de admin geïmporteerd en de pijlers staan in dit thema,
+  dus er is altijd een moment waarop de tekst er al is en het artikel nog
+  niet.
+
+  Bestaat het artikel, dan is dit een link. Bestaat het nog niet, dan blijft de
+  zin gewoon staan zonder link. Geen dode link, geen 404, en geen gat in de
+  zin — de lezer merkt er niets van en jij hoeft de volgorde van importeren
+  niet te bewaken.
+
+  Artikelen in dezelfde pijler hoeven hier niet doorheen: die staan al in het
+  overzichtsblok onderaan elke pijler, dat zichzelf vult uit de tags.
+
+  @param {string} handle - De handle van het artikel, zonder /blogs/gids/.
+  @param {string} text - De ankertekst. Beschrijvend, nooit "lees meer" (§5.3).
+{% enddoc %}
+
+{%- liquid
+  assign target = blogs.gids.articles | where: 'handle', handle | first
+-%}
+
+{%- if target != blank and target.url != blank -%}
+  <a href="{{ target.url }}">{{ text }}</a>
+{%- else -%}
+  {{- text -}}
+{%- endif -%}

@@ -62,7 +62,13 @@
       {%- endunless -%}
     </header>
 
-    <div class="pijler__body nawm-body-long">
+    {%- comment -%}
+      De body wordt eerst opgevangen en dan pas uitgeschreven. Dat is nodig
+      voor de inhoudsopgave: die leest de H2's uit de HTML, en dus moet die
+      HTML er als tekst zijn voordat hij op de pagina staat. Een pijler is 1200
+      tot 1800 woorden en haalt de ondergrens van §6.5 dus ruim.
+    {%- endcomment -%}
+    {%- capture pijler_body -%}
       {%- case page.handle -%}
         {%- when 'wake-up-light' -%}
           {% render 'pijler-wake-up-light' %}
@@ -78,7 +84,42 @@
           {%- endcomment -%}
           {{ page.content }}
       {%- endcase -%}
+    {%- endcapture -%}
+
+    {% render 'nawm-toc', content: pijler_body %}
+
+    <div class="pijler__body nawm-body-long">
+      {{ pijler_body }}
     </div>
+
+    {%- comment -%}
+      De infographic van de Sleep–Wake Guide hoort op de avondpijler (§3.3):
+      dit is de pagina die dezelfde zes momenten uitlegt. Hij staat hier als
+      afbeelding met de vermelding dat de PDF bij elke bestelling meekomt.
+
+      Geen placeholder zolang het beeld er niet is. Een gepubliceerde pagina
+      met een lege kader erin is erger dan een pagina zonder beeld.
+    {%- endcomment -%}
+    {%- if section.settings.infographic != blank -%}
+      <figure class="pijler__infographic">
+        <img
+          src="{{ section.settings.infographic | image_url: width: 1400 }}"
+          srcset="
+            {{ section.settings.infographic | image_url: width: 700 }} 700w,
+            {{ section.settings.infographic | image_url: width: 1400 }} 1400w
+          "
+          sizes="(min-width: 1024px) 44rem, 100vw"
+          alt="{{ section.settings.infographic_alt | escape }}"
+          width="{{ section.settings.infographic.width }}"
+          height="{{ section.settings.infographic.height }}"
+          loading="lazy"
+          decoding="async"
+        >
+        <figcaption class="nawm-small pijler__infographic-caption">
+          {{ 'nawm.gids.infographic_caption' | t }}
+        </figcaption>
+      </figure>
+    {%- endif -%}
 
     {%- comment -%}
       §5.2 — elke pijler linkt naar al zijn artikelen. Zonder dit blok is een
@@ -145,6 +186,22 @@
 
   .pijler__body {
     margin-block-start: clamp(2rem, 5vw, 3rem);
+  }
+
+  .pijler__infographic {
+    margin: clamp(2.5rem, 6vw, 3.5rem) 0 0;
+  }
+
+  .pijler__infographic img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--ink-day) 6%, transparent);
+  }
+
+  .pijler .pijler__infographic-caption {
+    margin-block-start: var(--sp-3);
   }
 
   .pijler__cluster {
@@ -224,6 +281,25 @@
     {
       "type": "paragraph",
       "content": "De pagina kiest zijn inhoud op handle: wake-up-light, beter-opstaan of avondroutine. De tekst staat in snippets/pijler-<handle>.liquid, de kop en de intro in locales/nl.default.json onder nawm.gids.pijler. De artikellijst vult zich uit de tag pijler:<handle> op de artikelen in de blog 'gids'."
+    },
+    {
+      "type": "header",
+      "content": "Infographic"
+    },
+    {
+      "type": "paragraph",
+      "content": "Alleen voor de avondpijler: de Sleep–Wake Guide als beeld. Laat leeg zolang het beeld er niet is — een leeg kader op een gepubliceerde pagina is erger dan geen beeld."
+    },
+    {
+      "type": "image_picker",
+      "id": "infographic",
+      "label": "Beeld"
+    },
+    {
+      "type": "text",
+      "id": "infographic_alt",
+      "label": "Alt-tekst",
+      "info": "Beschrijf wat er te zien is, in gewone taal. Geen zoekwoorden."
     }
   ]
 }

@@ -1,0 +1,231 @@
+{% doc %}
+  Pijler 1 — de categoriepijler. NAWM_SEO_CONTENTSPEC.md §3.1.
+
+  Doelzoekwoorden: wake up light, lichtwekker, daglichtwekker, wekker met
+  licht, zonsopgang wekker, hoe werkt een wake up light.
+
+  Deze pagina bestaat omdat de productpagina transactioneel is en dat moet
+  blijven. Hier landt de informationele variant van dezelfde termen, en van
+  hier stuurt hij door.
+
+  Twee regels bij het bewerken:
+
+  · Mechanisch beschrijven, nooit fysiologisch (§1.3). Wat het apparaat doet
+    en wat jij merkt — niet wat je lichaam doet. `scripts/claims-lint.sh`
+    blokkeert de woorden waar dat misgaat.
+  · Het eerlijke deel blijft staan. "Voor wie het minder geschikt is" is geen
+    disclaimer maar de reden dat de rest geloofd wordt.
+
+  Elke H2 heeft een `id`. Zonder id valt de kop uit de inhoudsopgave — zie
+  snippets/nawm-toc.liquid.
+{% enddoc %}
+
+<h2 id="wat-is-een-wake-up-light">Wat is een wake-up light?</h2>
+
+<p>
+  Een wake-up light is een lamp met een klok erin. In plaats van je om zeven
+  uur met geluid uit je slaap te halen, begint hij daarvóór met licht: eerst
+  bijna niets, dan langzaam meer, tot de kamer bij je wektijd verlicht is. Het
+  geluid komt pas aan het eind, en zachter dan een telefoonalarm. Je wordt
+  meestal wakker vóórdat het klinkt.
+</p>
+
+<p>
+  Je komt hem in het Nederlands onder drie namen tegen — wake-up light,
+  lichtwekker en daglichtwekker — en dat is hetzelfde apparaat. Wat ze
+  gemeenschappelijk hebben, is dat het wekmoment een aanloop krijgt in plaats
+  van een schok. Wat ze onderling onderscheidt, is hoe lang die aanloop kan
+  duren, hoe fijn je de helderheid kunt regelen, en of het ding 's nachts ook
+  echt donker kan zijn.
+</p>
+
+<h2 id="hoe-de-zonsopgang-werkt">Hoe de zonsopgangsimulatie werkt</h2>
+
+<p>
+  Je stelt twee dingen in: hoe laat je eruit wilt, en hoeveel minuten daarvóór
+  het licht moet beginnen. Zet je de wektijd op 07:00 en de duur op dertig
+  minuten, dan gebeurt er dit:
+</p>
+
+<ul>
+  <li>
+    Om 06:30 gaat de lamp aan op de laagste stand. In een donkere kamer is dat
+    een gloed, geen verlichting — je kunt er niet bij lezen.
+  </li>
+  <li>
+    Tussen 06:30 en 07:00 loopt de helderheid stap voor stap omhoog. Bij een
+    apparaat met twintig standen is dat ongeveer één stap per anderhalve
+    minuut, en dat is te weinig verschil om als beweging te zien.
+  </li>
+  <li>
+    De kleur schuift mee van diep amber naar iets dat op vroeg ochtendlicht
+    lijkt.
+  </li>
+  <li>
+    Om 07:00 staat het licht op vol en zet het geluid de laatste stap. Was je
+    al wakker, dan zet je het uit voordat het goed en wel begonnen is.
+  </li>
+</ul>
+
+<p>
+  Meer is het niet. Er zit geen sensor in die je slaap meet en er is geen
+  algoritme dat een goed moment uitkiest. Het is een lamp die op een
+  afgesproken tijd langzaam aangaat, en de winst zit in het woord langzaam.
+</p>
+
+<p>
+  Wat tien of zestig minuten in de praktijk betekent, verschilt sterk per
+  persoon en per seizoen. Wie vroeg wakker schrikt, zet hem korter; wie diep
+  slaapt, zet hem langer. Beginnen bij twintig of dertig minuten en na een week
+  bijstellen werkt beter dan meteen op de uiterste stand gaan zitten.
+</p>
+
+<h2 id="wat-hij-niet-doet">Wat een wake-up light niet doet</h2>
+
+<p>
+  Het is makkelijker om te vertellen wat er wél gebeurt dan om eerlijk te zijn
+  over de grens, dus hier staat de grens.
+</p>
+
+<p>
+  Hij zorgt er niet voor dat je meer slaapt. Ga je om half twee naar bed en
+  moet je om zeven uur op, dan verandert er niets aan die vijfeneenhalf uur.
+  De aanloop maakt het moment van opstaan minder abrupt; hij haalt geen uren
+  terug die er niet zijn. Wie structureel te weinig slaapt, lost dat aan de
+  andere kant van de nacht op.
+</p>
+
+<p>
+  Hij haalt je ook niet uit bed. Er komt licht, er komt geluid, en daarna is
+  het aan jou. Dat klinkt flauw, maar het is het verschil tussen een apparaat
+  en een belofte: mensen die na een maand nog steeds tevreden zijn, hebben er
+  bijna altijd iets omheen veranderd — een vaste wektijd, of een telefoon die
+  niet meer naast het kussen ligt.
+</p>
+
+<p>
+  Dat laatste is niet toevallig het lastigste stuk. Waarom dat wegleggen zo
+  moeilijk is, en wat er wél werkt, staat in
+  {% render 'nawm-gids-link',
+    handle: 'telefoon-voor-het-slapen-gaan',
+    text: 'het stuk over je telefoon voor het slapen gaan'
+  %}.
+</p>
+
+<h2 id="waar-je-op-let">Waar je op let als je er een kiest</h2>
+
+<p>
+  De prijzen in deze categorie lopen van twintig tot ver over de tweehonderd
+  euro, en het verschil zit zelden in het licht zelf. Dit zijn de vijf punten
+  waar je wél iets aan hebt.
+</p>
+
+<h3>Hoe lang de zonsopgang kan duren</h3>
+
+<p>
+  Kan hij alleen tien of vijftien minuten, dan is de aanloop kort en scheelt
+  het weinig met een gewone wekker. Een bereik van tien tot zestig minuten
+  geeft je ruimte om te zoeken wat bij je past. Kijk of de duur per alarm
+  instelbaar is, want je weekend wil misschien iets anders dan je maandag.
+</p>
+
+<h3>Hoeveel helderheidsstanden er zijn</h3>
+
+<p>
+  Dit is het punt dat het meest onderschat wordt. Met vijf standen is het
+  laagste niveau vaak al te fel voor een donkere slaapkamer, en dan gebruik je
+  het nachtlicht niet. Met twintig standen kun je een stand vinden die je wél
+  aanzet.
+</p>
+
+<h3>Of het display volledig uit kan</h3>
+
+<p>
+  Een klok die de hele nacht cijfers in je kamer projecteert, is de meest
+  voorkomende klacht in beoordelingen van deze categorie. "Dimbaar" is niet
+  hetzelfde als "uit". Zoek in de specificaties of de handleiding naar het
+  woord uit, en niet naar het woord dimbaar.
+</p>
+
+<h3>Welke geluiden je écht als wekbron kunt kiezen</h3>
+
+<p>
+  Hier zit een val. Een apparaat dat "22 geluiden" op de doos heeft staan,
+  heeft er vaak maar een handvol die je als alarm kunt instellen — de rest is
+  bedoeld om bij in slaap te vallen. Dat is geen probleem zolang je het weet.
+  Het is wel een probleem als je erachter komt op de eerste ochtend. Zoek naar
+  twee aparte getallen: het totaal, en het aantal dat als wekgeluid
+  selecteerbaar is.
+</p>
+
+<h3>Of er een handleiding in je taal bij zit</h3>
+
+<p>
+  Bijna elk apparaat in deze categorie wordt ingesteld met vier of vijf knoppen
+  zonder tekst erop, in een volgorde die je nooit raadt. Een slechte
+  handleiding is in deze categorie de op één na meest genoemde klacht. Vraag de
+  handleiding op vóór je bestelt — een verkoper die hem niet wil laten zien,
+  vertelt je daarmee genoeg.
+</p>
+
+<h2 id="voor-wie-minder-geschikt">Voor wie een wake-up light minder geschikt is</h2>
+
+<p>
+  Wij verkopen er zelf een, en toch: dit is niet voor iedereen, en dat is beter
+  om nu te weten dan over twee weken.
+</p>
+
+<ul>
+  <li>
+    <strong>Je bent een extreem zware slaper.</strong> Slaap je door een hard
+    alarm heen, dan wekt licht alleen je waarschijnlijk ook niet. Het geluid
+    doet dan het werk, net als bij je oude wekker — en dan koop je vooral een
+    zachtere manier om wakker gemáákt te worden, niet een manier om vanzelf
+    wakker te worden.
+  </li>
+  <li>
+    <strong>Je slaapkamer staat 's ochtends al vol in de zon.</strong> Dan doet
+    de natuur het al, en voegt een lamp weinig toe. In de winter kan het
+    verhaal weer anders zijn.
+  </li>
+  <li>
+    <strong>Je hebt een medisch slaapprobleem.</strong> Dit is een
+    consumentenproduct en geen behandeling. Slaap je al weken slecht, ben je
+    aanhoudend moe of stop je 's nachts met ademen, dan is dit niet wat je
+    zoekt.
+  </li>
+</ul>
+
+<h2 id="veelgestelde-vragen">Veelgestelde vragen</h2>
+
+<h3>Kun je een wake-up light ook overdag gebruiken?</h3>
+
+<p>
+  Als lamp wel, maar er is weinig reden toe. Het is een lamp met een klok, geen
+  bureaulamp, en de meeste modellen geven op vol vermogen minder licht dan een
+  gewone plafondlamp. De functie zit in het tijdstip, niet in de hoeveelheid.
+</p>
+
+<h3>Werkt hij nog als er stroom uitvalt?</h3>
+
+<p>
+  Meestal niet. Vrijwel alles in deze categorie werkt op netstroom via een
+  adapter, en een back-upbatterij is zeldzaam. Controleer na een stroomstoring
+  dus even of de tijd en het alarm nog goed staan.
+</p>
+
+<h3>Hoeveel ruimte heb ik nodig op mijn nachtkastje?</h3>
+
+<p>
+  Reken op iets ter grootte van een grote koffiemok, plus ruimte voor de kabel
+  aan de achterkant. Een apparaat dat half over de rand hangt, staat na een week
+  op de grond. Meet je nachtkastje voordat je bestelt.
+</p>
+
+<h3>Moet het licht wit zijn, of mag het gekleurd?</h3>
+
+<p>
+  Voor het wekmoment is warm licht dat naar helderder loopt het uitgangspunt.
+  Veel apparaten kunnen daarnaast andere kleuren als sfeerlicht, en dat is een
+  aparte functie — leuk om te hebben, geen reden om ervoor te kiezen.
+</p>
