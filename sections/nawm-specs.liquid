@@ -1,17 +1,29 @@
 {% comment %}
-  Sectie 9 — Specificaties. BUILD SPEC §5.9.
+  Sectie 9 — Specificaties, kort. BUILD SPEC §5.9, ingekort in
+  NAWM_RANDZAKEN_ADS_SEO.md §S1.
 
-  Een vertrouwenssectie, geen verkoopsectie — daarom mag hij er functioneel en
-  dicht uitzien: definitielijst, mono waarden, harde 4px-hoeken in plaats van
-  ronde kaarten.
+  Deze sectie was een kopie van de specificatietabel op de productpagina:
+  dezelfde zeven groepen, dezelfde twintig rijen, dezelfde metafields. Google
+  zag twee pagina's die om `wake up light` en `lichtwekker` concurreerden en
+  koos er zelf één — meestal de verkeerde.
+
+  De scheiding is inhoudelijk en geen technische truc. De homepage draagt het
+  probleem, het patroon, het systeem en de routine; de productpagina draagt de
+  specificaties, de prijs en de beoordelingen. Wat hier overblijft zijn vier
+  getallen die het verhaal van de homepage afmaken, plus één beschrijvende link
+  naar de plek waar de rest staat.
+
+  Weggehaald en niet vervangen: geluid, alarmen, connectiviteit, voeding,
+  fysiek en de inhoud van de doos. De volledige lijst met selecteerbare
+  wekgeluiden hoort daar uitdrukkelijk bij — die stond hier én op de PDP.
+
+  De verplichte disambiguatie tussen ontspanningsgeluiden en selecteerbare
+  wekgeluiden verhuist daarmee mee naar sections/pdp-specs.liquid. Zet die
+  twee rijen hier nooit terug zonder ook dat onderscheid terug te zetten: wie
+  25 wekgeluiden verwacht, stuurt het apparaat terug.
 
   Alle waarden komen uit metafields (§8.1). Nul hardcoded getallen. Ontbreekt
   een waarde, dan rendert het VERIFY-token.
-
-  Verplichte disambiguatie: het aantal ontspanningsgeluiden en het aantal
-  selecteerbare wekgeluiden zijn verschillende getallen en staan daarom in twee
-  aparte rijen met eigen labels. Doe je dat niet, dan koopt iemand met de
-  verwachting van 25 wekgeluiden en dat is een retour plus een negatieve review.
 {% endcomment %}
 
 {% liquid
@@ -40,226 +52,99 @@
 %}
 
 <section class="nawm-section nawm-specs ctx-dawn" id="specificaties">
-  <div class="nawm-wrap">
+  <div class="nawm-wrap nawm-specs__inner">
     <div class="nawm-specs__head nawm-reveal">
       {% render 'nawm-eyebrow', text: eyebrow %}
       <h2>{{ heading }}</h2>
+      <p class="nawm-lede nawm-specs__lede">{{ 'nawm.specs.lede' | t }}</p>
     </div>
 
-    <div class="nawm-specs__groups">
-      <section class="nawm-specs__group">
-        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.light' | t }}</h3>
-        <dl class="nawm-specs__list">
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.brightness_levels',
-            metafield: mf.brightness_levels,
-            field: 'brightness_levels',
-            note: 'aantal helderheidsniveaus — bevestigen op het verkoopmodel'
-          %}
+    {%- comment -%}
+      Vier getallen, geen tabel. De volledige lijst — geluid, alarmen,
+      connectiviteit, voeding, afmetingen, EAN, garantie, inhoud van de doos —
+      staat op de productpagina en hoort daar alleen te staan.
+    {%- endcomment -%}
+    <dl class="nawm-specs__list nawm-specs__list--core nawm-reveal">
+      <div class="nawm-specs__row">
+        <dt class="nawm-specs__label">{{ 'nawm.specs.rows.sunrise_range' | t }}</dt>
+        <dd class="nawm-specs__value nawm-mono">
+          {%- if mf.sunrise_min_minutes.type != blank and mf.sunrise_max_minutes.type != blank -%}
+            {{-
+              'nawm.specs.sunrise_range_value'
+              | t: min: mf.sunrise_min_minutes.value, max: mf.sunrise_max_minutes.value
+            -}}
+          {%- else -%}
+            {% render 'nawm-verify',
+              field: 'sunrise_min_minutes / sunrise_max_minutes',
+              note: 'instelbare zonsopgangduur — bevestigen op het verkoopmodel'
+            %}
+          {%- endif -%}
+        </dd>
+      </div>
 
-          <div class="nawm-specs__row">
-            <dt class="nawm-specs__label">{{ 'nawm.specs.rows.sunrise_range' | t }}</dt>
-            <dd class="nawm-specs__value nawm-mono">
-              {%- if mf.sunrise_min_minutes.type != blank and mf.sunrise_max_minutes.type != blank -%}
-                {{-
-                  'nawm.specs.sunrise_range_value'
-                  | t: min: mf.sunrise_min_minutes.value, max: mf.sunrise_max_minutes.value
-                -}}
-              {%- else -%}
-                {% render 'nawm-verify',
-                  field: 'sunrise_min_minutes / sunrise_max_minutes',
-                  note: 'instelbare zonsopgangduur — bevestigen op het verkoopmodel'
-                %}
-              {%- endif -%}
-            </dd>
-          </div>
+      {% render 'nawm-spec-row',
+        label_key: 'nawm.specs.rows.brightness_levels',
+        metafield: mf.brightness_levels,
+        field: 'brightness_levels',
+        note: 'aantal helderheidsniveaus — bevestigen op het verkoopmodel'
+      %}
 
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.light_colors',
-            metafield: mf.light_colors,
-            field: 'light_colors',
-            kind: 'list',
-            note: 'lichtkleuren — bron noemt acht kleuren, bevestigen op het verkoopmodel'
-          %}
+      {% render 'nawm-spec-row',
+        label_key: 'nawm.specs.rows.light_colors',
+        metafield: mf.light_colors,
+        field: 'light_colors',
+        kind: 'list',
+        note: 'aantal en namen van de lichtkleuren'
+      %}
 
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.display_dimmable',
-            metafield: mf.display_dimmable,
-            field: 'display_dimmable',
-            kind: 'bool',
-            note: 'display dimbaar'
-          %}
-        </dl>
-      </section>
+      {% render 'nawm-spec-row',
+        label_key: 'nawm.specs.rows.display_dimmable',
+        metafield: mf.display_dimmable,
+        field: 'display_dimmable',
+        kind: 'boolean',
+        note: 'of het display volledig uit kan'
+      %}
+    </dl>
 
-      <section class="nawm-specs__group">
-        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.sound' | t }}</h3>
-        <p class="nawm-small nawm-specs__note">{{ 'nawm.specs.disambiguation' | t }}</p>
-        <dl class="nawm-specs__list">
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.relax_sounds_count',
-            metafield: mf.relax_sounds_count,
-            field: 'relax_sounds_count',
-            note: 'aantal ontspanningsgeluiden — listing noemt 25, tellen op het verkoopmodel'
-          %}
-
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.wake_sounds_count',
-            metafield: mf.wake_sounds_count,
-            field: 'wake_sounds_count',
-            note: 'aantal selecteerbare wekgeluiden — bronnen noemen 22 én zeven, tellen op het verkoopmodel'
-          %}
-
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.wake_sounds_list',
-            metafield: mf.wake_sounds_list,
-            field: 'wake_sounds_list',
-            optional: true,
-            kind: 'list',
-            note: 'welke geluiden daadwerkelijk als wekgeluid selecteerbaar zijn'
-          %}
-        </dl>
-      </section>
-
-      <section class="nawm-specs__group">
-        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.alarms' | t }}</h3>
-        <dl class="nawm-specs__list">
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.alarms',
-            metafield: mf.alarms,
-            field: 'alarms',
-            note: 'alarmen, week/weekend, snooze en sleeptimer'
-          %}
-        </dl>
-      </section>
-
-      <section class="nawm-specs__group">
-        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.connectivity' | t }}</h3>
-        <dl class="nawm-specs__list">
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.has_fm_radio',
-            metafield: mf.has_fm_radio,
-            field: 'has_fm_radio',
-            kind: 'bool',
-            note: 'FM-radio — model, knoppen, ontvangst en handleiding één-op-één controleren'
-          %}
-
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.has_bluetooth',
-            metafield: mf.has_bluetooth,
-            field: 'has_bluetooth',
-            kind: 'bool',
-            note: 'bluetooth'
-          %}
-
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.has_usb_port',
-            metafield: mf.has_usb_port,
-            field: 'has_usb_port',
-            optional: true,
-            kind: 'bool',
-            note: 'USB-poort — alleen vermelden als hij de telefoon van het nachtkastje kan houden'
-          %}
-        </dl>
-      </section>
-
-      <section class="nawm-specs__group">
-        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.power' | t }}</h3>
-        <dl class="nawm-specs__list">
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.power',
-            metafield: mf.power,
-            field: 'power',
-            note: 'voeding'
-          %}
-
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.battery_backup',
-            metafield: mf.battery_backup,
-            field: 'battery_backup',
-            optional: true,
-            note: 'back-upgedrag bij stroomuitval — blijven tijd en alarm bewaard, en hoelang'
-          %}
-        </dl>
-      </section>
-
-      <section class="nawm-specs__group">
-        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.physical' | t }}</h3>
-        <dl class="nawm-specs__list">
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.dimensions_mm',
-            metafield: mf.dimensions_mm,
-            field: 'dimensions_mm',
-            note: 'afmetingen — meten op het verkoopmodel'
-          %}
-
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.weight_g',
-            metafield: mf.weight_g,
-            field: 'weight_g',
-            suffix: 'g',
-            note: 'gewicht — wegen op het verkoopmodel'
-          %}
-
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.ean',
-            metafield: mf.ean,
-            field: 'ean',
-            note: 'EAN — moet identiek zijn aan wat er op de verpakking staat'
-          %}
-
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.warranty',
-            metafield: mf.warranty,
-            field: 'warranty',
-            note: 'garantietermijn — verpakking en leverancier'
-          %}
-        </dl>
-      </section>
-
-      <section class="nawm-specs__group">
-        <h3 class="nawm-specs__group-heading">{{ 'nawm.specs.groups.box' | t }}</h3>
-        <dl class="nawm-specs__list">
-          {% render 'nawm-spec-row',
-            label_key: 'nawm.specs.rows.in_the_box',
-            metafield: mf.in_the_box,
-            field: 'in_the_box',
-            kind: 'list',
-            note: 'exacte inhoud van de doos'
-          %}
-        </dl>
-      </section>
-    </div>
+    {%- comment -%}
+      De uitgang naar de productpagina. Beschrijvende ankertekst, geen "lees
+      meer": dit is de interne link die Google vertelt welke van de twee
+      pagina's de transactionele is. Zie NAWM_RANDZAKEN_ADS_SEO.md §S6.
+    {%- endcomment -%}
+    {%- if product != blank -%}
+      <p class="nawm-specs__more nawm-reveal">
+        <a class="nawm-cta nawm-cta--ghost" href="{{ product.url }}">
+          {{- 'nawm.specs.all_specs_link' | t -}}
+        </a>
+      </p>
+    {%- endif -%}
   </div>
 </section>
 
 {% stylesheet %}
-  .nawm-specs__groups {
-    margin-block-start: clamp(2.5rem, 6vw, 4rem);
-    display: grid;
-    gap: var(--sp-6);
+  /* De zeven groepen met hun kopjes zijn hier weg: die tabel staat nu alleen
+     nog op de productpagina. Wat overblijft is één lijst van vier rijen. */
+  .nawm-specs__inner {
+    max-width: 52rem;
   }
 
-  .nawm-specs__group-heading {
-    font-family: var(--ff-mono);
-    font-size: var(--fs-mono);
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: .14em;
-    color: var(--nawm-ember);
-    padding-block-end: var(--sp-2);
-    border-block-end: 1px solid var(--line);
-  }
-
-  .nawm-specs__note {
-    margin-block-start: var(--sp-3);
-    max-width: 62ch;
+  .nawm-specs .nawm-specs__lede {
+    margin-block-start: var(--sp-4);
+    max-width: 56ch;
   }
 
   .nawm-specs__list {
     margin: var(--sp-3) 0 0;
     display: grid;
     gap: 0;
+  }
+
+  .nawm-specs__list--core {
+    margin-block-start: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  .nawm-specs .nawm-specs__more {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
   }
 
   .nawm-specs__row {
@@ -293,13 +178,6 @@
     }
   }
 
-  @media (min-width: 1024px) {
-    .nawm-specs__groups {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--sp-6) var(--sp-7);
-      align-items: start;
-    }
-  }
 {% endstylesheet %}
 
 {% schema %}
@@ -308,7 +186,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "Alle waarden komen uit de metafields in de namespace nawm op het gekozen product. Ontbreekt er één, dan verschijnt hier een magenta VERIFY-token in plaats van een gok."
+      "content": "Vier kernwaarden uit de metafields in de namespace nawm. Ontbreekt er één, dan verschijnt hier een magenta VERIFY-token in plaats van een gok. De volledige specificatietabel staat bewust alléén op de productpagina — zet hem hier niet terug, anders concurreren je twee sterkste pagina's weer om dezelfde zoekwoorden."
     },
     {
       "type": "text",

@@ -164,7 +164,8 @@
       "distribution_label": "Beoordelingsverdeling",
       "stars_short": "{{ n }}★",
       "stars_of_five": "{{ n }} van de 5 sterren",
-      "verified": "Geverifieerde aankoop"
+      "verified": "Geverifieerde aankoop",
+      "all_reviews_link": "Lees alle beoordelingen"
     },
     "inbox": {
       "eyebrow": "Wat je krijgt",
@@ -177,8 +178,10 @@
       "image_alt": "Alle onderdelen uit de doos van bovenaf naast elkaar gelegd"
     },
     "specs": {
-      "eyebrow": "Specificaties",
-      "heading": "Alles wat in de doos zit, precies zoals het is.",
+      "eyebrow": "De kern",
+      "heading": "Vier getallen die het verschil maken.",
+      "lede": "De rest van de specificaties — geluid, alarmen, aansluitingen, voeding, afmetingen — staat op de productpagina, waar je ze nodig hebt.",
+      "all_specs_link": "Alle specificaties op de productpagina",
       "groups": {
         "light": "Licht",
         "sound": "Geluid",
@@ -292,6 +295,7 @@
           "a": "Nee. NAWM is een consumentenproduct voor routine en wekcomfort, geen medisch hulpmiddel of behandeling."
         }
       },
+      "all_questions_link": "Nog zeven vragen, op de productpagina",
       "practical_heading": "Bestellen en retourneren",
       "practical": {
         "p1": {
@@ -824,8 +828,8 @@
       "manual": "Lees de volledige handleiding vóór je bestelt"
     },
     "seo": {
-      "home_title": "NAWM Wake-Up Light — word wakker met licht, niet met schrikken",
-      "home_description": "Zonsopgang van 10 tot 60 minuten, 20 helderheidsstanden en 7 wekgeluiden. Nederlandstalige handleiding, 30 dagen retour, gratis retourzending."
+      "home_title": "NAWM — rustiger avond, zachtere ochtend",
+      "home_description": "Wij maken één ding: een wake-up light met een routine eromheen. Waarom je ochtend zwaar voelt, en wat je er vanavond al aan kunt veranderen."
     },
     "contact": {
       "eyebrow": "Contact",
