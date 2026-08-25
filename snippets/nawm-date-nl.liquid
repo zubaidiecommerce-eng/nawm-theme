@@ -1,0 +1,28 @@
+{% doc %}
+  Een datum in het Nederlands: `25 augustus 2026`.
+
+  Shopify's `date`-filter geeft `%B` terug in de taal van de winkelinstelling
+  en niet in die van het talenbestand. Op een winkel die in het Engels is
+  aangemaakt levert dat `25 August 2026` op, midden in een Nederlandse zin.
+  De maandnamen staan daarom in `nawm.pdp.common.months` en worden hier
+  opgezocht — dezelfde lijst die de leverdatum in het koopblok gebruikt, zodat
+  de site nooit twee schrijfwijzen van dezelfde maand toont.
+
+  @param {string} date - Een datum, bijvoorbeeld `article.published_at`.
+{% enddoc %}
+
+{%- liquid
+  if date != blank
+    assign months = 'nawm.pdp.common.months' | t | split: ','
+    assign month_index = date | date: '%-m' | times: 1 | minus: 1
+    assign day_number = date | date: '%-d'
+    assign year_number = date | date: '%Y'
+    assign month_name = months[month_index] | strip
+
+    echo day_number
+    echo ' '
+    echo month_name
+    echo ' '
+    echo year_number
+  endif
+-%}

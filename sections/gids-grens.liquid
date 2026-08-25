@@ -1,0 +1,106 @@
+{% comment %}
+  De grenspagina. NAWM_SEO_CONTENTSPEC.md §4.13.
+
+  De enige pagina van de site waar symptomen bij naam genoemd worden, en
+  uitsluitend om te zeggen dat wij er niet over gaan. Dat is geen zwakte maar
+  het bewijs dat we onze eigen grenzen kennen — precies wat een webshop met
+  één product nodig heeft om in de buurt van medische zoekwoorden te mogen
+  komen zonder een claim te doen.
+
+  Drie regels voor wie deze pagina ooit bewerkt:
+
+  · Geen enkel signaal in de lijst mag gekoppeld worden aan het product. Niet
+    impliciet, niet "wij kunnen helpen bij". De lijst is een doorverwijzing en
+    geen bruggetje.
+  · De verwijzing naar Thuisarts.nl en de huisarts blijft staan en blijft
+    boven de link naar de avondpijler.
+  · Deze pagina staat op de uitzonderingslijst van `scripts/claims-lint.sh`
+    (§9). Dat is geen vrijbrief voor claims — alleen voor het benoemen van de
+    dingen waar we níét over gaan.
+
+  Vanuit elk artikel in cluster B en vanuit de veiligheidsnoot op de homepage
+  wordt hierheen gelinkt.
+{% endcomment %}
+
+{% liquid
+  assign signals = 's1,s2,s3,s4,s5' | split: ','
+  assign evening = pages['avondroutine']
+
+  comment
+    Filters werken niet op argumenten van een render-tag — theme-check
+    UnsupportedFilterArguments. De vertaling gebeurt dus hier.
+  endcomment
+  assign eyebrow = 'nawm.gids.grens.eyebrow' | t
+%}
+
+<article class="nawm-section gids-grens ctx-dawn">
+  <div class="nawm-wrap gids-grens__inner">
+    {% render 'nawm-schema-breadcrumb', page: page, in_guide: false %}
+
+    <header class="gids-grens__head">
+      {% render 'nawm-eyebrow', text: eyebrow %}
+      <h1 class="gids-grens__title">{{ page.title }}</h1>
+    </header>
+
+    <div class="gids-grens__body nawm-body-long">
+      <p>{{ 'nawm.gids.grens.intro_1' | t }}</p>
+      <p>{{ 'nawm.gids.grens.intro_2' | t }}</p>
+
+      <h2 id="wanneer-de-huisarts">{{ 'nawm.gids.grens.signals_heading' | t }}</h2>
+      <ul>
+        {%- for key in signals -%}
+          {%- assign k = 'nawm.gids.grens.signals.' | append: key -%}
+          <li>{{ k | t }}</li>
+        {%- endfor -%}
+      </ul>
+
+      <p>
+        {{ 'nawm.gids.grens.referral' | t }}
+        <a href="https://www.thuisarts.nl" target="_blank" rel="noopener">
+          {{- 'nawm.gids.grens.thuisarts_anchor' | t -}}
+          <span class="nawm-visually-hidden"> ({{ 'nawm.common.opens_new_tab' | t }})</span>
+        </a>{{ 'nawm.gids.grens.referral_tail' | t }}
+      </p>
+
+      <h2 id="waar-wij-wel-over-gaan">{{ 'nawm.gids.grens.scope_heading' | t }}</h2>
+      <p>
+        {{ 'nawm.gids.grens.scope_body' | t }}
+        {%- if evening != blank and evening.title != blank -%}
+          {{ ' ' }}
+          <a href="{{ evening.url }}">{{ 'nawm.gids.grens.evening_anchor' | t }}</a>{{ 'nawm.gids.grens.scope_tail' | t }}
+        {%- endif -%}
+      </p>
+    </div>
+  </div>
+</article>
+
+{% stylesheet %}
+  .gids-grens__inner {
+    max-width: 44rem;
+  }
+
+  .gids-grens__head {
+    margin-block-start: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .gids-grens .gids-grens__title {
+    font-size: var(--fs-h2);
+    text-wrap: balance;
+  }
+
+  .gids-grens__body {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Grenspagina",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De tekst staat in locales/nl.default.json onder nawm.gids.grens. Koppel geen enkel signaal uit de lijst aan het product — deze pagina verwijst door en verkoopt niet."
+    }
+  ]
+}
+{% endschema %}

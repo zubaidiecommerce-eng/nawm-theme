@@ -1,0 +1,306 @@
+{% comment %}
+  Een pijlerpagina. NAWM_SEO_CONTENTSPEC.md §3 en §6.1.
+
+  Drie pijlers, één sjabloon. Welke pagina je ziet hangt af van `page.handle`:
+  `wake-up-light`, `beter-opstaan` of `avondroutine`.
+
+  Waarom de tekst in snippets staat en niet in het talenbestand of in de
+  admin:
+
+  · Een pijler is 1200 tot 1800 woorden met koppen, lijsten en links. Dat als
+    losse JSON-sleutels onderhouden is onwerkbaar, en als rich text in de
+    admin valt het buiten `scripts/claims-lint.sh` — en §0 zegt dat de lint
+    over alle content moet draaien.
+  · Een snippet is een gewoon bestand in deze repo. Het staat in versiebeheer,
+    de lint leest het mee, en Shopify's GitHub-koppeling synchroniseert het.
+
+  `render` neemt geen variabele snippetnaam, vandaar de case hieronder. Dat is
+  ook eerlijker: er zijn precies drie pijlers, en een vierde toevoegen hoort
+  een bewuste handeling te zijn.
+
+  De artikellijst onderaan is regel §5.2: elke pijler linkt naar al zijn
+  artikelen. Ze worden gevonden via de tag `pijler:<handle>` op het artikel,
+  dus een nieuw artikel verschijnt hier vanzelf zodra het die tag krijgt.
+{% endcomment %}
+
+{% liquid
+  assign guide = blogs.gids
+
+  assign base = 'nawm.gids.pijler.' | append: page.handle
+
+  assign eyebrow_key = base | append: '.eyebrow'
+  assign eyebrow = eyebrow_key | t
+
+  assign intro_key = base | append: '.intro'
+  assign intro = intro_key | t
+
+  assign articles_key = base | append: '.articles_heading'
+  assign articles_heading = articles_key | t
+
+  comment
+    Vangnet voor de productkoppeling, zoals in alle NAWM-secties.
+  endcomment
+  assign nawm_product = settings.nawm_product
+  if nawm_product.id == blank and settings.nawm_product_handle != blank
+    assign nawm_product = all_products[settings.nawm_product_handle]
+  endif
+
+  assign pillar_tag = 'pijler:' | append: page.handle
+%}
+
+<article class="nawm-section pijler ctx-dawn">
+  <div class="nawm-wrap pijler__inner">
+    {% render 'nawm-schema-breadcrumb', page: page, in_guide: true %}
+
+    <header class="pijler__head">
+      {%- unless eyebrow contains 'translation missing' -%}
+        {% render 'nawm-eyebrow', text: eyebrow %}
+      {%- endunless -%}
+      <h1 class="pijler__title">{{ page.title }}</h1>
+      {%- unless intro contains 'translation missing' -%}
+        <p class="nawm-lede pijler__intro">{{ intro }}</p>
+      {%- endunless -%}
+    </header>
+
+    {%- comment -%}
+      De body wordt eerst opgevangen en dan pas uitgeschreven. Dat is nodig
+      voor de inhoudsopgave: die leest de H2's uit de HTML, en dus moet die
+      HTML er als tekst zijn voordat hij op de pagina staat. Een pijler is 1200
+      tot 1800 woorden en haalt de ondergrens van §6.5 dus ruim.
+    {%- endcomment -%}
+    {%- capture pijler_body -%}
+      {%- case page.handle -%}
+        {%- when 'wake-up-light' -%}
+          {% render 'pijler-wake-up-light' %}
+        {%- when 'beter-opstaan' -%}
+          {% render 'pijler-beter-opstaan' %}
+        {%- when 'avondroutine' -%}
+          {% render 'pijler-avondroutine' %}
+        {%- else -%}
+          {%- comment -%}
+            Een pagina die aan dit sjabloon hangt maar geen van de drie
+            handles heeft. Dan valt de admin-inhoud terug op zijn plek, zodat
+            er iets staat in plaats van niets.
+          {%- endcomment -%}
+          {{ page.content }}
+      {%- endcase -%}
+    {%- endcapture -%}
+
+    {% render 'nawm-toc', content: pijler_body %}
+
+    <div class="pijler__body nawm-body-long">
+      {{ pijler_body }}
+    </div>
+
+    {%- comment -%}
+      De infographic van de Sleep–Wake Guide hoort op de avondpijler (§3.3):
+      dit is de pagina die dezelfde zes momenten uitlegt. Hij staat hier als
+      afbeelding met de vermelding dat de PDF bij elke bestelling meekomt.
+
+      Geen placeholder zolang het beeld er niet is. Een gepubliceerde pagina
+      met een lege kader erin is erger dan een pagina zonder beeld.
+    {%- endcomment -%}
+    {%- if section.settings.infographic != blank -%}
+      <figure class="pijler__infographic">
+        <img
+          src="{{ section.settings.infographic | image_url: width: 1400 }}"
+          srcset="
+            {{ section.settings.infographic | image_url: width: 700 }} 700w,
+            {{ section.settings.infographic | image_url: width: 1400 }} 1400w
+          "
+          sizes="(min-width: 1024px) 44rem, 100vw"
+          alt="{{ section.settings.infographic_alt | escape }}"
+          width="{{ section.settings.infographic.width }}"
+          height="{{ section.settings.infographic.height }}"
+          loading="lazy"
+          decoding="async"
+        >
+        <figcaption class="nawm-small pijler__infographic-caption">
+          {{ 'nawm.gids.infographic_caption' | t }}
+        </figcaption>
+      </figure>
+    {%- endif -%}
+
+    {%- comment -%}
+      §5.2 — elke pijler linkt naar al zijn artikelen. Zonder dit blok is een
+      cluster een verzameling losse pagina's zonder rankkracht.
+    {%- endcomment -%}
+    {%- assign cluster_size = 0 -%}
+    {%- for item in guide.articles -%}
+      {%- if item.tags contains pillar_tag -%}
+        {%- assign cluster_size = cluster_size | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if cluster_size > 0 -%}
+      <section class="pijler__cluster" aria-labelledby="pijler-cluster-heading">
+        <h2 class="pijler__cluster-heading" id="pijler-cluster-heading">
+          {{- articles_heading -}}
+        </h2>
+        <ul class="pijler__cluster-list">
+          {%- for item in guide.articles -%}
+            {%- if item.tags contains pillar_tag -%}
+              <li class="pijler__cluster-item">
+                <a class="pijler__cluster-link" href="{{ item.url }}">{{ item.title }}</a>
+                {%- if item.excerpt != blank -%}
+                  <p class="pijler__cluster-excerpt">{{ item.excerpt | strip_html | truncate: 140 }}</p>
+                {%- endif -%}
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      </section>
+    {%- endif -%}
+
+    {%- comment -%}
+      §5.3 — elke pijler linkt één keer naar de productpagina, met ankertekst
+      die het product beschrijft. Eén keer, en niet als banner: dit is een
+      informatiepagina, en een koopblok halverwege maakt hem ongeloofwaardig.
+    {%- endcomment -%}
+    {%- if nawm_product != blank -%}
+      <p class="pijler__product">
+        {{ 'nawm.gids.pijler_product_lede' | t }}
+        <a href="{{ nawm_product.url }}">{{ 'nawm.gids.pijler_product_anchor' | t }}</a>{{ 'nawm.gids.pijler_product_tail' | t }}
+      </p>
+    {%- endif -%}
+  </div>
+</article>
+
+{% stylesheet %}
+  .pijler__inner {
+    max-width: 44rem;
+  }
+
+  .pijler__head {
+    margin-block-start: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .pijler .pijler__title {
+    font-size: var(--fs-h2);
+    text-wrap: balance;
+  }
+
+  .pijler .pijler__intro {
+    margin-block-start: var(--sp-4);
+  }
+
+  .pijler__body {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+  }
+
+  .pijler__infographic {
+    margin: clamp(2.5rem, 6vw, 3.5rem) 0 0;
+  }
+
+  .pijler__infographic img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--ink-day) 6%, transparent);
+  }
+
+  .pijler .pijler__infographic-caption {
+    margin-block-start: var(--sp-3);
+  }
+
+  .pijler__cluster {
+    margin-block-start: clamp(3rem, 8vw, 4.5rem);
+    padding: clamp(1.5rem, 4vw, 2rem);
+    border: 1px solid var(--nawm-peach);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 92%, #fff);
+  }
+
+  .pijler .pijler__cluster-heading {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--nawm-ember);
+  }
+
+  .pijler__cluster-list {
+    list-style: none;
+    margin: var(--sp-4) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .pijler__cluster-item {
+    padding-block: var(--sp-4);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .pijler__cluster-item:last-child {
+    border-block-end: 0;
+    padding-block-end: 0;
+  }
+
+  .pijler__cluster-link {
+    color: var(--fg);
+    font-size: 1.0625rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .pijler__cluster-link:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--nawm-ember);
+    text-underline-offset: 4px;
+  }
+
+  .pijler .pijler__cluster-excerpt {
+    margin-block-start: var(--sp-2);
+    font-size: var(--fs-small);
+    max-width: 62ch;
+  }
+
+  .pijler .pijler__product {
+    margin-block-start: clamp(2.5rem, 6vw, 3.5rem);
+    padding-block-start: var(--sp-4);
+    border-block-start: 1px solid var(--line);
+    color: var(--fg);
+    max-width: 62ch;
+  }
+
+  .pijler__product a {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--nawm-ember);
+    text-underline-offset: 4px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Pijlerpagina",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De pagina kiest zijn inhoud op handle: wake-up-light, beter-opstaan of avondroutine. De tekst staat in snippets/pijler-<handle>.liquid, de kop en de intro in locales/nl.default.json onder nawm.gids.pijler. De artikellijst vult zich uit de tag pijler:<handle> op de artikelen in de blog 'gids'."
+    },
+    {
+      "type": "header",
+      "content": "Infographic"
+    },
+    {
+      "type": "paragraph",
+      "content": "Alleen voor de avondpijler: de Sleep–Wake Guide als beeld. Laat leeg zolang het beeld er niet is — een leeg kader op een gepubliceerde pagina is erger dan geen beeld."
+    },
+    {
+      "type": "image_picker",
+      "id": "infographic",
+      "label": "Beeld"
+    },
+    {
+      "type": "text",
+      "id": "infographic_alt",
+      "label": "Alt-tekst",
+      "info": "Beschrijf wat er te zien is, in gewone taal. Geen zoekwoorden."
+    }
+  ]
+}
+{% endschema %}

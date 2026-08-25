@@ -11,11 +11,25 @@
   if body == blank
     assign body = 'nawm.safety.body' | t
   endif
+
+  comment
+    De grenspagina, als hij bestaat. NAWM_SEO_CONTENTSPEC.md §4.13 vraagt om een
+    link hiernaartoe vanuit elk artikel in cluster B én vanuit deze noot. Dit is
+    de plek op de homepage waar de grens toch al staat; hem hier laten
+    doorverwijzen naar wie er wél over gaat, kost niets en maakt de noot af.
+  endcomment
+  assign grens = pages['wanneer-naar-de-huisarts']
 %}
 
 <section class="nawm-section nawm-safety ctx-dawn">
   <div class="nawm-wrap">
-    <p class="nawm-safety__text">{{ body }}</p>
+    <p class="nawm-safety__text">
+      {{ body }}
+      {%- if grens != blank and grens.title != blank -%}
+        {{ ' ' }}
+        <a href="{{ grens.url }}">{{ 'nawm.safety.grens_link' | t }}</a>
+      {%- endif -%}
+    </p>
   </div>
 </section>
 

@@ -23,6 +23,16 @@
 {% liquid
   assign reviews = shop.metaobjects.nawm_review.values
 
+  comment
+    Vangnet voor de productkoppeling, zoals in de andere secties: eerst de
+    themasetting, dan de handle. Alleen nodig voor de link naar de volledige
+    beoordelingen op de productpagina.
+  endcomment
+  assign nawm_product = settings.nawm_product
+  if nawm_product.id == blank and settings.nawm_product_handle != blank
+    assign nawm_product = all_products[settings.nawm_product_handle]
+  endif
+
   assign eyebrow = section.settings.eyebrow
   if eyebrow == blank
     assign eyebrow = 'nawm.proof.eyebrow' | t
@@ -52,10 +62,26 @@
     endif
   endfor
 
+  comment
+    De homepage toont er drie, de productpagina alle acht. Zie
+    NAWM_RANDZAKEN_ADS_SEO.md §S1: dezelfde acht beoordelingen op beide
+    pagina's maakte van de twee sterkste pagina's van de winkel elkaars
+    concurrent. Drie is genoeg om de score te dragen — en een score zonder
+    zichtbare beoordelingen op dezelfde pagina is een schema-overtreding, dus
+    nul is geen optie.
+  endcomment
+  assign max_reviews = section.settings.max_reviews | times: 1
+  if max_reviews <= 0
+    assign max_reviews = 3
+  endif
+
   assign visible = 0
   for review in reviews
     if review.bron_url != blank and review.datum != blank and review.citaat != blank
       assign visible = visible | plus: 1
+      if visible >= max_reviews
+        break
+      endif
     endif
   endfor
 %}
@@ -137,15 +163,32 @@
       data-count="{{ visible }}"
     >
       <ul class="nawm-proof__track" data-marquee-track>
+        {%- assign shown = 0 -%}
         {%- for review in reviews -%}
           {%- if review.bron_url != blank and review.datum != blank and review.citaat != blank -%}
             <li class="nawm-proof__item">
               {% render 'nawm-review-card', review: review, uid: forloop.index %}
             </li>
+            {%- assign shown = shown | plus: 1 -%}
+            {%- if shown >= max_reviews -%}
+              {%- break -%}
+            {%- endif -%}
           {%- endif -%}
         {%- endfor -%}
       </ul>
     </div>
+
+    {%- comment -%}
+      De uitgang naar de rest van de beoordelingen. Beschrijvende ankertekst
+      naar de productpagina, want dat is de pagina die alle acht draagt.
+    {%- endcomment -%}
+    {%- if nawm_product != blank -%}
+      <div class="nawm-wrap nawm-proof__more nawm-reveal">
+        <a class="nawm-cta nawm-cta--ghost" href="{{ nawm_product.url }}#beoordelingen">
+          {{- 'nawm.proof.all_reviews_link' | t -}}
+        </a>
+      </div>
+    {%- endif -%}
   {%- else -%}
     <div class="nawm-wrap">
       <p class="nawm-small nawm-proof__empty">{{ 'nawm.proof.empty' | t }}</p>
@@ -374,6 +417,10 @@
     color: var(--fg-soft);
   }
 
+  .nawm-proof__more {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+  }
+
   .nawm-proof__empty {
     margin-block-start: clamp(2rem, 5vw, 3rem);
   }
@@ -401,6 +448,16 @@
       "type": "textarea",
       "id": "heading",
       "label": "Kop"
+    },
+    {
+      "type": "range",
+      "id": "max_reviews",
+      "label": "Aantal beoordelingen op deze pagina",
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "default": 3,
+      "info": "De homepage toont er drie, de productpagina alle acht. Zet dit niet hoger: dezelfde acht beoordelingen op beide pagina's laat je twee sterkste pagina's om dezelfde zoekwoorden concurreren."
     }
   ],
   "presets": [

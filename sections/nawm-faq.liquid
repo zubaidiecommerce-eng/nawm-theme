@@ -4,12 +4,14 @@
   Koopweerstand wegnemen, en eerlijk zijn over grenzen. Native <details> en
   <summary>, geen JS-accordeon: semantiek en toetsenbord komen zo gratis mee.
 
-  De FAQPage JSON-LD wordt in dezelfde lus opgebouwd als de zichtbare lijst,
-  zodat er nooit twee versies van hetzelfde antwoord onderhouden worden.
-  Antwoorden die nog een VERIFY zijn, gaan bewust níét de structured data in.
+  Vier vragen, en geen FAQPage JSON-LD. Beide sinds
+  NAWM_RANDZAKEN_ADS_SEO.md §S1 en §S3: de productpagina droeg dezelfde elf
+  vragen en hetzelfde schema, en twee pagina's die om hetzelfde rich result
+  vechten leveren er samen minder op dan één.
 
   Staan er metaobjects `nawm_faq` klaar, dan zijn die de bron. Anders komen de
-  vragen uit locales/nl.default.json.
+  vragen uit locales/nl.default.json. In beide gevallen geldt hetzelfde
+  maximum.
 {% endcomment %}
 
 {% liquid
@@ -25,11 +27,28 @@
     assign heading = 'nawm.faq.heading' | t
   endif
 
-  assign keys = 'q1,q2,q3,q4,q5,q6,q7,q8' | split: ','
-  assign practical = 'p1,p2,p3' | split: ','
-  assign verify_notes = 'functionele producttest van FM-selectie als wekbron,exact aantal wekgeluiden apart van totaal ontspanningsgeluiden,voeding en back-upgedrag bij stroomuitval' | split: ','
-  assign jsonld = ''
-  assign index = 0
+  comment
+    Vier vragen, niet elf. Zie NAWM_RANDZAKEN_ADS_SEO.md §S1.
+
+    Hier stonden acht inhoudelijke vragen plus drie praktische, en op de
+    productpagina stonden dezelfde. De overige zeven — q5 tot en met q8 en de
+    drie praktische over levertijd, retour en garantie — staan nu uitsluitend
+    op de productpagina, waar iemand ze stelt op het moment dat hij koopt.
+
+    De praktische lijst is helemaal weg en niet ingekort: levertijd, retour en
+    garantie zijn koopvragen, geen oriëntatievragen.
+  endcomment
+  assign keys = 'q1,q2,q3,q4' | split: ','
+  assign max_questions = keys.size
+
+  comment
+    Vangnet voor de productkoppeling, zoals in de andere secties. Alleen nodig
+    voor de link naar de overige vragen op de productpagina.
+  endcomment
+  assign nawm_product = settings.nawm_product
+  if nawm_product.id == blank and settings.nawm_product_handle != blank
+    assign nawm_product = all_products[settings.nawm_product_handle]
+  endif
 %}
 
 <section class="nawm-section nawm-faq ctx-dawn" id="faq">
@@ -42,27 +61,29 @@
 
     <div class="nawm-faq__list">
       {%- if faqs.size > 0 -%}
+        {%- comment -%}
+          Dezelfde bovengrens als de locale-variant hieronder. Zonder deze teller
+          zou een winkel met elf metaobjecten ze hier alsnog alle elf tonen, en
+          dan is de scheiding met de productpagina weer weg.
+        {%- endcomment -%}
+        {%- assign shown = 0 -%}
         {%- for faq in faqs -%}
           {%- liquid
             assign question = faq.vraag.value | default: faq.vraag
             assign answer = faq.antwoord.value | default: faq.antwoord
           -%}
           {%- if question != blank and answer != blank -%}
-            <details class="nawm-faq__item" {% if forloop.first %}open{% endif %} data-nawm-event="open_faq">
+            <details class="nawm-faq__item" {% if shown == 0 %}open{% endif %} data-nawm-event="open_faq">
               <summary class="nawm-faq__question">
                 <span class="nawm-faq__question-text">{{ question }}</span>
                 <span class="nawm-accordion__marker" aria-hidden="true"></span>
               </summary>
               <div class="nawm-faq__answer">{{ answer }}</div>
             </details>
-            {%- unless faq.toon_in_json_ld == false or faq.toon_in_json_ld.value == false -%}
-              {%- capture jsonld -%}
-                {{- jsonld -}}
-                {%- unless index == 0 -%},{%- endunless -%}
-                {"@type":"Question","name":{{ question | strip_html | json }},"acceptedAnswer":{"@type":"Answer","text":{{ answer | strip_html | json }}}}
-              {%- endcapture -%}
-              {%- assign index = index | plus: 1 -%}
-            {%- endunless -%}
+            {%- assign shown = shown | plus: 1 -%}
+            {%- if shown >= max_questions -%}
+              {%- break -%}
+            {%- endif -%}
           {%- endif -%}
         {%- endfor -%}
       {%- else -%}
@@ -83,69 +104,44 @@
               {%- if answer != blank -%}
                 <p>{{ answer }}</p>
               {%- else -%}
-                {%- liquid
-                  assign note_index = 0
-                  if key == 'q5'
-                    assign note_index = 1
-                  elsif key == 'q6'
-                    assign note_index = 2
-                  endif
-                -%}
+                {%- comment -%}
+                  De twee vragen met een eigen VERIFY-noot — q5 over het aantal
+                  wekgeluiden en q6 over de voeding — staan sinds §S1 alleen nog
+                  op de productpagina, met hun noten. Van q1 tot en met q4 gaat
+                  er nog één over een openstaande producttest, dus die noot
+                  blijft hier.
+                {%- endcomment -%}
                 <p>
-                  {% render 'nawm-verify', field: key, note: verify_notes[note_index] %}
+                  {% render 'nawm-verify',
+                    field: key,
+                    note: 'functionele producttest van FM-selectie als wekbron'
+                  %}
                 </p>
               {%- endif -%}
             </div>
           </details>
 
-          {%- if answer != blank -%}
-            {%- capture jsonld -%}
-              {{- jsonld -}}
-              {%- unless index == 0 -%},{%- endunless -%}
-              {"@type":"Question","name":{{ question | strip_html | json }},"acceptedAnswer":{"@type":"Answer","text":{{ answer | strip_html | json }}}}
-            {%- endcapture -%}
-            {%- assign index = index | plus: 1 -%}
-          {%- endif -%}
         {%- endfor -%}
       {%- endif -%}
 
       {%- comment -%}
-        Praktische vragen. De antwoorden komen uit de themasettings, zodat
-        levertijd, retour en garantie overal op de site identiek zijn.
+        Hier stonden de drie praktische vragen — levertijd, retour, garantie —
+        met hun antwoorden uit de themasettings. Ze staan nu alleen nog op de
+        productpagina. Dat zijn koopvragen: iemand stelt ze op het moment dat
+        hij op de knop kijkt, niet terwijl hij zich oriënteert.
       {%- endcomment -%}
-      {%- for key in practical -%}
-        {%- liquid
-          assign base = 'nawm.faq.practical.' | append: key
-          assign k_q = base | append: '.q'
-          assign question = k_q | t
-
-          case key
-            when 'p1'
-              assign answer = settings.delivery_time
-            when 'p2'
-              assign answer = settings.return_policy_line
-            else
-              assign answer = settings.warranty_line
-          endcase
-        -%}
-        {%- if answer != blank -%}
-          <details class="nawm-faq__item" data-nawm-event="open_faq">
-            <summary class="nawm-faq__question">
-                <span class="nawm-faq__question-text">{{ question }}</span>
-                <span class="nawm-accordion__marker" aria-hidden="true"></span>
-              </summary>
-            <div class="nawm-faq__answer"><p>{{ answer }}</p></div>
-          </details>
-
-          {%- capture jsonld -%}
-            {{- jsonld -}}
-            {%- unless index == 0 -%},{%- endunless -%}
-            {"@type":"Question","name":{{ question | strip_html | json }},"acceptedAnswer":{"@type":"Answer","text":{{ answer | strip_html | json }}}}
-          {%- endcapture -%}
-          {%- assign index = index | plus: 1 -%}
-        {%- endif -%}
-      {%- endfor -%}
     </div>
+
+    {%- comment -%}
+      De uitgang naar de overige zeven vragen. Beschrijvende ankertekst, en
+      niet dezelfde tekst als de andere links naar de productpagina — één
+      tekst, één doel.
+    {%- endcomment -%}
+    {%- if nawm_product != blank -%}
+      <p class="nawm-faq__more nawm-reveal">
+        <a href="{{ nawm_product.url }}#faq">{{ 'nawm.faq.all_questions_link' | t }}</a>
+      </p>
+    {%- endif -%}
 
     {%- comment -%}
       Wie na alle vragen nog iets kwijt wil, hoort niet te hoeven zoeken naar
@@ -163,13 +159,27 @@
   </div>
 </section>
 
-{%- if index > 0 -%}
-  <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{{ jsonld | strip_newlines | strip }}]}
-  </script>
-{%- endif -%}
+{%- comment -%}
+  Hier stond FAQPage JSON-LD, en op de productpagina staat hetzelfde schema uit
+  dezelfde bron. Twee FAQPages op één site die om hetzelfde rich result vechten
+  is een pagina te veel: Google kiest er één, en dat hoort de pagina te zijn
+  waar iemand koopt.
+
+  Het schema staat daarom uitsluitend in sections/pdp-faq.liquid. Zie
+  NAWM_RANDZAKEN_ADS_SEO.md §S3 en NAWM_SEO_CONTENTSPEC.md §6.4 — daar geldt
+  dezelfde regel voor de artikelen: geen FAQPage buiten de productpagina.
+{%- endcomment -%}
 
 {% stylesheet %}
+  .nawm-faq .nawm-faq__more {
+    margin-block-start: var(--sp-5);
+  }
+
+  .nawm-faq__more a {
+    text-decoration-color: var(--nawm-ember);
+    text-underline-offset: 4px;
+  }
+
   .nawm-faq .nawm-faq__intro {
     margin-block-start: var(--sp-4);
     max-width: 56ch;

@@ -15,3 +15,13 @@
 # claim die de lint zoekt. Zie BUILD SPEC §5.12, verbatim overgenomen.
 "q": "Helpt NAWM mij gegarandeerd om sneller in slaap te vallen?",
 "q": "Word ik gegarandeerd energieker wakker?",
+
+# --- sections/*.liquid, toelichtingen ---------------------------------------
+#
+# Reden: dit zijn commentaarregels die de regel uit NAWM_SEO_CONTENTSPEC.md §9
+# vastleggen, niet overtreden. Ze staan er juist om de volgende bewerker te
+# vertellen dat er geen fysiologie op deze pagina's hoort. De lint leest
+# commentaar niet als commentaar, dus staan ze hier.
+een helderheidsgetal, een tijd en een geluid. Geen melatoninegrafiek.
+Wat hier bewust NIET staat: geen melatoninegrafiek, geen slaapfases, geen
+cortisol, en geen enkele verwijzing naar bewijs uit onderzoek. Het mechanisme

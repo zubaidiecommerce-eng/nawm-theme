@@ -9,9 +9,25 @@
  *   · één keer per bezoeker — sluiten of inschrijven zet een vlag
  *   · niet op de winkelwagen of de kassa: wie al aan het afrekenen is, moet je
  *     niet onderbreken
+ *   · op de gids minstens 30 seconden wachten — zie hieronder
  *   · de timer loopt niet door in een verborgen tabblad
  *   · de vertraging staat in de theme-editor, niet hier
  */
+
+/* NAWM_SEO_CONTENTSPEC.md §8: geen popup op artikelpagina's binnen de eerste
+   30 seconden.
+ *
+ * De reden is inhoudelijk en niet cosmetisch. Iemand die via Google op een
+ * artikel binnenkomt, heeft nog geen relatie met deze winkel — hij heeft een
+ * vraag. Een venster dat na acht seconden over zijn antwoord heen schuift,
+ * is precies het signaal waar Google op let en waar een lezer op wegklikt.
+ *
+ * De ondergrens staat hier en niet in de theme-editor, zodat een lagere
+ * instelling hem niet kan omzeilen. Wie hem hoger wil, zet de vertraging in
+ * de editor hoger; die wint als hij groter is.
+ */
+const GUIDE_MIN_DELAY_SECONDS = 30;
+const GUIDE_PATHS = /^\/(blogs\/gids|pages\/(wake-up-light|beter-opstaan|avondroutine|wanneer-naar-de-huisarts))(\/|$)/;
 
 const KEY = 'nawm:newsletter-popup';
 const dialog = document.querySelector('[data-nawm-popup]');
@@ -65,8 +81,14 @@ if (dialog && typeof dialog.showModal === 'function') {
     remember();
     dialog.showModal();
   } else if (!alreadySeen() && !onCartOrCheckout) {
-    const delay = Math.max(0, Number(dialog.dataset.delay || 8)) * 1000;
-    timer = setTimeout(open, delay);
+    let seconds = Math.max(0, Number(dialog.dataset.delay || 8));
+
+    /* Op de gids geldt de ondergrens. Staat de editor hoger, dan wint die. */
+    if (GUIDE_PATHS.test(location.pathname)) {
+      seconds = Math.max(seconds, GUIDE_MIN_DELAY_SECONDS);
+    }
+
+    timer = setTimeout(open, seconds * 1000);
 
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) clearTimeout(timer);

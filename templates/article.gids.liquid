@@ -1,0 +1,18 @@
+{% comment %}
+  Een artikel uit de gids: /blogs/gids/<slug>.
+
+  Een .liquid-template en geen .json, om dezelfde reden als de productpagina
+  en de contactpagina: Shopify's GitHub-koppeling synchroniseert de secties en
+  de assets van deze repo wél, maar de JSON-templates niet. Een
+  `article.gids.json` zou nooit in het thema aankomen en Shopify zou terugvallen
+  op het standaard artikelsjabloon. Zie templates/product.nawm.liquid en
+  docs/OPEN-PDP.md.
+
+  NAWM_SEO_CONTENTSPEC.md §6.1 noemt `article.gids.json`; dit bestand is
+  hetzelfde met de sync-beperking van deze repo erin verwerkt.
+
+  Hang een artikel hieraan via Sjabloon → gids in de artikelinstellingen.
+{% endcomment %}
+
+{% section 'gids-article' %}
+{% section 'gids-related' %}

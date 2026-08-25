@@ -1501,3 +1501,149 @@ html.nawm-pdp .pdp-hero {
     transition: none;
   }
 }
+
+/* ============================================================= de gids */
+
+/* Deze drie blokken — de leesbody, de inhoudsopgave en het kruimelpad —
+   worden gedeeld door gids-article, pijler-hub en gids-grens. Ze stonden
+   eerst in de stylesheet van gids-article, en dat was fout: Shopify laadt
+   de CSS van een sectie alleen op pagina's waar die sectie ook rendert, dus
+   op een pijlerpagina stond de tekst zonder opmaak.
+
+   §8 stelt twee eisen aan leesbaarheid, en die staan hieronder vast:
+   regellengte maximaal 68 tekens en bodytekst minimaal 17px op mobiel.
+   Dat laatste doet `max()`, want --fs-body begint bij 1.0625rem maar een
+   toekomstige wijziging van dat token mag hier niet onderdoor gaan. */
+/* De body komt als kant-en-klare HTML uit het artikel, dus hier staan de
+   regels voor tags en niet voor klassen. Dat is de enige plek in dit thema
+   waar dat mag. */
+.nawm-body-long {
+  font-size: max(1.0625rem, var(--fs-body));
+  line-height: 1.65;
+  color: var(--fg);
+  max-width: 68ch;
+}
+
+/* Twee klassen, en dat is hier geen smaakkwestie. `.nawm-section p` staat op
+   (0,1,1) met `margin: 0` en `color: var(--fg-soft)`, en dat verslaat elke
+   regel op één klasse — specificiteit wint van volgorde. Op één klasse zou een
+   artikel dus als één blok tekst zonder witruimte renderen, in het zachte
+   grijs van bijschriften. Precies de twee dingen die leesbaarheid dragen. */
+.nawm-section .nawm-body-long > * + * {
+  margin-block-start: var(--sp-4);
+}
+
+.nawm-section .nawm-body-long p {
+  color: var(--fg);
+}
+
+.nawm-body-long h2 {
+  margin-block-start: clamp(2.5rem, 6vw, 3.5rem);
+  font-size: var(--fs-h3);
+  scroll-margin-block-start: calc(var(--header-group-height, 104px) + 1rem);
+}
+
+.nawm-body-long h3 {
+  margin-block-start: clamp(1.75rem, 4vw, 2.25rem);
+  font-family: var(--ff-body);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.nawm-body-long ul,
+.nawm-body-long ol {
+  padding-inline-start: var(--sp-5);
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.nawm-body-long a {
+  color: var(--fg);
+  text-decoration: underline;
+  text-decoration-color: var(--nawm-ember);
+  text-underline-offset: 4px;
+}
+
+.nawm-body-long img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-card);
+}
+
+/* Een citaat of tussenkader in een artikel. Eén vorm, meer heeft een
+   tekstpagina niet nodig. */
+.nawm-body-long blockquote {
+  margin-inline: 0;
+  padding-inline-start: var(--sp-4);
+  border-inline-start: 2px solid var(--nawm-amber);
+  color: var(--fg);
+}
+
+/* --------------------------------------------------------- inhoudsopgave */
+
+.nawm-toc {
+  margin-block-start: clamp(2rem, 5vw, 3rem);
+  padding: clamp(1.25rem, 4vw, 1.75rem);
+  border: 1px solid var(--line);
+  border-radius: var(--r-card);
+  background: color-mix(in oklab, var(--nawm-dawn) 92%, #fff);
+}
+
+/* Ook twee klassen: dit is een `<h2>` en `.nawm-section h2` staat op (0,1,1)
+   met de koptekstmaat. Op één klasse zou het kopje van de inhoudsopgave even
+   groot worden als de koppen in het artikel eronder. */
+.nawm-section .nawm-toc__heading {
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--nawm-ember);
+}
+
+.nawm-toc__list {
+  margin: var(--sp-4) 0 0;
+  padding-inline-start: var(--sp-5);
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.nawm-toc__link {
+  color: var(--fg);
+  text-decoration-color: var(--nawm-ember);
+  text-underline-offset: 4px;
+}
+
+/* ------------------------------------------------------------- kruimels */
+
+.nawm-crumbs__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: .04em;
+  color: var(--fg-soft);
+}
+
+.nawm-crumbs__item + .nawm-crumbs__item::before {
+  content: "›";
+  margin-inline-end: var(--sp-2);
+  color: var(--fg-soft);
+}
+
+.nawm-crumbs__item a {
+  color: var(--fg-soft);
+  text-decoration-color: var(--line);
+  text-underline-offset: 3px;
+}
+
+.nawm-crumbs__item[aria-current="page"] {
+  color: var(--fg);
+}

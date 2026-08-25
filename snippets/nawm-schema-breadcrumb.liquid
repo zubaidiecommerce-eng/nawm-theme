@@ -1,0 +1,146 @@
+{% doc %}
+  Kruimelpad, zichtbaar én als BreadcrumbList. NAWM_SEO_CONTENTSPEC.md §6.3.
+
+      Home › Gids › <pijler> › <artikel>
+
+  Eén bron voor allebei. Een zichtbaar pad dat afwijkt van de structured data
+  is een overtreding, en het is bovendien precies het soort verschil dat
+  niemand opmerkt tot Google de rich result laat vallen.
+
+  De pijler van een artikel komt uit een tag `pijler:<handle>` op het artikel
+  zelf. Dat is de Shopify-native weg: een nieuw artikel krijgt zijn plek in de
+  boom door één tag in de admin, zonder dat dit thema aangeraakt hoeft te
+  worden. Ontbreekt de tag, of bestaat de pagina niet, dan valt die kruimel
+  weg en blijft het pad kloppen — een pad met een gat erin is erger dan een
+  korter pad.
+
+  Let op: de tagpagina's van de blog staan op `noindex` (§8). Deze tag is dus
+  een structuursignaal en geen navigatie.
+
+  @param {object} [article] - Het artikel, op artikelpagina's.
+  @param {object} [page] - De pagina, op pijler- en grenspagina's.
+  @param {boolean} [in_guide] - Neem "Gids" als tweede kruimel mee. Standaard
+    waar zodra er een artikel is meegegeven.
+{% enddoc %}
+
+{%- liquid
+  comment
+    De handle staat hier hard en niet in een instelling. `/blogs/<handle>/…`
+    ligt vast zodra er één artikel geïndexeerd is; hem instelbaar maken nodigt
+    uit tot een wijziging die elke artikel-URL breekt. Zie §2.
+  endcomment
+  assign guide = blogs.gids
+
+  assign show_guide = in_guide
+  if article != blank
+    assign show_guide = true
+  endif
+
+  comment
+    De pijler zoeken. `pages` is leeg als de pagina niet bestaat, en dan valt
+    deze kruimel er vanzelf uit.
+  endcomment
+  assign pillar = blank
+  if article != blank
+    for tag in article.tags
+      if tag contains 'pijler:'
+        assign pillar_handle = tag | remove: 'pijler:' | strip
+        assign pillar = pages[pillar_handle]
+        break
+      endif
+    endfor
+  endif
+
+  assign current_title = article.title | default: page.title
+  assign current_url = article.url | default: page.url
+-%}
+
+{%- if current_title != blank -%}
+  <nav class="nawm-crumbs" aria-label="{{ 'nawm.gids.breadcrumb_label' | t }}">
+    <ol class="nawm-crumbs__list">
+      <li class="nawm-crumbs__item">
+        <a href="{{ routes.root_url }}">{{ 'nawm.gids.breadcrumb_home' | t }}</a>
+      </li>
+
+      {%- if show_guide and guide != blank -%}
+        <li class="nawm-crumbs__item">
+          <a href="{{ guide.url }}">{{ guide.title | default: 'Gids' }}</a>
+        </li>
+      {%- endif -%}
+
+      {%- if pillar != blank and pillar.title != blank -%}
+        <li class="nawm-crumbs__item">
+          <a href="{{ pillar.url }}">{{ pillar.title }}</a>
+        </li>
+      {%- endif -%}
+
+      <li class="nawm-crumbs__item" aria-current="page">{{ current_title }}</li>
+    </ol>
+  </nav>
+
+  {%- liquid
+    comment
+      Dezelfde kruimels, in dezelfde volgorde, opgebouwd uit dezelfde
+      variabelen. De teller loopt mee zodat `position` nooit een gat heeft
+      wanneer een kruimel wegvalt.
+    endcomment
+    assign position = 0
+    assign items = ''
+
+    assign position = position | plus: 1
+    capture items
+      echo items
+      echo '{"@type":"ListItem","position":'
+      echo position
+      echo ',"name":'
+      echo 'nawm.gids.breadcrumb_home' | t | json
+      echo ',"item":'
+      echo shop.url | append: routes.root_url | json
+      echo '}'
+    endcapture
+
+    if show_guide and guide != blank
+      assign position = position | plus: 1
+      capture items
+        echo items
+        echo ',{"@type":"ListItem","position":'
+        echo position
+        echo ',"name":'
+        echo guide.title | default: 'Gids' | json
+        echo ',"item":'
+        echo shop.url | append: guide.url | json
+        echo '}'
+      endcapture
+    endif
+
+    if pillar != blank and pillar.title != blank
+      assign position = position | plus: 1
+      capture items
+        echo items
+        echo ',{"@type":"ListItem","position":'
+        echo position
+        echo ',"name":'
+        echo pillar.title | json
+        echo ',"item":'
+        echo shop.url | append: pillar.url | json
+        echo '}'
+      endcapture
+    endif
+
+    assign position = position | plus: 1
+    capture items
+      echo items
+      echo ',{"@type":"ListItem","position":'
+      echo position
+      echo ',"name":'
+      echo current_title | json
+      echo ',"item":'
+      echo shop.url | append: current_url | json
+      echo '}'
+    endcapture
+  -%}
+
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{{ items | strip_newlines | strip }}]}
+  </script>
+{%- endif -%}
