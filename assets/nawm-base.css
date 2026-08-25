@@ -1201,9 +1201,12 @@ html.nawm-pdp .pdp-evening {
 
 /* De handleidingknop is een van de sterkste vertrouwenssignalen van de pagina
    en hoort dus als knop te staan, gecentreerd en met lucht eromheen — niet als
-   linkje onder een lijst. */
-.nawm-inbox__docs--cta {
-  margin-block-start: clamp(2rem, 5vw, 3rem);
+   linkje onder een lijst.
+
+   Twee klassen, want dit is een `<p>` en `.nawm-section p { margin: 0 }` staat
+   op (0,1,1). Op één klasse kwam de lucht erboven er nooit uit. */
+.nawm-section .nawm-inbox__docs--cta {
+  margin-block-start: clamp(3rem, 8vw, 4.5rem);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -1258,17 +1261,14 @@ html.nawm-pdp .pdp-hero {
 
 /* ------------------------------------------------------------- ademruimte */
 
-/* De afsluitende regel van de wel-of-niet-sectie plakte op mobiel tegen de
-   laatste bullet. Die zin is het sterkste vertrouwenssignaal van de pagina en
-   verdient een eigen adempauze. */
-.pdp-fit__closing {
-  margin-block-start: clamp(2.5rem, 8vw, 3rem);
-}
+/* Hier stonden twee marges die er nooit uit kwamen: de adempauze boven de
+   slotzin van de wel-of-niet-sectie, en die boven de handleidingsknop. Allebei
+   op één klasse, allebei op een `<p>`, en `.nawm-section p { margin: 0 }` staat
+   op (0,1,1) — specificiteit wint van volgorde, dus geen van beide deed iets.
 
-/* De handleidingknop stond te dicht op de opsomming erboven. */
-.nawm-inbox__docs--cta {
-  margin-block-start: clamp(3rem, 8vw, 4.5rem);
-}
+   Ze staan nu op twee klassen bij de rest van hun blok: `.pdp-fit__closing` in
+   sections/pdp-fit.liquid en `.nawm-inbox__docs--cta` hierboven. Zet hier geen
+   nieuwe marge op één klasse neer; die verdwijnt weer. */
 
 /* Het koopblok: prijs, knop en garanties zaten op elkaar geplakt. */
 .nawm-offer__cta {

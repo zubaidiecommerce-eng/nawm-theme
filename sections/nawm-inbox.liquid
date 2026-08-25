@@ -199,7 +199,9 @@
     color: var(--nawm-ember);
   }
 
-  .nawm-inbox__docs {
+  /* Twee klassen: dit is een `<p>` en `.nawm-section p { margin: 0 }` staat op
+     (0,1,1), dus op één klasse verdween de marge. */
+  .nawm-inbox .nawm-inbox__docs {
     margin-block-start: var(--sp-5);
     display: flex;
     flex-wrap: wrap;

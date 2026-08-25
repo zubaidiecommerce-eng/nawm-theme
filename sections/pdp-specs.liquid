@@ -345,8 +345,11 @@
 
   /* Geen `font-size` meer: dat gold voor de tekstlink die hier ooit stond en
      zou nu tegen de maat van de knop in werken. Wel meer lucht, want een knop
-     van 60px vlak onder een accordeon plakt vast. */
-  .pdp-specs__manual {
+     van 60px vlak onder een accordeon plakt vast.
+
+     Twee klassen, want dit is een `<p>` en `.nawm-section p { margin: 0 }`
+     staat op (0,1,1). De marge die hier stond, kwam er dus nooit uit. */
+  .pdp-specs .pdp-specs__manual {
     margin-block-start: clamp(2rem, 5vw, 3rem);
   }
 {% endstylesheet %}
