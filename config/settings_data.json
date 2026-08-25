@@ -153,7 +153,8 @@
         "settings": {
           "eyebrow": "",
           "heading": "",
-          "body": ""
+          "body": "",
+          "clip_s3": "shopify://files/videos/Generate_a_second_video_asp.mp4"
         }
       },
       "pdp-fit": {
@@ -271,9 +272,29 @@
         "settings": {
           "eyebrow": "",
           "heading": "",
-          "result_none": "",
-          "result_low": "",
-          "result_high": ""
+          "statement_s1": "",
+          "axis_s1": "avond",
+          "statement_s2": "",
+          "axis_s2": "ochtend",
+          "statement_s3": "",
+          "axis_s3": "avond",
+          "statement_s4": "",
+          "axis_s4": "ochtend",
+          "statement_s5": "",
+          "axis_s5": "avond",
+          "statement_s6": "",
+          "axis_s6": "ochtend",
+          "result_none_title": "",
+          "result_none_body": "",
+          "result_avond_title": "",
+          "result_avond_body": "",
+          "result_avond_setup": "",
+          "result_ochtend_title": "",
+          "result_ochtend_body": "",
+          "result_ochtend_setup": "",
+          "result_both_title": "",
+          "result_both_body": "",
+          "result_both_setup": ""
         }
       },
       "pdp-kosten": {
