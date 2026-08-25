@@ -1,0 +1,145 @@
+{% comment %}
+  Gerelateerde artikelen onder een artikel. NAWM_SEO_CONTENTSPEC.md §6.1.
+
+  Eerst artikelen uit dezelfde pijler — die horen inhoudelijk bij elkaar en
+  het is de link die het cluster bij elkaar houdt. Zijn dat er te weinig, dan
+  vult de rest van de gids aan. Het huidige artikel valt er altijd uit.
+
+  Maximaal drie. §5.4 staat drie onderlinge links per artikel toe, en die zijn
+  in de body al gebruikt; dit blok is navigatie en geen extra linkbudget. Drie
+  is bovendien precies één rij.
+
+  Daaronder staat de weg omhoog: de pijler zelf. Elk artikel linkt omhoog naar
+  zijn pijler (§5.1) — dat gebeurt in de eerste alinea van het artikel, en hier
+  nog een keer, voor wie doorleest tot het einde.
+{% endcomment %}
+
+{% liquid
+  assign guide = blogs.gids
+  assign max_related = 3
+
+  comment
+    De pijler van dit artikel, via dezelfde tag als het kruimelpad.
+  endcomment
+  assign pillar = blank
+  for tag in article.tags
+    if tag contains 'pijler:'
+      assign pillar_handle = tag | remove: 'pijler:' | strip
+      assign pillar = pages[pillar_handle]
+      assign pillar_tag = tag
+      break
+    endif
+  endfor
+%}
+
+{%- if guide.articles.size > 1 -%}
+  <aside class="nawm-section gids-related ctx-dawn" aria-labelledby="gids-related-heading">
+    <div class="nawm-wrap gids-related__inner">
+      <h2 class="gids-related__heading" id="gids-related-heading">
+        {{ 'nawm.gids.related_heading' | t }}
+      </h2>
+
+      <ul class="gids-related__list">
+        {%- assign shown = 0 -%}
+
+        {%- comment -%} Eerst dezelfde pijler. {%- endcomment -%}
+        {%- for other in guide.articles -%}
+          {%- if other.id != article.id and pillar_tag != blank and other.tags contains pillar_tag -%}
+            <li class="gids-related__item">
+              <a class="gids-related__link" href="{{ other.url }}">{{ other.title }}</a>
+            </li>
+            {%- assign shown = shown | plus: 1 -%}
+            {%- if shown >= max_related -%}
+              {%- break -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        {%- comment -%} Daarna de rest van de gids, tot het er drie zijn. {%- endcomment -%}
+        {%- if shown < max_related -%}
+          {%- for other in guide.articles -%}
+            {%- unless other.id == article.id or pillar_tag != blank and other.tags contains pillar_tag -%}
+              <li class="gids-related__item">
+                <a class="gids-related__link" href="{{ other.url }}">{{ other.title }}</a>
+              </li>
+              {%- assign shown = shown | plus: 1 -%}
+              {%- if shown >= max_related -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endfor -%}
+        {%- endif -%}
+      </ul>
+
+      {%- if pillar != blank and pillar.title != blank -%}
+        <p class="gids-related__up">
+          <a href="{{ pillar.url }}">{{ 'nawm.gids.back_to_pillar' | t: pillar: pillar.title }}</a>
+        </p>
+      {%- endif -%}
+    </div>
+  </aside>
+{%- endif -%}
+
+{% stylesheet %}
+  .gids-related__inner {
+    max-width: 44rem;
+  }
+
+  .gids-related .gids-related__heading {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--nawm-ember);
+    padding-block-end: var(--sp-2);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .gids-related__list {
+    list-style: none;
+    margin: var(--sp-4) 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .gids-related__item {
+    padding-block: var(--sp-3);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .gids-related__link {
+    color: var(--fg);
+    font-size: 1.0625rem;
+    text-decoration: none;
+  }
+
+  .gids-related__link:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--nawm-ember);
+    text-underline-offset: 4px;
+  }
+
+  .gids-related .gids-related__up {
+    margin-block-start: var(--sp-5);
+  }
+
+  .gids-related__up a {
+    color: var(--fg-soft);
+    text-decoration-color: var(--nawm-ember);
+    text-underline-offset: 4px;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Gids gerelateerd",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Maximaal drie artikelen, eerst uit dezelfde pijler. De pijler komt uit de tag pijler:<handle> op het artikel."
+    }
+  ]
+}
+{% endschema %}

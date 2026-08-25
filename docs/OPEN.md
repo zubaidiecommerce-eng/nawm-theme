@@ -204,7 +204,7 @@ hoeft te scannen.
 ---
 
 <!-- claims-lint:start -->
-_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-25 15:48.  Niet met de hand bijwerken._
+_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-25 15:58.  Niet met de hand bijwerken._
 
 ### Openstaande VERIFY-tokens (36)
 

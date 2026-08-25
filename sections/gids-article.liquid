@@ -1,0 +1,266 @@
+{% comment %}
+  Een artikel uit de gids. NAWM_SEO_CONTENTSPEC.md §6.1.
+
+  Kruimelpad, kop, uitgelicht beeld, inhoudsopgave, body. Geen deelknoppen,
+  geen auteursfoto, geen leestijdschatting — dit is naslag, geen tijdschrift.
+
+  Twee dingen die deze sectie bewust níét doet:
+
+  · Geen popup en geen banner. §4 zegt het voor de content, §8 zegt het voor
+    de techniek: geen popup binnen de eerste 30 seconden. Deze sectie roept er
+    dus geen aan, en de afsluitende link naar de productpagina staat in de
+    body van het artikel zelf — één contextuele link, geschreven door wie het
+    artikel schreef.
+  · Geen FAQPage-schema, ook niet als het artikel vragen bevat. Zie §6.4.
+
+  Het uitgelichte beeld staat boven de vouw en is dus het LCP-element: `eager`
+  en `fetchpriority="high"`. Elk ander beeld in de body krijgt `lazy` mee, maar
+  dat gebeurt in de HTML van het artikel zelf — Liquid komt niet in `content`.
+{% endcomment %}
+
+{% liquid
+  assign published_day = article.published_at | date: '%Y-%m-%d'
+  assign updated_day = article.updated_at | date: '%Y-%m-%d'
+
+  capture published_nl
+    render 'nawm-date-nl', date: article.published_at
+  endcapture
+
+  capture updated_nl
+    render 'nawm-date-nl', date: article.updated_at
+  endcapture
+%}
+
+{% render 'nawm-schema-article', article: article %}
+
+<article class="nawm-section gids-article ctx-dawn">
+  <div class="nawm-wrap gids-article__inner">
+    {% render 'nawm-schema-breadcrumb', article: article %}
+
+    <header class="gids-article__head">
+      <h1 class="gids-article__title">{{ article.title }}</h1>
+
+      {%- comment -%}
+        De publicatiedatum staat er omdat een gids die niet gedateerd is,
+        niet te beoordelen valt. De gewijzigd-datum staat er alleen als hij
+        werkelijk afwijkt: "bijgewerkt op dezelfde dag als gepubliceerd" is
+        ruis.
+      {%- endcomment -%}
+      <p class="nawm-mono gids-article__meta">
+        <time datetime="{{ published_day }}">
+          {{- 'nawm.gids.published_on' | t: date: published_nl -}}
+        </time>
+        {%- if updated_day != published_day -%}
+          <span class="gids-article__meta-sep" aria-hidden="true">·</span>
+          <time datetime="{{ updated_day }}">
+            {{- 'nawm.gids.updated_on' | t: date: updated_nl -}}
+          </time>
+        {%- endif -%}
+      </p>
+    </header>
+
+    {%- if article.image != blank -%}
+      <figure class="gids-article__figure">
+        <img
+          src="{{ article.image | image_url: width: 1600 }}"
+          srcset="
+            {{ article.image | image_url: width: 800 }} 800w,
+            {{ article.image | image_url: width: 1200 }} 1200w,
+            {{ article.image | image_url: width: 1600 }} 1600w
+          "
+          sizes="(min-width: 1024px) 68rem, 100vw"
+          alt="{{ article.image.alt | escape }}"
+          width="{{ article.image.width }}"
+          height="{{ article.image.height }}"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        >
+      </figure>
+    {%- endif -%}
+
+    {% render 'nawm-toc', content: article.content %}
+
+    <div class="gids-article__body nawm-body-long">
+      {{ article.content }}
+    </div>
+  </div>
+</article>
+
+{% stylesheet %}
+  /* Leesbaarheid boven alles (§8): regellengte maximaal 68 tekens, en op
+     mobiel geen bodytekst onder 17px. `--fs-body` is de bron; deze sectie zet
+     alleen de ondergrens. */
+  .gids-article__inner {
+    max-width: 44rem;
+  }
+
+  .gids-article__head {
+    margin-block-start: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .gids-article .gids-article__title {
+    font-size: var(--fs-h2);
+    text-wrap: balance;
+  }
+
+  .gids-article .gids-article__meta {
+    margin-block-start: var(--sp-3);
+    color: var(--fg-soft);
+  }
+
+  .gids-article__meta-sep {
+    margin-inline: var(--sp-2);
+  }
+
+  .gids-article__figure {
+    margin: clamp(2rem, 5vw, 3rem) 0 0;
+    border-radius: var(--r-card);
+    overflow: hidden;
+    background: color-mix(in oklab, var(--ink-day) 6%, transparent);
+  }
+
+  .gids-article__figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .gids-article__body {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+  }
+
+  /* De body komt als kant-en-klare HTML uit het artikel, dus hier staan de
+     regels voor tags en niet voor klassen. Dat is de enige plek in dit thema
+     waar dat mag. */
+  .nawm-body-long {
+    font-size: max(1.0625rem, var(--fs-body));
+    line-height: 1.65;
+    color: var(--fg);
+    max-width: 68ch;
+  }
+
+  .nawm-body-long > * + * {
+    margin-block-start: var(--sp-4);
+  }
+
+  .nawm-body-long h2 {
+    margin-block-start: clamp(2.5rem, 6vw, 3.5rem);
+    font-size: var(--fs-h3);
+    scroll-margin-block-start: calc(var(--header-group-height, 104px) + 1rem);
+  }
+
+  .nawm-body-long h3 {
+    margin-block-start: clamp(1.75rem, 4vw, 2.25rem);
+    font-family: var(--ff-body);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .nawm-body-long ul,
+  .nawm-body-long ol {
+    padding-inline-start: var(--sp-5);
+    display: grid;
+    gap: var(--sp-2);
+  }
+
+  .nawm-body-long a {
+    color: var(--fg);
+    text-decoration: underline;
+    text-decoration-color: var(--nawm-ember);
+    text-underline-offset: 4px;
+  }
+
+  .nawm-body-long img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--r-card);
+  }
+
+  /* Een citaat of tussenkader in een artikel. Eén vorm, meer heeft een
+     tekstpagina niet nodig. */
+  .nawm-body-long blockquote {
+    margin-inline: 0;
+    padding-inline-start: var(--sp-4);
+    border-inline-start: 2px solid var(--nawm-amber);
+    color: var(--fg);
+  }
+
+  /* --------------------------------------------------------- inhoudsopgave */
+
+  .nawm-toc {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    background: color-mix(in oklab, var(--nawm-dawn) 92%, #fff);
+  }
+
+  .gids-article .nawm-toc__heading {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--nawm-ember);
+  }
+
+  .nawm-toc__list {
+    margin: var(--sp-4) 0 0;
+    padding-inline-start: var(--sp-5);
+    display: grid;
+    gap: var(--sp-2);
+  }
+
+  .nawm-toc__link {
+    color: var(--fg);
+    text-decoration-color: var(--nawm-ember);
+    text-underline-offset: 4px;
+  }
+
+  /* ------------------------------------------------------------- kruimels */
+
+  .nawm-crumbs__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--sp-2);
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    letter-spacing: .04em;
+    color: var(--fg-soft);
+  }
+
+  .nawm-crumbs__item + .nawm-crumbs__item::before {
+    content: "›";
+    margin-inline-end: var(--sp-2);
+    color: var(--fg-soft);
+  }
+
+  .nawm-crumbs__item a {
+    color: var(--fg-soft);
+    text-decoration-color: var(--line);
+    text-underline-offset: 3px;
+  }
+
+  .nawm-crumbs__item[aria-current="page"] {
+    color: var(--fg);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Gidsartikel",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "De body komt uit het artikel zelf. De inhoudsopgave verschijnt vanaf 800 woorden en wordt opgebouwd uit de H2's — die moeten in de HTML van het artikel een eigen id hebben, anders vallen ze eruit. De pijler in het kruimelpad komt uit een tag pijler:<handle> op het artikel."
+    }
+  ]
+}
+{% endschema %}

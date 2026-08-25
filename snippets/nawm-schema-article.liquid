@@ -1,0 +1,52 @@
+{% doc %}
+  Article-schema voor een gidsartikel. NAWM_SEO_CONTENTSPEC.md §6.2.
+
+  Wat hier bewust níét in staat, en waarom (§6.4):
+
+  · Geen `HowTo`. Google toont die rich results niet meer, dus het is
+    onderhoud zonder opbrengst.
+  · Geen `FAQPage`. Dat schema staat uitsluitend op de productpagina. Twee
+    pagina's van dezelfde site die om hetzelfde rich result vechten, leveren
+    samen minder op dan één.
+  · Geen `MedicalWebPage` of `MedicalCondition`. Nooit. Dat is precies de
+    signalering die deze hele contentstrategie vermijdt.
+
+  Elk veld komt uit het artikel zelf, zodat er nooit twee versies van dezelfde
+  tekst onderhouden worden. Ontbreekt er een uitgelicht beeld, dan blijft
+  `image` weg in plaats van een lege array te worden — een array met niets
+  erin is voor een validator een fout, geen leeg veld.
+
+  @param {object} article - Het artikel.
+{% enddoc %}
+
+{%- liquid
+  assign description = article.excerpt_or_content | strip_html | strip_newlines | truncate: 200
+  assign page_url = shop.url | append: article.url
+-%}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": {{ article.title | json }},
+    "description": {{ description | json }},
+    {%- if article.image != blank -%}
+      "image": [{{ article.image | image_url: width: 1600 | prepend: 'https:' | json }}],
+    {%- endif -%}
+    "datePublished": {{ article.published_at | date: '%Y-%m-%d' | json }},
+    "dateModified": {{ article.updated_at | date: '%Y-%m-%d' | json }},
+    "inLanguage": "nl-NL",
+    "author": { "@type": "Organization", "name": "NAWM" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "NAWM"
+      {%- if settings.logo != blank -%}
+        , "logo": {
+          "@type": "ImageObject",
+          "url": {{ settings.logo | image_url: width: 400 | prepend: 'https:' | json }}
+        }
+      {%- endif -%}
+    },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": {{ page_url | json }} }
+  }
+</script>

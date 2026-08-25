@@ -1,0 +1,202 @@
+{% comment %}
+  Het overzicht van de gids. NAWM_SEO_CONTENTSPEC.md §6.1 en §8.
+
+  Alle artikelen op één pagina, geordend per pijler. Geen paginering: §8 noemt
+  `rel=next`/`rel=prev` als optie en één pagina als de betere, en bij twaalf
+  artikelen is dat geen twijfelgeval. Eén pagina betekent ook dat elke
+  interne link van hier naar een artikel op dezelfde pagina staat als alle
+  andere, en dat is precies wat een cluster nodig heeft.
+
+  De ordening per pijler is geen decoratie. Ze laat aan een lezer én aan
+  Google zien dat dit drie onderwerpen zijn en geen bak losse stukken.
+  Artikelen zonder pijlertag komen onderaan te staan in plaats van te
+  verdwijnen — een artikel dat nergens bij hoort hoort opgemerkt te worden.
+{% endcomment %}
+
+{% liquid
+  assign pillars = 'wake-up-light,beter-opstaan,avondroutine' | split: ','
+
+  comment
+    Filters werken niet op argumenten van een render-tag — theme-check
+    UnsupportedFilterArguments. De vertaling moet dus hier gebeuren, anders
+    staat de ruwe sleutel op de pagina.
+  endcomment
+  assign index_eyebrow = 'nawm.gids.index_eyebrow' | t
+%}
+
+<div class="nawm-section gids-index ctx-dawn">
+  <div class="nawm-wrap gids-index__inner">
+    {% render 'nawm-schema-breadcrumb', page: blog, in_guide: false %}
+
+    <header class="gids-index__head">
+      {% render 'nawm-eyebrow', text: index_eyebrow %}
+      <h1 class="gids-index__title">{{ 'nawm.gids.index_heading' | t }}</h1>
+      <p class="nawm-lede gids-index__intro">{{ 'nawm.gids.index_intro' | t }}</p>
+    </header>
+
+    {%- for handle in pillars -%}
+      {%- liquid
+        assign pillar_tag = 'pijler:' | append: handle
+        assign pillar = pages[handle]
+
+        assign count = 0
+        for item in blog.articles
+          if item.tags contains pillar_tag
+            assign count = count | plus: 1
+          endif
+        endfor
+      -%}
+
+      {%- if count > 0 -%}
+        <section class="gids-index__cluster">
+          <h2 class="gids-index__cluster-heading">
+            {%- if pillar != blank and pillar.title != blank -%}
+              <a href="{{ pillar.url }}">{{ pillar.title }}</a>
+            {%- else -%}
+              {%- assign fallback_key = 'nawm.gids.pijler.' | append: handle | append: '.short' -%}
+              {{ fallback_key | t }}
+            {%- endif -%}
+          </h2>
+
+          <ul class="gids-index__list">
+            {%- for item in blog.articles -%}
+              {%- if item.tags contains pillar_tag -%}
+                <li class="gids-index__item">
+                  <a class="gids-index__link" href="{{ item.url }}">{{ item.title }}</a>
+                  {%- if item.excerpt != blank -%}
+                    <p class="gids-index__excerpt">{{ item.excerpt | strip_html | truncate: 160 }}</p>
+                  {%- endif -%}
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </section>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment -%}
+      Alles zonder pijlertag. Hoort er normaal niet te zijn; staat het er wel,
+      dan is dat een artikel dat zijn tag mist en dat wil je zien.
+    {%- endcomment -%}
+    {%- assign loose = 0 -%}
+    {%- for item in blog.articles -%}
+      {%- unless item.tags contains 'pijler:wake-up-light'
+        or item.tags contains 'pijler:beter-opstaan'
+        or item.tags contains 'pijler:avondroutine' -%}
+        {%- assign loose = loose | plus: 1 -%}
+      {%- endunless -%}
+    {%- endfor -%}
+
+    {%- if loose > 0 -%}
+      <section class="gids-index__cluster">
+        <h2 class="gids-index__cluster-heading">{{ 'nawm.gids.index_other' | t }}</h2>
+        <ul class="gids-index__list">
+          {%- for item in blog.articles -%}
+            {%- unless item.tags contains 'pijler:wake-up-light'
+              or item.tags contains 'pijler:beter-opstaan'
+              or item.tags contains 'pijler:avondroutine' -%}
+              <li class="gids-index__item">
+                <a class="gids-index__link" href="{{ item.url }}">{{ item.title }}</a>
+                {%- if item.excerpt != blank -%}
+                  <p class="gids-index__excerpt">{{ item.excerpt | strip_html | truncate: 160 }}</p>
+                {%- endif -%}
+              </li>
+            {%- endunless -%}
+          {%- endfor -%}
+        </ul>
+      </section>
+    {%- endif -%}
+
+    {%- if blog.articles.size == 0 -%}
+      <p class="nawm-small gids-index__empty">{{ 'nawm.gids.index_empty' | t }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .gids-index__inner {
+    max-width: 46rem;
+  }
+
+  .gids-index__head {
+    margin-block-start: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .gids-index .gids-index__title {
+    font-size: var(--fs-h2);
+    text-wrap: balance;
+  }
+
+  .gids-index .gids-index__intro {
+    margin-block-start: var(--sp-4);
+  }
+
+  .gids-index__cluster {
+    margin-block-start: clamp(2.5rem, 6vw, 3.5rem);
+  }
+
+  .gids-index .gids-index__cluster-heading {
+    font-family: var(--ff-mono);
+    font-size: var(--fs-mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--nawm-ember);
+    padding-block-end: var(--sp-2);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .gids-index__cluster-heading a {
+    color: inherit;
+    text-decoration-color: var(--line);
+    text-underline-offset: 3px;
+  }
+
+  .gids-index__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .gids-index__item {
+    padding-block: var(--sp-4);
+    border-block-end: 1px solid var(--line);
+  }
+
+  .gids-index__link {
+    color: var(--fg);
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .gids-index__link:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--nawm-ember);
+    text-underline-offset: 4px;
+  }
+
+  .gids-index .gids-index__excerpt {
+    margin-block-start: var(--sp-2);
+    font-size: var(--fs-small);
+    max-width: 66ch;
+  }
+
+  .gids-index .gids-index__empty {
+    margin-block-start: clamp(2rem, 5vw, 3rem);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · Gidsoverzicht",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Alle artikelen op één pagina, geordend per pijler via de tag pijler:<handle>. Voeg hier geen paginering aan toe: twaalf artikelen horen op één pagina te staan."
+    }
+  ]
+}
+{% endschema %}

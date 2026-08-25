@@ -39,6 +39,56 @@
     assign page_description = 'nawm.seo.home_description' | t
   endif
 
+  comment
+    De gids. NAWM_SEO_CONTENTSPEC.md §7 wil per templatetype een vast patroon,
+    zodat er niets met de hand hoeft. De titels regelt Shopify al — de
+    paginatitel plus de winkelnaam, precies het patroon uit de tabel. Alleen de
+    beschrijvingen ontbreken, en die worden hier ingevuld uit het talenbestand.
+
+    Alleen invullen wanneer het veld leeg is: staat er een SEO-beschrijving in
+    de admin, dan wint die. Een thema dat een handmatig ingevulde beschrijving
+    overschrijft, is een thema waarin je niets meer kunt corrigeren.
+
+    Nooit automatisch uit de eerste alinea genereren (§7). Dat leest als
+    vulling, en het is precies wat Google negeert.
+  endcomment
+  if page_description == blank
+    if template.suffix == 'pijler'
+      assign pillar_key = 'nawm.gids.pijler.' | append: page.handle | append: '.meta_description'
+      assign pillar_description = pillar_key | t
+      unless pillar_description contains 'translation missing'
+        assign page_description = pillar_description
+      endunless
+    elsif template.name == 'blog' and blog.handle == 'gids'
+      assign page_description = 'nawm.gids.index_meta_description' | t
+    endif
+  endif
+
+  comment
+    Indexeerregels uit §8 en §S6. Alle drie gaan over dunne pagina's die met
+    een sterkere pagina van dezelfde winkel concurreren:
+
+    · De tagpagina's van de blog. Twaalf artikelen leveren tientallen
+      tagcombinaties op, elk met een handvol titels erop, en elke daarvan
+      concurreert met de pijler die hetzelfde onderwerp uitlegt.
+    · `/collections/all`. Eén product in een collectie is een dunne pagina die
+      met de productpagina zelf concurreert.
+    · Interne zoekresultaten. Die horen sowieso nooit in een index.
+
+    `follow` en niet `nofollow`: de links op die pagina's mogen hun waarde
+    gewoon doorgeven, ze horen alleen zelf niet in de zoekresultaten.
+  endcomment
+  assign robots_noindex = false
+  if request.page_type == 'blog' and current_tags != blank
+    assign robots_noindex = true
+  endif
+  if request.page_type == 'collection' and collection.handle == 'all'
+    assign robots_noindex = true
+  endif
+  if request.page_type == 'search'
+    assign robots_noindex = true
+  endif
+
   assign og_title = page_title | default: shop.name
   assign og_url = canonical_url | default: request.origin
   assign og_type = 'website'
@@ -130,6 +180,19 @@
   {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
 </title>
 
+{%- if robots_noindex -%}
+  <meta
+    name="robots"
+    content="noindex,follow"
+  >
+{%- endif -%}
+
+{%- comment -%}
+  Zelfverwijzende canonical op elke pagina. `canonical_url` levert die van
+  Shopify zelf; de valkuil is de productpagina die via een collectie wordt
+  geopend en dan naar `/collections/all/products/…` canonicaliseert. Controleer
+  dat op de gepubliceerde URL — zie docs/SEO-STATUS.md.
+{%- endcomment -%}
 <link
   rel="canonical"
   href="{{ canonical_url }}"

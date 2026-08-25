@@ -1,0 +1,62 @@
+{% doc %}
+  Inhoudsopgave uit de H2's van een artikel. NAWM_SEO_CONTENTSPEC.md §6.5.
+
+  Alleen op artikelen boven de 800 woorden. Korter dan dat is een
+  inhoudsopgave langer dan het artikel eronder, en dan werkt hij tegen je.
+
+  De koppen worden niet in Liquid van een `id` voorzien maar dragen die al in
+  de broncode van het artikel. Dat is bewust: een id die hier verzonnen wordt
+  bestaat alleen in dit lijstje en niet in de kop zelf, en dan springt de
+  ankerlink nergens heen. Elke H2 in content/gids/*.html heeft dus een
+  handgeschreven `id`, en een H2 zonder id slaan we hier over in plaats van er
+  een dode link van te maken.
+
+  Waarom string-splitsen en geen regex: Liquid heeft er geen. Een H2 ziet er
+  in deze artikelen altijd zo uit:
+
+      <h2 id="waar-het-misgaat">Waar het misgaat</h2>
+
+  Daar is met `split` betrouwbaar bij te komen. Wijkt een kop daarvan af — een
+  attribuut ná het id, of opmaak binnen de kop — dan valt hij uit de
+  inhoudsopgave en verder gebeurt er niets. Dat is de veilige kant.
+
+  @param {string} content - De HTML van het artikel, meestal `article.content`.
+  @param {number} [min_words] - Ondergrens in woorden. Standaard 800.
+{% enddoc %}
+
+{%- liquid
+  assign threshold = min_words | default: 800
+
+  comment
+    `strip_html` haalt de opmaak eruit; wat overblijft telt als woorden. Een
+    grove telling volstaat: het gaat om de vraag of dit artikel lang genoeg is
+    voor een inhoudsopgave, niet om het exacte getal.
+  endcomment
+  assign words = content | strip_html | strip_newlines | split: ' ' | size
+
+  assign chunks = content | split: '<h2'
+-%}
+
+{%- if words >= threshold and chunks.size > 2 -%}
+  <nav class="nawm-toc" aria-labelledby="nawm-toc-heading">
+    <h2 class="nawm-toc__heading" id="nawm-toc-heading">{{ 'nawm.gids.toc_heading' | t }}</h2>
+    <ol class="nawm-toc__list">
+      {%- for chunk in chunks offset: 1 -%}
+        {%- liquid
+          assign id = ''
+          assign id_parts = chunk | split: 'id="'
+          if id_parts.size > 1
+            assign id = id_parts[1] | split: '"' | first
+          endif
+
+          assign label = chunk | split: '</h2>' | first | split: '>' | last | strip
+        -%}
+        {%- if id != blank and label != blank -%}
+          <li class="nawm-toc__item">
+            <a class="nawm-toc__link" href="#{{ id }}">{{ label }}</a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ol>
+  </nav>
+{%- endif -%}

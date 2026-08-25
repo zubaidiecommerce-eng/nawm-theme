@@ -34,6 +34,20 @@
     assign nawm_page = true
     assign nawm_light = true
   endif
+
+  comment
+    De gids: de drie pijlerpagina's, de grenspagina, het blogoverzicht en de
+    artikelen. Allemaal NAWM-typografie op een lichte grond, en geen lucht —
+    dit is leeswerk, geen reis van 23:30 naar 07:00.
+
+    De suffixen komen uit NAWM_SEO_CONTENTSPEC.md §6.1. Ze staan hier als
+    suffix en niet als handle, zodat een nieuwe pijlerpagina alleen in de admin
+    aan het sjabloon gehangen hoeft te worden.
+  endcomment
+  if template.suffix == 'pijler' or template.suffix == 'grens' or template.suffix == 'gids'
+    assign nawm_page = true
+    assign nawm_light = true
+  endif
   comment
     Twee suffixen. `nawm` is de huidige; `wake-up-light` blijft staan omdat het
     live thema dat bestand sinds 20 augustus niet meer van GitHub ophaalt —

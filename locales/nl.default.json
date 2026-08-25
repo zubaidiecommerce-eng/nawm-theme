@@ -16,6 +16,67 @@
       "minutes": "minuten",
       "pdf": "PDF"
     },
+    "gids": {
+      "toc_heading": "In dit artikel",
+      "breadcrumb_label": "Kruimelpad",
+      "breadcrumb_home": "Home",
+      "published_on": "Gepubliceerd op {{ date }}",
+      "updated_on": "bijgewerkt op {{ date }}",
+      "related_heading": "Verder lezen",
+      "back_to_pillar": "Terug naar {{ pillar }}",
+      "index_eyebrow": "De gids",
+      "index_heading": "Alles wat we schreven over je avond en je ochtend",
+      "index_intro": "Geen nieuws en geen blog. Stukken die blijven staan, over wat je 's avonds doet en hoe je ochtend begint. Drie onderwerpen, en per onderwerp een pagina die het geheel uitlegt.",
+      "index_other": "Overig",
+      "index_empty": "Er staan nog geen stukken in de gids.",
+      "index_meta_description": "Overzicht van alles wat we schreven over je avond en je ochtend. Drie onderwerpen, twaalf stukken, geen nieuws.",
+      "pijler_product_lede": "Wij maken één ding, en dat is",
+      "pijler_product_anchor": "de NAWM wake-up light",
+      "pijler_product_tail": ". Alles op deze pagina werkt ook zonder, maar met een apparaat dat het licht voor je opbouwt hoef je er 's ochtends niet meer aan te denken.",
+      "pijler": {
+        "wake-up-light": {
+          "short": "Het product en de categorie",
+          "eyebrow": "Wake-up light",
+          "intro": "Wat een wake-up light doet, hoe de zonsopgang werkt, en waar je op let als je er een kiest. Inclusief het eerlijke deel: voor wie hij minder geschikt is.",
+          "articles_heading": "Meer over wake-up lights",
+          "meta_description": "Hoe een wake-up light werkt, waar je op let bij het kiezen, en voor wie hij minder geschikt is. Zonder verkooppraat."
+        },
+        "beter-opstaan": {
+          "short": "De ochtend",
+          "eyebrow": "Beter opstaan",
+          "intro": "Je ochtend begint niet bij je alarm. Vijf momenten die bepalen hoe zwaar je opstaat, en per moment één verandering die je vanavond al kunt doen.",
+          "articles_heading": "Meer over je ochtend",
+          "meta_description": "Vijf momenten die bepalen hoe zwaar je ochtend voelt, en per moment één concrete verandering. Over gedrag, niet over fysiologie."
+        },
+        "avondroutine": {
+          "short": "De avond",
+          "eyebrow": "Avondroutine",
+          "intro": "Een routine die je volhoudt is geen lijst met regels maar een reeks momenten die zichzelf aankondigen. Zes stappen, plus een korte versie voor drukke avonden.",
+          "articles_heading": "Meer over je avond",
+          "meta_description": "Zes momenten van dertig minuten voor bed tot het licht uit, plus een verkorte versie van vijftien minuten voor drukke avonden."
+        }
+      },
+      "grens": {
+        "eyebrow": "De grens",
+        "intro_1": "Wij verkopen een wake-up light en we schrijven over gewoontes: hoe laat je gaat slapen, waar je telefoon ligt, hoe donker je kamer 's ochtends is. Dat is waar wij iets over te zeggen hebben.",
+        "intro_2": "Waar wij niets over te zeggen hebben, is wat er in je lichaam gebeurt. We stellen geen diagnose, we behandelen niets en we hebben geen mening over jouw klachten. Als je op deze pagina bent gekomen omdat je je al langer niet goed voelt, dan zijn wij niet degenen die je zoekt.",
+        "signals_heading": "Wanneer je beter naar de huisarts gaat",
+        "signals": {
+          "s1": "Je bent al weken moe, ook op dagen waarop je genoeg hebt geslapen.",
+          "s2": "Je hebt regelmatig hoofdpijn, zeker als die er 's ochtends al is.",
+          "s3": "Je voelt je langere tijd somber of vlak, en dat trekt niet weg.",
+          "s4": "Je snurkt en iemand heeft gemerkt dat je even stopt met ademen.",
+          "s5": "Je ligt al weken wakker terwijl je moe bent, of je wordt structureel midden in de nacht wakker."
+        },
+        "referral": "Bij alle vijf geldt hetzelfde: bel je huisarts. Wil je eerst rustig lezen wat er aan de hand kan zijn, kijk dan op",
+        "thuisarts_anchor": "Thuisarts.nl",
+        "referral_tail": " — dat is gemaakt door Nederlandse huisartsen en het is gratis.",
+        "scope_heading": "Waar wij wél iets over te zeggen hebben",
+        "scope_body": "Blijft er, naast wat een arts eraan doet, een stuk over dat gewoon gedrag is — je telefoon die tot half één in je hand ligt, een avond zonder eindpunt, een kamer die in januari om zeven uur nog pikdonker is — dan is dat het stuk waar wij over schrijven. Dat begint bij",
+        "evening_anchor": "je avondroutine",
+        "scope_tail": "."
+      }
+    },
     "hero": {
       "eyebrow": "Je slaapt misschien lang genoeg. Maar word je ook uitgerust wakker?",
       "heading": "Frisser wakker begint|de avond ervoor.",
