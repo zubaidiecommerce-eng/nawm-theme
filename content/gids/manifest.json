@@ -1,0 +1,128 @@
+{
+  "_doc": [
+    "Metadata bij de artikelbodies in deze map. NAWM_SEO_CONTENTSPEC.md §4 en §7.",
+    "",
+    "Per artikel:",
+    "  handle           het bestand is <handle>.html, en de URL wordt /blogs/gids/<handle>",
+    "  title            de H1 op de pagina en de <title> vóór ' — NAWM'",
+    "  pillar           bepaalt de tag pijler:<pillar>, en daarmee het kruimelpad,",
+    "                   de plek in het overzicht en het blok gerelateerde artikelen",
+    "  excerpt          de samenvatting onder de titel in het overzicht en op de pijler",
+    "  meta_description handgeschreven, ≤155 tekens. Nooit uit de eerste alinea",
+    "                   genereren — dat leest als vulling (§7)",
+    "  image_alt        de alt-tekst van het uitgelichte beeld, minimaal 1200px breed (§8)",
+    "",
+    "De volgorde hieronder is de bouwvolgorde uit §10, niet de nummering uit §4.",
+    "Publiceer wakker-worden-in-de-winter uiterlijk in september."
+  ],
+  "blog": {
+    "handle": "gids",
+    "title": "Gids",
+    "meta_title": "Gids — beter opstaan en afbouwen | NAWM",
+    "meta_description": "Overzicht van alles wat we schreven over je avond en je ochtend. Drie onderwerpen, geen nieuws."
+  },
+  "articles": [
+    {
+      "handle": "telefoon-voor-het-slapen-gaan",
+      "title": "Je telefoon voor het slapen gaan: waarom wegleggen zo moeilijk is",
+      "meta_title": "Telefoon wegleggen voor het slapen — NAWM",
+      "pillar": "avondroutine",
+      "excerpt": "Niet omdat je geen discipline hebt, maar omdat je avond geen eindpunt heeft. Vijf manieren om er wel een te maken.",
+      "meta_description": "Niet omdat je geen discipline hebt, maar omdat je avond geen eindpunt heeft. Vijf manieren om er wel een te maken.",
+      "image_alt": "Een telefoon ligt met het scherm naar beneden op een houten plank naast een bed"
+    },
+    {
+      "handle": "bedtijd-uitstellen",
+      "title": "Waarom je je bedtijd blijft uitstellen terwijl je moe bent",
+      "meta_title": "Waarom je je bedtijd uitstelt — NAWM",
+      "pillar": "avondroutine",
+      "excerpt": "Je weet dat je moe bent en je blijft toch zitten. Over het gevoel dat de avond van jou is, en waarom meer discipline daar niet tegenop kan.",
+      "meta_description": "Je weet dat je moe bent en je blijft toch zitten. Waarom meer discipline daar niet tegenop kan, en wat een eindpunt wel doet.",
+      "image_alt": "Een donkere woonkamer met één lamp aan, laat op de avond"
+    },
+    {
+      "handle": "moe-wakker-worden-ondanks-genoeg-slaap",
+      "title": "Genoeg geslapen en toch moe wakker: wat er dan meestal aan de hand is",
+      "meta_title": "Genoeg geslapen en toch moe wakker — NAWM",
+      "pillar": "beter-opstaan",
+      "excerpt": "Acht uur in bed en toch een zwaar hoofd. Vier dingen die vaker met je avond en je wekmoment te maken hebben dan met het aantal uren.",
+      "meta_description": "Acht uur in bed en toch een zwaar hoofd. Vier dingen die vaker met je avond en je wekmoment te maken hebben dan met het aantal uren.",
+      "image_alt": "Verkreukeld beddengoed in het grijze licht van een vroege ochtend"
+    },
+    {
+      "handle": "wake-up-light-zware-slaper",
+      "title": "Werkt een wake-up light als je een zware slaper bent?",
+      "pillar": "wake-up-light",
+      "excerpt": "Eerlijk antwoord: licht alleen is voor veel mensen genoeg, maar niet voor iedereen. Wat het geluid doet en waar de grens ligt.",
+      "meta_description": "Eerlijk antwoord: licht alleen is voor veel mensen genoeg, maar niet voor iedereen. Wat het geluid doet en waar de grens ligt.",
+      "image_alt": "Een wake-up light op een nachtkastje met de dome op een lage amberstand"
+    },
+    {
+      "handle": "hoe-werkt-een-wake-up-light",
+      "title": "Hoe werkt een wake-up light?",
+      "pillar": "wake-up-light",
+      "excerpt": "Een wake-up light bouwt het licht op vóór je wektijd. Zo werkt de zonsopgangsimulatie, stap voor stap.",
+      "meta_description": "Een wake-up light bouwt het licht op vóór je wektijd. Zo werkt de zonsopgangsimulatie, en dit is waar je op let als je er een kiest.",
+      "image_alt": "Een wake-up light halverwege de zonsopgang, met warm licht op de muur erachter"
+    },
+    {
+      "handle": "wake-up-light-of-gewone-wekker",
+      "title": "Wake-up light of gewone wekker: wat is het verschil?",
+      "pillar": "wake-up-light",
+      "excerpt": "Het verschil zit niet in het geluid maar in de aanloop. Een vergelijking op vijf punten, inclusief wanneer een gewone wekker beter is.",
+      "meta_description": "Het verschil zit niet in het geluid maar in de aanloop. Een vergelijking op vijf punten, inclusief wanneer een gewone wekker beter is.",
+      "image_alt": "Een wake-up light en een eenvoudige digitale wekker naast elkaar op een nachtkastje"
+    },
+    {
+      "handle": "wakker-worden-in-de-winter",
+      "title": "Wakker worden als het buiten nog donker is",
+      "pillar": "beter-opstaan",
+      "excerpt": "Van oktober tot maart geeft je kamer je geen enkele aanwijzing dat het ochtend is. Wat je dan aan gordijnen, licht en wektijd verandert.",
+      "meta_description": "Van oktober tot maart geeft je kamer geen enkele aanwijzing dat het ochtend is. Wat je aan gordijnen, licht en wektijd verandert.",
+      "image_alt": "Een donker slaapkamerraam met een kier in de gordijnen, vroeg in de winter"
+    },
+    {
+      "handle": "waarom-is-opstaan-zo-moeilijk",
+      "title": "Waarom opstaan zo moeilijk voelt, en wat je eraan kunt veranderen",
+      "meta_title": "Waarom opstaan zo moeilijk voelt — NAWM",
+      "pillar": "beter-opstaan",
+      "excerpt": "Het gaat om de twee minuten tussen je alarm en je voeten op de grond. Wat daar gebeurt, en waarom een harde toon anders werkt dan een geleidelijke wekker.",
+      "meta_description": "Het gaat om de twee minuten tussen je alarm en je voeten op de grond. Wat daar gebeurt, en wat je de avond ervoor kunt doen.",
+      "image_alt": "Een hand die onder een dekbed vandaan naar een nachtkastje reikt"
+    },
+    {
+      "handle": "is-snoozen-slecht",
+      "title": "Is snoozen slecht? Wat er gebeurt in die negen minuten",
+      "meta_title": "Is snoozen slecht? — NAWM",
+      "pillar": "beter-opstaan",
+      "excerpt": "Negen minuten is te kort om iets aan je vermoeidheid te doen en lang genoeg om het opstaan opnieuw te moeten doen. Drie alternatieven.",
+      "meta_description": "Negen minuten is te kort om iets aan je vermoeidheid te doen en lang genoeg om het opstaan opnieuw te moeten doen. Drie alternatieven.",
+      "image_alt": "Een wekkerdisplay dat 07:09 toont in een donkere kamer"
+    },
+    {
+      "handle": "vaste-wektijd",
+      "title": "Elke dag dezelfde wektijd, ook in het weekend?",
+      "pillar": "beter-opstaan",
+      "excerpt": "Het eerlijke compromis ligt niet bij elke dag half zeven. Houd het verschil onder het uur, en laat een week- en weekendalarm het regelen.",
+      "meta_description": "Het eerlijke compromis ligt niet bij elke dag half zeven. Houd het verschil onder het uur, en laat twee alarmen het regelen.",
+      "image_alt": "Een agenda en een wekker naast elkaar op een houten tafel"
+    },
+    {
+      "handle": "welke-kleur-licht-slaapkamer",
+      "title": "Welk licht past bij je slaapkamer 's avonds?",
+      "pillar": "avondroutine",
+      "excerpt": "Warm of koel, en vooral: hoe fel. Waar je een lamp neerzet, hoe laag je hem zet, en waarom het laagste standje het enige is dat telt.",
+      "meta_description": "Warm of koel, en vooral hoe fel. Waar je een lamp neerzet, hoe laag je hem zet, en waarom het laagste standje het enige is dat telt.",
+      "image_alt": "Een slaapkamer in warm amberlicht van één lamp op een nachtkastje"
+    },
+    {
+      "handle": "avondroutine-in-30-minuten",
+      "title": "Een avondroutine van 30 minuten die je ook op een drukke dag volhoudt",
+      "meta_title": "Avondroutine van 30 minuten — NAWM",
+      "pillar": "avondroutine",
+      "excerpt": "Zes momenten in het laatste halfuur voor bed, plus de verkorte versie van vijftien minuten voor avonden waarop het niet uitkomt.",
+      "meta_description": "Zes momenten in het laatste halfuur voor bed, plus een verkorte versie van vijftien minuten voor avonden waarop het niet uitkomt.",
+      "image_alt": "Een opgeruimd nachtkastje met een boek, een glas water en een lamp op een lage stand"
+    }
+  ]
+}
