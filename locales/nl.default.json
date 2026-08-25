@@ -705,6 +705,10 @@
           "s6": {
             "text": "Het eerste uur van mijn dag is verspild",
             "axis": "ochtend"
+          },
+          "s7": {
+            "text": "Ik slaap prima",
+            "axis": "none"
           }
         },
         "results": {
