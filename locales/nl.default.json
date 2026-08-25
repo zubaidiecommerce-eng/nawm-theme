@@ -16,6 +16,9 @@
       "minutes": "minuten",
       "pdf": "PDF"
     },
+    "price": {
+      "per_morning": "{{ amount }} per ochtend in het eerste jaar"
+    },
     "hero": {
       "eyebrow": "Je slaapt misschien lang genoeg. Maar word je ook uitgerust wakker?",
       "heading": "Frisser wakker begint|de avond ervoor.",

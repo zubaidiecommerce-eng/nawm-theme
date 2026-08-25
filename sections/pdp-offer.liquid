@@ -58,11 +58,10 @@
     prijs over een periode die erbij staat — geen uitspraak over hoe lang het
     apparaat meegaat, want dat weten we niet.
   endcomment
-  assign per_morning = blank
-  if pdp_product.price > 0
-    assign cents_per_day = pdp_product.price | divided_by: 365
-    assign per_morning = cents_per_day | money
-  endif
+  capture per_morning
+    render 'nawm-per-morning', product: pdp_product
+  endcapture
+  assign per_morning = per_morning | strip
 %}
 
 <section class="nawm-section pdp-offer ctx-dawn" id="aanbod">

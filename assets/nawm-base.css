@@ -184,6 +184,21 @@ html.nawm-page .shopify-section:has(.nawm-section) {
 
 .nawm-small { font-size: var(--fs-small); color: var(--fg-soft); }
 
+/* De prijs in perspectief, op de plek waar de schok ontstaat: direct onder het
+   bedrag in het koopblok. Mono en zacht, zodat hij de knop eronder niet
+   beconcurreert — hij hoort gelezen te worden, niet opgemerkt.
+
+   Selector op (0,2,0) en niet (0,1,0), want `.nawm-section p` staat op (0,1,1)
+   en zou de marge er anders weer af halen. */
+.nawm-section .price-context {
+  margin-block-start: .25rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: .04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-soft);
+}
+
 /* ----------------------------------------------------------------- eyebrow */
 
 .nawm-eyebrow {
