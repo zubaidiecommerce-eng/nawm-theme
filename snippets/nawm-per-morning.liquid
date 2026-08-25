@@ -1,0 +1,55 @@
+{% doc %}
+  Wat het per ochtend kost. Fix & uitbreiding v4, punt A2.
+
+  De prijs delen door een benoemde periode. Geen uitspraak over hoe lang het
+  apparaat meegaat — dat weten we niet — maar een omrekening die de bezoeker
+  zelf kan narekenen.
+
+  Het getal stond op vier plekken los in de secties, elke keer met `365` in de
+  Liquid. Vier plekken die kunnen gaan verschillen zodra de prijs of de periode
+  wijzigt. Hier is het één berekening, gevoed door de themasetting
+  `afschrijvingsdagen`.
+
+  Rendert een leeg resultaat wanneer er niets te rekenen valt. Vang hem daarom
+  met `capture` op en controleer op `blank` voordat je hem toont:
+
+      {%- capture per_morning -%}
+        {% render 'nawm-per-morning', product: pdp_product %}
+      {%- endcapture -%}
+      {%- assign per_morning = per_morning | strip -%}
+
+  Drie gevallen waarin er bewust niets uit komt:
+
+  · De prijs staat op handmatig. `price_manual` is vrije tekst, geen bedrag in
+    centen, dus er valt niet mee te rekenen. Een regel die uit een ander getal
+    is afgeleid dan het getal erboven is erger dan geen regel.
+  · Het product ontbreekt of is gratis.
+  · De uitkomst is minder dan één cent. `€0,00 per ochtend` leest als een
+    rekenfout, niet als een argument.
+
+  @param {object} [product] - Het product waarvan de prijs geldt.
+{% enddoc %}
+
+{%- liquid
+  comment
+    De periode komt uit de themasetting. Blijft die leeg of staat hij op nul,
+    dan valt hij terug op een jaar — `divided_by: 0` breekt de hele pagina af.
+  endcomment
+  assign days = settings.afschrijvingsdagen | times: 1
+  if days <= 0
+    assign days = 365
+  endif
+
+  assign cents = 0
+  assign price = product.price | default: 0
+  if settings.price_display_source != 'manual' and price > 0
+    comment
+      Beide operanden zijn gehele getallen, dus dit is een gehele deling: de
+      centen worden afgekapt, niet afgerond. Dat is de bedoeling — de regel mag
+      nooit hoger uitvallen dan wat de bezoeker zelf uitrekent.
+    endcomment
+    assign cents = price | divided_by: days
+  endif
+-%}
+
+{%- if cents > 0 -%}{{ cents | money }}{%- endif -%}

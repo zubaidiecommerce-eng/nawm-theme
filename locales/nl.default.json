@@ -16,6 +16,9 @@
       "minutes": "minuten",
       "pdf": "PDF"
     },
+    "price": {
+      "per_morning": "{{ amount }} per ochtend in het eerste jaar"
+    },
     "hero": {
       "eyebrow": "Je slaapt misschien lang genoeg. Maar word je ook uitgerust wakker?",
       "heading": "Frisser wakker begint|de avond ervoor.",
@@ -408,7 +411,7 @@
           "n2": "Je slaapkamer ’s ochtends al vol in de zon staat. Dan doet de natuur het al",
           "n3": "Je een medisch slaapprobleem hebt. Dit is een consumentenproduct, geen behandeling"
         },
-        "closing": "Herken je jezelf rechts? Bestel hem dan niet. Dat scheelt jou een retour en ons allebei gedoe."
+        "closing": "Herken je jezelf rechts? Dan is dit waarschijnlijk niet wat je zoekt. Liever dat je dat nu weet dan over twee weken."
       },
       "evening": {
         "eyebrow": "Je avond met NAWM",
@@ -702,6 +705,10 @@
           "s6": {
             "text": "Het eerste uur van mijn dag is verspild",
             "axis": "ochtend"
+          },
+          "s7": {
+            "text": "Ik slaap prima",
+            "axis": "none"
           }
         },
         "results": {
