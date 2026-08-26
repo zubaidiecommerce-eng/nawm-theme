@@ -1,0 +1,40 @@
+{% comment %}
+  De tweede beeldband. Zelfde weergave als pdp-beeldband, eigen instellingen.
+  Een tweede bestand omdat Shopify dezelfde statische sectie niet twee keer in
+  één template rendert. De CSS staat in pdp-beeldband.liquid.
+{% endcomment %}
+
+{% render 'nawm-beeldband', conf: section.settings %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP beeldband 2",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Vult de lege ruimte op desktop met beeld. Toont niets zolang er geen afbeelding in zit — een lege plaatshouder ziet eruit als een fout, een gat hoogstens als rust."
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "textarea", "id": "heading", "label": "Kop", "info": "Optioneel. Zonder kop is het puur beeld." },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "Verhouding",
+      "options": [
+        { "value": "4 / 3", "label": "Liggend (4:3)" },
+        { "value": "16 / 9", "label": "Breed (16:9)" },
+        { "value": "1 / 1", "label": "Vierkant" },
+        { "value": "4 / 5", "label": "Staand (4:5)" }
+      ],
+      "default": "4 / 3"
+    },
+    { "type": "image_picker", "id": "image_1", "label": "Beeld 1" },
+    { "type": "text", "id": "caption_1", "label": "Bijschrift 1" },
+    { "type": "image_picker", "id": "image_2", "label": "Beeld 2" },
+    { "type": "text", "id": "caption_2", "label": "Bijschrift 2" },
+    { "type": "image_picker", "id": "image_3", "label": "Beeld 3" },
+    { "type": "text", "id": "caption_3", "label": "Bijschrift 3" }
+  ],
+  "presets": [{ "name": "NAWM · PDP beeldband 2" }]
+}
+{% endschema %}

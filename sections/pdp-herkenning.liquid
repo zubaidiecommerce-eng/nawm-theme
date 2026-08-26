@@ -71,6 +71,11 @@
     data-nawm-mirror
   >
     <div class="nawm-wrap pdp-mirror__inner">
+      {%- comment -%}
+        De kolom met de stellingen en de uitkomst. Staat er een beeld naast, dan
+        is dit de linkerkolom; staat het er niet, dan is het gewoon de sectie.
+      {%- endcomment -%}
+      <div class="pdp-mirror__main">
       <div class="pdp-head pdp-head--wide nawm-reveal">
         {% render 'nawm-eyebrow', text: eyebrow %}
         <h2 id="pdp-mirror-heading">{{ heading }}</h2>
@@ -170,11 +175,52 @@
         {%- endfor -%}
       </div>
     </div>
+
+    {%- if section.settings.image != blank -%}
+      <div class="pdp-mirror__side nawm-reveal" style="--reveal-delay: 120ms;">
+        {{
+          section.settings.image
+          | image_url: width: 800
+          | image_tag:
+            widths: '320,480,800',
+            sizes: '(min-width: 1024px) 20rem, 90vw',
+            alt: section.settings.image.alt,
+            loading: 'lazy',
+            decoding: 'async'
+        }}
+      </div>
+    {%- endif -%}
+    </div>
   </section>
 
 {% stylesheet %}
   .pdp-mirror__inner {
     max-width: 46rem;
+  }
+
+  /* Met een beeld ernaast wordt het twee kolommen en vult de sectie de breedte.
+     Zonder beeld blijft het de smalle kolom die het was — de sectie leest dan
+     nog steeds goed, hij staat alleen midden op de pagina. */
+  @media (min-width: 1024px) {
+    .pdp-mirror--with-image .pdp-mirror__inner {
+      max-width: none;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+      gap: clamp(2.5rem, 5vw, 4.5rem);
+      align-items: start;
+    }
+
+    .pdp-mirror--with-image .pdp-mirror__side {
+      position: sticky;
+      top: calc(var(--header-height, 60px) + var(--sp-4));
+    }
+  }
+
+  .pdp-mirror__side img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: var(--r-card);
   }
 
   .pdp-mirror__list {
@@ -357,6 +403,12 @@
       "type": "textarea",
       "id": "heading",
       "label": "Kop"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Beeld ernaast",
+      "info": "Optioneel. Met een beeld wordt de sectie tweekoloms op desktop en vult hij de breedte; zonder beeld blijft het de smalle kolom."
     },
     {
       "type": "header",
