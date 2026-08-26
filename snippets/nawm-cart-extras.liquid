@@ -92,7 +92,7 @@
       <p class="nawm-cart__upsell-text">
         {{- 'nawm.cart.upsell' | t: amount: second_price | money -}}
       </p>
-      <button type="submit" class="nawm-cta nawm-cta--ghost" data-nawm-event="cart_upsell_click">
+      <button type="submit" class="nawm-cta nawm-cta--ghost" data-nawm-confirm data-nawm-event="cart_upsell_click">
         {{ 'nawm.cart.upsell_cta' | t }}
       </button>
     </form>
