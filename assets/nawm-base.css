@@ -1647,3 +1647,156 @@ html.nawm-pdp .pdp-hero {
 .nawm-crumbs__item[aria-current="page"] {
   color: var(--fg);
 }
+
+
+/* ====================================================== kleine interacties */
+
+/* Alles hieronder is versiering. Elke regel valt weg bij prefers-reduced-motion,
+   en niets ervan is nodig om iets te kunnen kopen. */
+
+/* ------------------------------------------------------ winkelwagenicoon */
+
+/* Het icoon in de balk reageert op de muis voordat je klikt. Een kleine
+   verschuiving omhoog leest als "dit is een knop"; meer is het niet. */
+@media (hover: hover) {
+  .header-actions__cart-icon {
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .header-actions__cart-icon:hover {
+    transform: translateY(-2px);
+  }
+
+  .header-actions__cart-icon .svg-wrapper {
+    display: inline-block;
+    transition: rotate var(--dur) var(--ease), scale var(--dur) var(--ease);
+    transform-origin: 50% 70%;
+  }
+
+  /* Het karretje kantelt alsof je het optilt. Twee graden is genoeg; meer wordt
+     een cartoon. */
+  .header-actions__cart-icon:hover .svg-wrapper {
+    rotate: -8deg;
+    scale: 1.06;
+  }
+
+  .header-actions__cart-icon .cart-bubble {
+    transition: scale var(--dur) var(--ease);
+  }
+
+  .header-actions__cart-icon:hover .cart-bubble {
+    scale: 1.1;
+  }
+}
+
+/* ------------------------------------------------ de knop na het klikken */
+
+/* De knop bevestigt zichzelf: het label schuift weg, een vinkje komt ervoor in
+   de plaats, en na 800ms is alles terug. Dat is de enige plek waar de bezoeker
+   zeker weet dat zijn klik is aangekomen voordat de lade opengaat. */
+.nawm-cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.nawm-cta__added {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  translate: 0 40%;
+  pointer-events: none;
+}
+
+.nawm-cta[data-added] .pdp-buy__label {
+  animation: nawm-label-out 720ms var(--ease) both;
+}
+
+.nawm-cta[data-added] .nawm-cta__added {
+  animation: nawm-check-in 720ms var(--ease) both;
+}
+
+/* De pijl hoort niet mee te schuiven met het label: hij hoort bij de knop, niet
+   bij de tekst. Tijdens de bevestiging gaat hij gewoon weg. */
+.nawm-cta[data-added]::after {
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+@keyframes nawm-label-out {
+  0%   { opacity: 1; translate: 0 0; }
+  28%  { opacity: 0; translate: 0 -60%; }
+  72%  { opacity: 0; translate: 0 -60%; }
+  100% { opacity: 1; translate: 0 0; }
+}
+
+@keyframes nawm-check-in {
+  0%   { opacity: 0; translate: 0 60%; }
+  28%  { opacity: 1; translate: 0 0; }
+  72%  { opacity: 1; translate: 0 0; }
+  100% { opacity: 0; translate: 0 -60%; }
+}
+
+/* ---------------------------------------------------- galerij die kantelt */
+
+/* De waarden komen uit nawm-motion.js. Staan ze er niet, dan is alles nul en
+   staat het beeld gewoon recht. */
+.pdp-gallery__track {
+  transform: perspective(1200px)
+    rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg))
+    translateZ(0);
+  translate: 0 calc(var(--tilt-lift, 0px) * -1);
+  transition: transform 600ms var(--ease), translate 600ms var(--ease);
+  will-change: transform;
+}
+
+/* -------------------------------------------------------- keuzes en tikken */
+
+/* Een keuze die je aantikt, veert kort in. Zonder die veer voelt een radio in
+   een groot vlak als een plaatje in plaats van een knop. */
+@media (prefers-reduced-motion: no-preference) {
+  .pdp-buy__qty:has(.pdp-buy__qty-radio:checked),
+  .pdp-gift__option:has(.pdp-gift__radio:checked),
+  .pdp-mirror__item:has(.pdp-mirror__check:checked) {
+    animation: nawm-press 340ms var(--ease);
+  }
+
+  @keyframes nawm-press {
+    0%   { scale: 1; }
+    40%  { scale: .985; }
+    100% { scale: 1; }
+  }
+
+  /* Het vinkje zelf komt op met een klein overschot, zodat het aanvoelt als
+     aangezet en niet als ingekleurd. */
+  .pdp-mirror__box::after,
+  .pdp-gift__checkbox-box::after {
+    transition: opacity var(--dur-fast) var(--ease), scale var(--dur) var(--ease);
+    scale: .4;
+  }
+
+  .pdp-mirror__item:has(.pdp-mirror__check:checked) .pdp-mirror__box::after,
+  .pdp-gift__checkbox:has(input:checked) .pdp-gift__checkbox-box::after {
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-actions__cart-icon,
+  .header-actions__cart-icon .svg-wrapper,
+  .header-actions__cart-icon .cart-bubble,
+  .pdp-gallery__track {
+    transition: none;
+    transform: none;
+    rotate: none;
+    scale: none;
+    translate: none;
+  }
+
+  .nawm-cta[data-added] .pdp-buy__label,
+  .nawm-cta[data-added] .nawm-cta__added {
+    animation: none;
+  }
+}

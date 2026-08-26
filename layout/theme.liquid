@@ -269,6 +269,13 @@
     {%- endcomment -%}
     {%- if nawm_page -%}
       {% render 'nawm-newsletter-popup' %}
+
+      {%- comment -%}
+        De kleine interacties. Alles erin is versiering: laadt dit bestand niet,
+        dan werkt de winkel precies zoals hij werkte. Daarom onderaan de body en
+        met lage prioriteit.
+      {%- endcomment -%}
+      <script src="{{ 'nawm-motion.js' | asset_url }}" type="module" fetchpriority="low"></script>
     {%- endif -%}
 
     {% render 'cart-drawer', render_wrapper: true %}

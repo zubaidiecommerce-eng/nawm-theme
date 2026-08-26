@@ -1,0 +1,92 @@
+{% comment %}
+  Een band met een tot drie beelden, om de pagina te vullen waar hij nu leeg is.
+
+  De productpagina bestaat grotendeels uit smalle tekstkolommen midden op een
+  breed scherm. Op mobiel klopt dat; op desktop laat het de pagina leeg lijken.
+  Deze band vult zo'n gat met beeld in plaats van met lucht.
+
+  Er staan er twee in de template en beide tonen niets zolang er geen beeld in
+  zit. Dat is belangrijk: een lege plaatshouder is erger dan een gat, want een
+  gat ziet er hoogstens rustig uit en een plaatshouder ziet eruit als een fout.
+
+  De markup staat in snippets/nawm-beeldband.liquid, gedeeld met de tweede
+  band. De CSS staat hier en geldt voor allebei: sectie-stylesheets worden
+  themabreed samengevoegd, dus één keer is genoeg.
+{% endcomment %}
+
+{% render 'nawm-beeldband', conf: section.settings %}
+
+{% stylesheet %}
+  .pdp-band__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-3);
+  }
+
+  .pdp-band:has(.pdp-head) .pdp-band__list {
+    margin-block-start: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 750px) {
+    .pdp-band__list {
+      grid-template-columns: repeat(var(--band-count, 1), minmax(0, 1fr));
+      gap: var(--sp-4);
+    }
+  }
+
+  .pdp-band__figure {
+    margin: 0;
+    border-radius: var(--r-card);
+    overflow: hidden;
+    background: color-mix(in oklab, var(--nawm-dawn) 88%, var(--ink-day));
+  }
+
+  .pdp-band__figure img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    aspect-ratio: var(--band-ratio, 4 / 3);
+    object-fit: cover;
+  }
+
+  .pdp-band__caption {
+    padding: var(--sp-2) var(--sp-3);
+    font-size: var(--fs-mono);
+    color: var(--fg-soft);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "NAWM · PDP beeldband",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Vult de lege ruimte op desktop met beeld. Toont niets zolang er geen afbeelding in zit — een lege plaatshouder ziet eruit als een fout, een gat hoogstens als rust."
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "textarea", "id": "heading", "label": "Kop", "info": "Optioneel. Zonder kop is het puur beeld." },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "Verhouding",
+      "options": [
+        { "value": "4 / 3", "label": "Liggend (4:3)" },
+        { "value": "16 / 9", "label": "Breed (16:9)" },
+        { "value": "1 / 1", "label": "Vierkant" },
+        { "value": "4 / 5", "label": "Staand (4:5)" }
+      ],
+      "default": "4 / 3"
+    },
+    { "type": "image_picker", "id": "image_1", "label": "Beeld 1" },
+    { "type": "text", "id": "caption_1", "label": "Bijschrift 1" },
+    { "type": "image_picker", "id": "image_2", "label": "Beeld 2" },
+    { "type": "text", "id": "caption_2", "label": "Bijschrift 2" },
+    { "type": "image_picker", "id": "image_3", "label": "Beeld 3" },
+    { "type": "text", "id": "caption_3", "label": "Bijschrift 3" }
+  ],
+  "presets": [{ "name": "NAWM · PDP beeldband" }]
+}
+{% endschema %}
