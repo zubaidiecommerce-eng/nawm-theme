@@ -487,9 +487,47 @@
       align-items: start;
       gap: clamp(2.5rem, 4vw, 4.5rem);
     }
+
+    /* `align-items: start` is hier de voorwaarde voor de plakkende galerij en
+       geen opmaakkeuze. Een grid-item dat uitrekt tot de rijhoogte ís al even
+       hoog als zijn gebied en kan dus nergens heen; met `start` krimpt het om
+       zijn inhoud en houdt het de rest van de rij over als reisruimte. */
   }
 
   /* ------------------------------------------------------------- galerij */
+
+  /* Op desktop blijft het product in beeld terwijl je de rest van het koopblok
+     leest. De sticky zit op de galerij zelf en niet op de kolom eromheen: de
+     kolom is een grid-item dat uitrekt tot de rijhoogte, en dát is precies de
+     ruimte waarbinnen de galerij mag blijven staan.
+
+     Daardoor stopt het effect vanzelf zodra de sectie op is — er is geen script
+     dat een grens moet bewaken, en er is geen moment waarop het beeld over de
+     volgende sectie heen schuift.
+
+     `max-height` plus `overflow: auto` als vangnet: is het scherm ooit lager
+     dan de galerij, dan blijft de onderkant bereikbaar in plaats van
+     onbereikbaar onder de vouw te hangen. */
+  @media (min-width: 1024px) {
+    .pdp-gallery {
+      position: sticky;
+      top: calc(var(--header-height, 60px) + var(--sp-4));
+      max-block-size: calc(100dvh - var(--header-height, 60px) - var(--sp-6));
+      overflow: auto;
+      scrollbar-width: none;
+    }
+
+    .pdp-gallery::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pdp-gallery {
+      position: static;
+      max-block-size: none;
+    }
+  }
 
   .pdp-gallery__track {
     display: grid;
@@ -589,13 +627,9 @@
 
   /* ------------------------------------------------------------ koopblok */
 
-  @media (min-width: 1024px) {
-    /* Het koopblok loopt mee terwijl je door de galerij scrollt. */
-    .pdp-hero__buy-inner {
-      position: sticky;
-      top: calc(var(--header-height, 60px) + var(--sp-4));
-    }
-  }
+  /* Het koopblok scrollt gewoon mee: de galerij is nu de kolom die blijft
+     staan. Twee sticky kolommen naast elkaar zou betekenen dat er niets meer
+     beweegt en de sectie voelt als een doodlopende weg. */
 
   .pdp-hero__heading {
     margin-block-start: var(--sp-2);
