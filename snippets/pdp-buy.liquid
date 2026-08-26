@@ -10,6 +10,17 @@
   heeft (PDP SPEC §5.2). Dit formulier rendert daarom alleen `payment_button`
   níét — er valt verder niets uit te zetten.
 
+  Het formulier zit in Horizon's eigen `product-form-component`. Dat is niet
+  cosmetisch: zonder die wikkel deed dit een gewone POST naar /cart en
+  navigeerde de bezoeker weg van de pagina. De winkelwagenlade ging dus nooit
+  open, de teller in de balk werkte niet, en er viel niets naar de winkelwagen
+  te laten vliegen. Met de wikkel loopt het via Horizon: fetch naar cart/add,
+  het standaard cart-event, de lade die opengaat, en de vluchtanimatie.
+
+  De refs `variantId` en `liveRegion` zijn verplicht. Ontbreken ze, dan gooit
+  het component een MissingRefError en valt het formulier terug op een gewone
+  POST — dat is een nette terugval, maar dan is de lade weer weg.
+
   De uitvoeringskeuze verschijnt alleen bij een product met meer dan één
   variant. Bij één SKU is het een leeg element en dus geen ruis; zou er later
   een tweede variant bijkomen, dan verkoopt de knop niet stilzwijgend altijd
@@ -33,6 +44,15 @@
   endif
 
   assign click_event = event | default: 'add_to_cart'
+
+  comment
+    Het beeld voor de vluchtanimatie: het variantbeeld, anders het productbeeld.
+  endcomment
+  assign fly_media = product.selected_or_first_available_variant.featured_media.preview_image
+  if fly_media == blank
+    assign fly_media = product.featured_media.preview_image
+  endif
+  assign fly_image = fly_media | image_url: width: 200
 
   comment
     De staffel. Het percentage komt uit één instelling — dezelfde die de
@@ -99,13 +119,21 @@
   {%- if jump_to_buy_block -%}
     <a class="nawm-cta nawm-cta--full pdp-buy__button" href="#koopblok">{{ label }}</a>
   {%- elsif product != blank and product.available -%}
+    <product-form-component
+      data-product-id="{{ product.id }}"
+      data-product-url="{{ product.url }}"
+      data-quantity-default="1"
+      on:submit="/handleSubmit"
+    >
+      <div class="visually-hidden" aria-live="assertive" role="status" aria-atomic="true" ref="liveRegion"></div>
+
     {%- form 'product', product, id: id, class: 'pdp-buy__form', novalidate: 'novalidate' -%}
       {%- unless product.has_only_default_variant -%}
         <div class="pdp-buy__variants">
           <label class="pdp-buy__variant-label" for="{{ id }}-variant">
             {{ 'nawm.pdp.common.variant_label' | t }}
           </label>
-          <select id="{{ id }}-variant" name="id" class="pdp-buy__variant-select">
+          <select id="{{ id }}-variant" name="id" ref="variantId" class="pdp-buy__variant-select">
             {%- for variant in product.variants -%}
               <option
                 value="{{ variant.id }}"
@@ -118,7 +146,7 @@
           </select>
         </div>
       {%- else -%}
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="id" ref="variantId" value="{{ product.selected_or_first_available_variant.id }}">
       {%- endunless -%}
 
       {%- if show_volume -%}
@@ -142,15 +170,35 @@
         </fieldset>
       {%- endif -%}
 
-      <button
-        type="submit"
-        name="add"
-        class="nawm-cta nawm-cta--full pdp-buy__button"
-        data-nawm-event="{{ click_event }}"
+      {%- comment -%}
+        `add-to-cart-component` verzorgt de vluchtanimatie en de knopstaat na het
+        toevoegen. Het beeld dat vliegt is het variantbeeld op 200 pixels — groot
+        genoeg om scherp te zijn tijdens de vlucht, klein genoeg om niets te
+        kosten.
+      {%- endcomment -%}
+      <add-to-cart-component
+        ref="addToCartButtonContainer"
+        data-product-variant-media="{{ fly_image }}"
+        data-add-to-cart-animation="true"
       >
-        {{ label }}
-      </button>
+        <button
+          type="submit"
+          name="add"
+          ref="addToCartButton"
+          on:click="/handleClick"
+          class="nawm-cta nawm-cta--full pdp-buy__button"
+          data-nawm-event="{{ click_event }}"
+        >
+          <span class="pdp-buy__label">{{ label }}</span>
+          <span class="nawm-cta__added" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="18" height="18" focusable="false">
+              <path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+        </button>
+      </add-to-cart-component>
     {%- endform -%}
+    </product-form-component>
   {%- elsif product != blank -%}
     <span class="nawm-cta nawm-cta--full pdp-buy__button" aria-disabled="true">
       {{ 'nawm.pdp.common.sold_out' | t }}
