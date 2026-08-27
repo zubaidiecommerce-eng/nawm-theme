@@ -927,7 +927,8 @@
       "update": "Aantal bijwerken",
       "total": "Totaal",
       "tax_note": "Inclusief btw. Verzendkosten worden bij het afrekenen berekend.",
-      "checkout": "Afrekenen"
+      "checkout": "Afrekenen",
+      "ideal_note": "Betaal met iDEAL, creditcard of PayPal in de volgende stap."
     },
     "differentiation": {
       "channels": "Rechtstreeks bij ons besteld, met onze garantie en onze service",

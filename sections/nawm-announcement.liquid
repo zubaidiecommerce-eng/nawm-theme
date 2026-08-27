@@ -164,6 +164,56 @@
       height: 34px;
     }
   }
+
+  /* --------------------------------------------------- de balk bij hover */
+
+  /* De balk werd licht bij hover terwijl de tekst wit bleef — v5, punt A2.
+     Wit op wit, dus onleesbaar.
+
+     De balk zelf is geen klikbaar element en hoort dus geen hoverstaat te
+     hebben. Hij heeft er ook geen: die komt van buiten, van een ancestor of
+     van een generieke regel in Horizon. Welke precies valt zonder de
+     gepubliceerde pagina niet vast te stellen, dus deze regels zijn geschreven
+     om te houden ongeacht waar hij vandaan komt — de sectiewikkel én de balk
+     zelf pinnen hun eigen achtergrond, ook in elke interactiestaat.
+
+     Wat hier bewust níét staat: `!important`. Twee klassen zijn genoeg om van
+     een generieke regel te winnen, en `!important` maakt de volgende
+     aanpassing onmogelijk in plaats van makkelijker. */
+  .shopify-section:has(> .nawm-announce),
+  .shopify-section:has(> .nawm-announce):hover,
+  .shopify-section:has(> .nawm-announce):focus-within {
+    background: var(--nawm-midnight);
+  }
+
+  .nawm-announce,
+  .nawm-announce:hover,
+  .nawm-announce:focus-within,
+  .nawm-announce .nawm-announce__inner:hover,
+  .nawm-announce .nawm-announce__item:hover {
+    background: var(--nawm-midnight);
+    color: var(--ink-night);
+  }
+
+  /* Staat er ooit een link in de extra boodschap, dan is dít zijn gedrag:
+     geen vlak, alleen kleur. Amber, want wit-op-wit was het probleem. */
+  .nawm-announce a,
+  .nawm-announce a:visited {
+    background: transparent;
+    color: var(--ink-night);
+    text-decoration-color: color-mix(in oklab, var(--nawm-amber) 60%, transparent);
+    text-underline-offset: 3px;
+  }
+
+  .nawm-announce a:hover {
+    background: transparent;
+    color: var(--nawm-amber);
+  }
+
+  .nawm-announce a:focus-visible {
+    outline: 2px solid var(--nawm-amber);
+    outline-offset: 2px;
+  }
 {% endstylesheet %}
 
 {% schema %}

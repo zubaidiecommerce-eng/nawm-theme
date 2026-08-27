@@ -169,6 +169,12 @@
   justify-content: center;
   gap: var(--sp-2);
   overflow: visible;
+
+  /* Haalt de regelafstand onder de logo's weg. De SVG's staan op `display:
+     block`, dus de baseline speelt daar geen rol meer, maar de rij erft anders
+     nog wel de regelhoogte van zijn omgeving — in de winkelwagenlade staat die
+     op 1 en dat drukt de onderrand aan. */
+  line-height: 0;
 }
 
 /* Geen grid met een vaste hoogte meer. Een inline svg in zo'n cel kreeg een

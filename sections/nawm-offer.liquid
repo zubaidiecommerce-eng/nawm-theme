@@ -202,9 +202,23 @@
   </script>
 {%- endif -%}
 
+{%- comment -%}
+  De mobiele bestelbalk wees naar `#offer`, en dat is het anker van de sectie
+  waarin hij zelf staat. De balk verschijnt juist wanneer die sectie niét in
+  beeld is, dus klikken scrolde je terug naar het aanbod en verborg de balk —
+  één klik verder en nog steeds niets besteld. Zie v5, punt A8.
+
+  Nu naar de productpagina, waar de knop staat die wél iets doet. Geen
+  add-to-cart vanaf hier: op de landingspagina heeft de bezoeker de
+  specificaties, de beoordelingen en het retourbeleid nog niet gezien, en een
+  bestelling zonder die stap is een retour in de maak.
+{%- endcomment -%}
 <div class="nawm-sticky-cta" data-nawm-sticky-cta inert>
   <p class="nawm-sticky-cta__price nawm-mono">{{ price }}</p>
-  {% render 'nawm-cta', label_key: 'nawm.offer.sticky_label', url: '#offer' %}
+  {% render 'nawm-cta',
+    label_key: 'nawm.offer.sticky_label',
+    url: product.url
+  %}
 </div>
 
 {% stylesheet %}
