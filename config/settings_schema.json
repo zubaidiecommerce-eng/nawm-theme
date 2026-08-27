@@ -2313,6 +2313,13 @@
         "info": "0 betekent: nog niet vastgesteld."
       },
       {
+        "type": "number",
+        "id": "afschrijvingsdagen",
+        "label": "Afschrijvingsperiode in dagen",
+        "default": 365,
+        "info": "De prijs per ochtend wordt hieruit berekend, niet ingetypt: prijs gedeeld door dit aantal. Bij 365 klopt de zinsnede \"in het eerste jaar\" die overal onder het bedrag staat. Wijk je hiervan af, pas dan ook nawm.price.per_morning, nawm.offer.per_morning en nawm.pdp.costs.per_morning in de talenbestanden aan. Leeg of 0 valt terug op 365."
+      },
+      {
         "type": "header",
         "content": "Productpagina · levering"
       },

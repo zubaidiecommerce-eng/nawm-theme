@@ -15,8 +15,13 @@
   Dan heeft hij het in zijn hoofd al in gebruik. Haal die regel niet weg om
   ruimte te winnen — dan blijft er een persoonlijkheidstestje over.
 
-  De uitkomst bij nul blijft iemand wegsturen die niet in de doelgroep zit. Dat
-  is geen verspilling maar precies wat de andere drie geloofwaardig maakt.
+  De uitkomst "Dan zit je goed" stuurt iemand weg die niet in de doelgroep zit.
+  Dat is geen verspilling maar precies wat de andere drie geloofwaardig maakt.
+
+  Die uitkomst hing tot v4 aan nul vinkjes, en dat was fout: wie iets aanvinkte
+  en daarna weer uitvinkte kreeg een conclusie zonder iets gezegd te hebben.
+  Sinds v4 hangt hij aan een eigen stelling — "Ik slaap prima", de laatste in de
+  lijst, wederzijds uitsluitend met de zes andere. Nul vinkjes toont niets.
 
   Stellingen en uitkomsten staan in schema-settings met een locale-fallback, en
   niet in blokken. Deze sectie wordt statisch gerenderd vanuit
@@ -44,8 +49,17 @@
     de pagina, en die is bewust gemengd: avond, ochtend, avond, ochtend, avond,
     ochtend. Zet ze niet op as bij elkaar — dan wordt zichtbaar dat het een
     test is, en dan vult niemand hem eerlijk in.
+
+    En dan s7, "Ik slaap prima", als laatste. Die hoort niet bij de mix: het is
+    de uitweg. Zonder hem was `none` een afvalpositie — vink je iets aan en
+    daarna weer uit, dan kreeg je "Dan zit je goed" terwijl je niets had gezegd.
+    Nu is het een keuze die je maakt, en die keuze sluit de rest uit.
+
+    De as van s7 staat hier vast en niet in een setting. Hij is structureel:
+    zet iemand hem per ongeluk op avond of ochtend, dan is de uitweg weg en
+    komt `none` nooit meer voor.
   endcomment
-  assign keys = 's1,s2,s3,s4,s5,s6' | split: ','
+  assign keys = 's1,s2,s3,s4,s5,s6,s7' | split: ','
   assign profiles = 'none,avond,ochtend,both' | split: ','
 %}
 
@@ -57,6 +71,11 @@
     data-nawm-mirror
   >
     <div class="nawm-wrap pdp-mirror__inner">
+      {%- comment -%}
+        De kolom met de stellingen en de uitkomst. Staat er een beeld naast, dan
+        is dit de linkerkolom; staat het er niet, dan is het gewoon de sectie.
+      {%- endcomment -%}
+      <div class="pdp-mirror__main">
       <div class="pdp-head pdp-head--wide nawm-reveal">
         {% render 'nawm-eyebrow', text: eyebrow %}
         <h2 id="pdp-mirror-heading">{{ heading }}</h2>
@@ -72,27 +91,27 @@
               assign text = locale_key | t
             endif
 
-            assign axis_key = 'axis_' | append: key
-            assign axis = section.settings[axis_key]
-            if axis == blank
-              assign axis_locale = 'nawm.pdp.mirror.statements.' | append: key | append: '.axis'
-              assign axis = axis_locale | t
+            if key == 's7'
+              assign axis = 'none'
+            else
+              assign axis_key = 'axis_' | append: key
+              assign axis = section.settings[axis_key]
+              if axis == blank
+                assign axis_locale = 'nawm.pdp.mirror.statements.' | append: key | append: '.axis'
+                assign axis = axis_locale | t
+              endif
             endif
 
-            comment
-              Maximaal vijf stappen stagger (v5, B4). Bij zeven stellingen zou de
-              laatste 360ms na de eerste beginnen, en dan wacht je op een lijst in
-              plaats van hem te lezen.
-            endcomment
-            assign step = forloop.index0
-            if step > 4
-              assign step = 4
+            assign delay = forloop.index0 | times: 60
+
+            assign item_class = 'pdp-mirror__item'
+            if axis == 'none'
+              assign item_class = 'pdp-mirror__item pdp-mirror__item--out'
             endif
-            assign delay = step | times: 60
           -%}
           {%- if text != blank -%}
             <li class="nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
-              <label class="pdp-mirror__item">
+              <label class="{{ item_class }}">
                 <input
                   type="checkbox"
                   class="pdp-mirror__check"
@@ -111,6 +130,10 @@
         De vier uitkomsten staan alle vier in de HTML en worden door de JS op
         `hidden` gezet. Zo staan ze in de broncode voor wie geen JavaScript
         heeft — die leest ze alle vier, wat rommelig is maar niet kapot.
+
+        Sinds v4 gaat ook deze omhullende `div` op `hidden` bij nul selecties.
+        Alleen de blokken verbergen liet een lege doos met een aria-live-regio
+        staan; nu is er bij nul selecties werkelijk niets.
       {%- endcomment -%}
       <div class="pdp-mirror__result" data-mirror-result aria-live="polite">
         {%- for profile in profiles -%}
@@ -163,11 +186,52 @@
         {%- endfor -%}
       </div>
     </div>
+
+    {%- if section.settings.image != blank -%}
+      <div class="pdp-mirror__side nawm-reveal" style="--reveal-delay: 120ms;">
+        {{
+          section.settings.image
+          | image_url: width: 800
+          | image_tag:
+            widths: '320,480,800',
+            sizes: '(min-width: 1024px) 20rem, 90vw',
+            alt: section.settings.image.alt,
+            loading: 'lazy',
+            decoding: 'async'
+        }}
+      </div>
+    {%- endif -%}
+    </div>
   </section>
 
 {% stylesheet %}
   .pdp-mirror__inner {
     max-width: 46rem;
+  }
+
+  /* Met een beeld ernaast wordt het twee kolommen en vult de sectie de breedte.
+     Zonder beeld blijft het de smalle kolom die het was — de sectie leest dan
+     nog steeds goed, hij staat alleen midden op de pagina. */
+  @media (min-width: 1024px) {
+    .pdp-mirror--with-image .pdp-mirror__inner {
+      max-width: none;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 20rem);
+      gap: clamp(2.5rem, 5vw, 4.5rem);
+      align-items: start;
+    }
+
+    .pdp-mirror--with-image .pdp-mirror__side {
+      position: sticky;
+      top: calc(var(--header-height, 60px) + var(--sp-4));
+    }
+  }
+
+  .pdp-mirror__side img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: var(--r-card);
   }
 
   .pdp-mirror__list {
@@ -194,6 +258,16 @@
       border-color var(--dur) var(--ease),
       background-color var(--dur) var(--ease),
       transform var(--dur) var(--ease);
+  }
+
+  /* De uitweg is een ander soort antwoord dan de zes erboven: hij sluit ze uit
+     in plaats van erbij te horen. Eén regel lucht en een haarlijn zeggen dat,
+     zonder er een aparte sectie van te maken. Zonder dat verschil lijkt het een
+     zevende herkenning die de andere zes stilzwijgend wist. */
+  .pdp-mirror__list li:has(.pdp-mirror__item--out) {
+    margin-block-start: var(--sp-3);
+    padding-block-start: clamp(1rem, 3vw, 1.5rem);
+    border-block-start: 1px solid var(--line);
   }
 
   .pdp-mirror__check {
@@ -329,7 +403,7 @@
   "settings": [
     {
       "type": "paragraph",
-      "content": "De uitkomst hangt af van wélke stellingen zijn aangevinkt, niet van hoeveel. Zes stellingen, om en om avond en ochtend. Zet ze niet op as bij elkaar — dan wordt zichtbaar dat het een test is. Laat een veld leeg voor de tekst uit locales/nl.default.json."
+      "content": "De uitkomst hangt af van wélke stellingen zijn aangevinkt, niet van hoeveel. Zes stellingen, om en om avond en ochtend. Zet ze niet op as bij elkaar — dan wordt zichtbaar dat het een test is. Stelling 7 is de uitweg en staat los daarvan. Laat een veld leeg voor de tekst uit locales/nl.default.json."
     },
     {
       "type": "text",
@@ -340,6 +414,12 @@
       "type": "textarea",
       "id": "heading",
       "label": "Kop"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Beeld ernaast",
+      "info": "Optioneel. Met een beeld wordt de sectie tweekoloms op desktop en vult hij de breedte; zonder beeld blijft het de smalle kolom."
     },
     {
       "type": "header",
@@ -472,8 +552,18 @@
       "default": "ochtend"
     },
     {
+      "type": "textarea",
+      "id": "statement_s7",
+      "label": "Stelling 7 — de uitweg",
+      "info": "Staat altijd onderaan en heeft geen as: hij hoort bij de uitkomst \"Ik slaap prima\" en sluit de zes andere stellingen uit. Laat leeg voor \"Ik slaap prima\" uit het talenbestand."
+    },
+    {
       "type": "header",
-      "content": "Uitkomst · niets aangevinkt"
+      "content": "Uitkomst · Ik slaap prima"
+    },
+    {
+      "type": "paragraph",
+      "content": "Deze uitkomst verschijnt alleen wanneer stelling 7 is aangevinkt — nooit als afvalpositie. Vinkt de bezoeker alles weer uit, dan verdwijnt de uitkomst en staat er niets."
     },
     {
       "type": "text",

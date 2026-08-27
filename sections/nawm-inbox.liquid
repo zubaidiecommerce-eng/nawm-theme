@@ -94,7 +94,7 @@
         {%- if manual != blank -%}
           {% render 'nawm-manual-cta',
             manual: product.metafields.nawm.manual_pdf,
-            extra_class: 'nawm-inbox__doc',
+            extra_class: 'nawm-cta--manual',
             label_key: 'nawm.inbox.manual_link'
           %}
         {%- endif -%}
@@ -199,18 +199,24 @@
     color: var(--nawm-ember);
   }
 
-  .nawm-inbox__docs {
+  /* Twee klassen: dit is een `<p>` en `.nawm-section p { margin: 0 }` staat op
+     (0,1,1), dus op één klasse verdween de marge. */
+  .nawm-inbox .nawm-inbox__docs {
     margin-block-start: var(--sp-5);
     display: flex;
     flex-wrap: wrap;
     gap: var(--sp-4);
   }
 
-  .nawm-inbox__doc {
-    color: var(--fg);
-    text-decoration-color: var(--nawm-ember);
-    text-underline-offset: 4px;
-  }
+  /* Hier zat de zwarte balk. Deze klasse stamt uit de tijd dat de handleiding
+     een tekstlink was en zette `color: var(--fg)`. Sinds v3 is het een knop:
+     in ctx-dawn is `--fg` bijna zwart en de knopachtergrond óók, dus zwarte
+     tekst op zwart. Sectie-CSS staat in de body en dus ná nawm-base.css, dus
+     bij gelijke specificiteit won deze regel van `.nawm-cta`.
+
+     De kleur is weg; de knop regelt hem zelf. nawm-base.css houdt hem nu
+     bovendien op (0,2,0), zodat een losse hulpklasse dit niet opnieuw kan
+     doen. */
 
   /* Op smalle schermen zijn 32px-punten op een 16:9-beeld te dicht op elkaar. */
   @media (max-width: 749px) {

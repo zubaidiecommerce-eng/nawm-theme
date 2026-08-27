@@ -65,7 +65,15 @@
 .ctx-night { --bg:var(--nawm-midnight); --fg:var(--ink-night); --fg-soft:var(--ink-night-soft); --line:rgb(255 255 255 / .10); }
 .ctx-dawn  { --bg:var(--nawm-dawn);     --fg:var(--ink-day);   --fg-soft:var(--ink-day-soft);   --line:rgb(26 23 16 / .12); }
 
-.nawm-section { padding-block:clamp(4.5rem,10vw,10rem); color:var(--fg); position:relative; }
+.nawm-section { padding-block:clamp(3.5rem,5.5vw,6rem); color:var(--fg); position:relative; }
+
+/* De bovengrens stond op 10rem met 10vw ertussen. Op een scherm van 1440 pixels
+   werd dat 144 pixels boven én onder, negentien secties lang: ruim tweeduizend
+   pixels scrollen zonder inhoud. Op mobiel viel het niet op omdat 10vw daar
+   onder de ondergrens bleef — vandaar dat het alleen op desktop stoorde.
+
+   Wat er nu staat is nog steeds ruim: 96 pixels op datzelfde scherm. Genoeg om
+   secties uit elkaar te houden, niet genoeg om ze uit elkaar te trekken. */
 .nawm-wrap { width:min(var(--wrap), 100% - var(--gutter)*2); margin-inline:auto; }
 
 @media (prefers-reduced-motion: reduce) {

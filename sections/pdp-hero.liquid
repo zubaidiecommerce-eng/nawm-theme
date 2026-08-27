@@ -99,6 +99,17 @@
   assign wake_sounds = pdp_product.metafields.nawm.wake_sounds_count.value
   assign manual = pdp_product.metafields.nawm.manual_pdf
 
+  comment
+    Wat het per ochtend kost, berekend uit de prijs en de themasetting
+    `afschrijvingsdagen`. Het snippet levert een leeg resultaat zodra er niets
+    te rekenen valt; `strip` haalt de witruimte van de capture eraf, zodat
+    `blank` ook echt blank is.
+  endcomment
+  capture per_morning
+    render 'nawm-per-morning', product: pdp_product
+  endcapture
+  assign per_morning = per_morning | strip
+
 %}
 
 {% render 'nawm-manual-gate', manual: manual %}
@@ -285,6 +296,20 @@
           {% render 'nawm-price', product: pdp_product %}
         </p>
 
+        {%- comment -%}
+          Koopblok: kosten per ochtend. Voorkomt de prijsschok op de plek waar
+          hij ontstaat — niet pas in de prijssectie, zes schermen lager.
+
+          Eén regel, en niet de volledige drieledige presentatie: die blijft
+          staan waar hij staat. Hier is één regel genoeg om de prijs in
+          perspectief te zetten zonder de aandacht van de knop weg te trekken.
+        {%- endcomment -%}
+        {%- if per_morning != blank -%}
+          <p class="price-context">
+            {{ 'nawm.price.per_morning' | t: amount: per_morning }}
+          </p>
+        {%- endif -%}
+
         <ul class="pdp-hero__usps" aria-label="{{ 'nawm.pdp.hero.usp_label' | t }}">
           <li>
             <strong>{{ 'nawm.pdp.hero.usp.u1.benefit' | t }}</strong>
@@ -462,9 +487,47 @@
       align-items: start;
       gap: clamp(2.5rem, 4vw, 4.5rem);
     }
+
+    /* `align-items: start` is hier de voorwaarde voor de plakkende galerij en
+       geen opmaakkeuze. Een grid-item dat uitrekt tot de rijhoogte ís al even
+       hoog als zijn gebied en kan dus nergens heen; met `start` krimpt het om
+       zijn inhoud en houdt het de rest van de rij over als reisruimte. */
   }
 
   /* ------------------------------------------------------------- galerij */
+
+  /* Op desktop blijft het product in beeld terwijl je de rest van het koopblok
+     leest. De sticky zit op de galerij zelf en niet op de kolom eromheen: de
+     kolom is een grid-item dat uitrekt tot de rijhoogte, en dát is precies de
+     ruimte waarbinnen de galerij mag blijven staan.
+
+     Daardoor stopt het effect vanzelf zodra de sectie op is — er is geen script
+     dat een grens moet bewaken, en er is geen moment waarop het beeld over de
+     volgende sectie heen schuift.
+
+     `max-height` plus `overflow: auto` als vangnet: is het scherm ooit lager
+     dan de galerij, dan blijft de onderkant bereikbaar in plaats van
+     onbereikbaar onder de vouw te hangen. */
+  @media (min-width: 1024px) {
+    .pdp-gallery {
+      position: sticky;
+      top: calc(var(--header-height, 60px) + var(--sp-4));
+      max-block-size: calc(100dvh - var(--header-height, 60px) - var(--sp-6));
+      overflow: auto;
+      scrollbar-width: none;
+    }
+
+    .pdp-gallery::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pdp-gallery {
+      position: static;
+      max-block-size: none;
+    }
+  }
 
   .pdp-gallery__track {
     display: grid;
@@ -564,13 +627,9 @@
 
   /* ------------------------------------------------------------ koopblok */
 
-  @media (min-width: 1024px) {
-    /* Het koopblok loopt mee terwijl je door de galerij scrollt. */
-    .pdp-hero__buy-inner {
-      position: sticky;
-      top: calc(var(--header-height, 60px) + var(--sp-4));
-    }
-  }
+  /* Het koopblok scrollt gewoon mee: de galerij is nu de kolom die blijft
+     staan. Twee sticky kolommen naast elkaar zou betekenen dat er niets meer
+     beweegt en de sectie voelt als een doodlopende weg. */
 
   .pdp-hero__heading {
     margin-block-start: var(--sp-2);

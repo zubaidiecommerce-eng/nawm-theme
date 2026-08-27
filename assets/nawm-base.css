@@ -143,11 +143,26 @@ html.nawm-page .shopify-section:has(.nawm-section) {
    een lichte knop in het donker. Dat is precies wat er op de instelsectie
    gebeurde: een zwarte balk waarin niets te lezen viel.
 
-   De knop bepaalt zijn eigen kleur en erft nooit. Deze selector staat bewust
-   op (0,2,1) zodat de volgorde in het bestand er niet toe doet. */
-.nawm-section a.nawm-cta,
+   v3 dekte alleen `a.nawm-cta` af, en dat was te smal. De handleidingsknop in
+   "Wat je krijgt" is een `<button>`, geen link, en kreeg zijn kleur van een
+   extra klasse uit de sectie-stylesheet (`.nawm-inbox__doc { color: var(--fg) }`).
+   Gelijke specificiteit, maar sectie-CSS staat in de body en dus ná dit
+   bestand — dus won `--fg`. In ctx-dawn is `--fg` bijna zwart en `--cta-bg`
+   óók: zwarte tekst op een zwarte balk. Precies het gemelde beeld.
+
+   Daarom nu breed: elk element met `.nawm-cta` bepaalt zijn eigen kleur en
+   erft nooit. `:where()` telt niet mee voor specificiteit, dus deze selectors
+   staan op (0,2,0) en (0,2,1) — hoog genoeg om elke losse hulpklasse uit een
+   sectie te verslaan, laag genoeg om door een bewuste `.ctx-*`-regel of een
+   variant-klasse met twee klassen overschreven te worden. */
+.nawm-section :where(a, button, span, input).nawm-cta,
 .nawm-section a.nawm-cta:visited {
   color: var(--cta-fg);
+
+  /* Breekt een eventuele gradient-text-truc: zonder dit blijft
+     `-webkit-text-fill-color: transparent` uit een erfelijke regel staan en
+     is de tekst onzichtbaar, hoe goed `color` ook is. */
+  -webkit-text-fill-color: currentColor;
 }
 
 .nawm-body { max-width: 62ch; }
@@ -168,6 +183,21 @@ html.nawm-page .shopify-section:has(.nawm-section) {
 }
 
 .nawm-small { font-size: var(--fs-small); color: var(--fg-soft); }
+
+/* De prijs in perspectief, op de plek waar de schok ontstaat: direct onder het
+   bedrag in het koopblok. Mono en zacht, zodat hij de knop eronder niet
+   beconcurreert — hij hoort gelezen te worden, niet opgemerkt.
+
+   Selector op (0,2,0) en niet (0,1,0), want `.nawm-section p` staat op (0,1,1)
+   en zou de marge er anders weer af halen. */
+.nawm-section .price-context {
+  margin-block-start: .25rem;
+  font-family: var(--ff-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: .04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-soft);
+}
 
 /* ----------------------------------------------------------------- eyebrow */
 
@@ -262,8 +292,10 @@ html[data-terug] .nawm-hero__eyebrow[data-tijdvak="terug"] { display: block; }
   border: 0;
   border-radius: 12px;
   background: var(--cta-bg);
+  background-clip: border-box;
   box-shadow: inset 0 0 0 1px var(--cta-ring);
   color: var(--cta-fg);
+  -webkit-text-fill-color: currentColor;
 
   /* Mono in plaats van de bodytekst. De knop draagt bijna altijd een bedrag,
      en cijfers in tabulaire mono staan stil in plaats van te verspringen. De
@@ -1354,9 +1386,12 @@ html.nawm-pdp .pdp-evening {
 
 /* De handleidingknop is een van de sterkste vertrouwenssignalen van de pagina
    en hoort dus als knop te staan, gecentreerd en met lucht eromheen — niet als
-   linkje onder een lijst. */
-.nawm-inbox__docs--cta {
-  margin-block-start: clamp(2rem, 5vw, 3rem);
+   linkje onder een lijst.
+
+   Twee klassen, want dit is een `<p>` en `.nawm-section p { margin: 0 }` staat
+   op (0,1,1). Op één klasse kwam de lucht erboven er nooit uit. */
+.nawm-section .nawm-inbox__docs--cta {
+  margin-block-start: clamp(3rem, 8vw, 4.5rem);
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -1364,7 +1399,11 @@ html.nawm-pdp .pdp-evening {
   text-align: center;
 }
 
-.nawm-inbox__docs--cta .nawm-cta {
+/* Eén maat voor de handleidingsknop, op alle drie de plekken waar hij groot
+   staat: "Wat je krijgt", de instelsectie en de specificaties. Stond eerder
+   drie keer los gedefinieerd — twee keer hetzelfde en één keer helemaal niet,
+   waardoor dezelfde knop er per sectie anders uitzag. */
+.nawm-cta--manual {
   min-height: 60px;
   padding-inline: var(--sp-6);
   font-size: 1.0625rem;
@@ -1407,17 +1446,14 @@ html.nawm-pdp .pdp-hero {
 
 /* ------------------------------------------------------------- ademruimte */
 
-/* De afsluitende regel van de wel-of-niet-sectie plakte op mobiel tegen de
-   laatste bullet. Die zin is het sterkste vertrouwenssignaal van de pagina en
-   verdient een eigen adempauze. */
-.pdp-fit__closing {
-  margin-block-start: clamp(2.5rem, 8vw, 3rem);
-}
+/* Hier stonden twee marges die er nooit uit kwamen: de adempauze boven de
+   slotzin van de wel-of-niet-sectie, en die boven de handleidingsknop. Allebei
+   op één klasse, allebei op een `<p>`, en `.nawm-section p { margin: 0 }` staat
+   op (0,1,1) — specificiteit wint van volgorde, dus geen van beide deed iets.
 
-/* De handleidingknop stond te dicht op de opsomming erboven. */
-.nawm-inbox__docs--cta {
-  margin-block-start: clamp(3rem, 8vw, 4.5rem);
-}
+   Ze staan nu op twee klassen bij de rest van hun blok: `.pdp-fit__closing` in
+   sections/pdp-fit.liquid en `.nawm-inbox__docs--cta` hierboven. Zet hier geen
+   nieuwe marge op één klasse neer; die verdwijnt weer. */
 
 /* Het koopblok: prijs, knop en garanties zaten op elkaar geplakt. */
 .nawm-offer__cta {
@@ -1822,4 +1858,157 @@ html.nawm-pdp .pdp-hero {
 
 .nawm-crumbs__item[aria-current="page"] {
   color: var(--fg);
+}
+
+
+/* ====================================================== kleine interacties */
+
+/* Alles hieronder is versiering. Elke regel valt weg bij prefers-reduced-motion,
+   en niets ervan is nodig om iets te kunnen kopen. */
+
+/* ------------------------------------------------------ winkelwagenicoon */
+
+/* Het icoon in de balk reageert op de muis voordat je klikt. Een kleine
+   verschuiving omhoog leest als "dit is een knop"; meer is het niet. */
+@media (hover: hover) {
+  .header-actions__cart-icon {
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .header-actions__cart-icon:hover {
+    transform: translateY(-2px);
+  }
+
+  .header-actions__cart-icon .svg-wrapper {
+    display: inline-block;
+    transition: rotate var(--dur) var(--ease), scale var(--dur) var(--ease);
+    transform-origin: 50% 70%;
+  }
+
+  /* Het karretje kantelt alsof je het optilt. Twee graden is genoeg; meer wordt
+     een cartoon. */
+  .header-actions__cart-icon:hover .svg-wrapper {
+    rotate: -8deg;
+    scale: 1.06;
+  }
+
+  .header-actions__cart-icon .cart-bubble {
+    transition: scale var(--dur) var(--ease);
+  }
+
+  .header-actions__cart-icon:hover .cart-bubble {
+    scale: 1.1;
+  }
+}
+
+/* ------------------------------------------------ de knop na het klikken */
+
+/* De knop bevestigt zichzelf: het label schuift weg, een vinkje komt ervoor in
+   de plaats, en na 800ms is alles terug. Dat is de enige plek waar de bezoeker
+   zeker weet dat zijn klik is aangekomen voordat de lade opengaat. */
+.nawm-cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.nawm-cta__added {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  translate: 0 40%;
+  pointer-events: none;
+}
+
+.nawm-cta[data-added] .pdp-buy__label {
+  animation: nawm-label-out 720ms var(--ease) both;
+}
+
+.nawm-cta[data-added] .nawm-cta__added {
+  animation: nawm-check-in 720ms var(--ease) both;
+}
+
+/* De pijl hoort niet mee te schuiven met het label: hij hoort bij de knop, niet
+   bij de tekst. Tijdens de bevestiging gaat hij gewoon weg. */
+.nawm-cta[data-added]::after {
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+@keyframes nawm-label-out {
+  0%   { opacity: 1; translate: 0 0; }
+  28%  { opacity: 0; translate: 0 -60%; }
+  72%  { opacity: 0; translate: 0 -60%; }
+  100% { opacity: 1; translate: 0 0; }
+}
+
+@keyframes nawm-check-in {
+  0%   { opacity: 0; translate: 0 60%; }
+  28%  { opacity: 1; translate: 0 0; }
+  72%  { opacity: 1; translate: 0 0; }
+  100% { opacity: 0; translate: 0 -60%; }
+}
+
+/* ---------------------------------------------------- galerij die kantelt */
+
+/* De waarden komen uit nawm-motion.js. Staan ze er niet, dan is alles nul en
+   staat het beeld gewoon recht. */
+.pdp-gallery__track {
+  transform: perspective(1200px)
+    rotateX(var(--tilt-x, 0deg))
+    rotateY(var(--tilt-y, 0deg))
+    translateZ(0);
+  translate: 0 calc(var(--tilt-lift, 0px) * -1);
+  transition: transform 600ms var(--ease), translate 600ms var(--ease);
+  will-change: transform;
+}
+
+/* -------------------------------------------------------- keuzes en tikken */
+
+/* Een keuze die je aantikt, veert kort in. Zonder die veer voelt een radio in
+   een groot vlak als een plaatje in plaats van een knop. */
+@media (prefers-reduced-motion: no-preference) {
+  .pdp-buy__qty:has(.pdp-buy__qty-radio:checked),
+  .pdp-gift__option:has(.pdp-gift__radio:checked),
+  .pdp-mirror__item:has(.pdp-mirror__check:checked) {
+    animation: nawm-press 340ms var(--ease);
+  }
+
+  @keyframes nawm-press {
+    0%   { scale: 1; }
+    40%  { scale: .985; }
+    100% { scale: 1; }
+  }
+
+  /* Het vinkje zelf komt op met een klein overschot, zodat het aanvoelt als
+     aangezet en niet als ingekleurd. */
+  .pdp-mirror__box::after,
+  .pdp-gift__checkbox-box::after {
+    transition: opacity var(--dur-fast) var(--ease), scale var(--dur) var(--ease);
+    scale: .4;
+  }
+
+  .pdp-mirror__item:has(.pdp-mirror__check:checked) .pdp-mirror__box::after,
+  .pdp-gift__checkbox:has(input:checked) .pdp-gift__checkbox-box::after {
+    scale: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-actions__cart-icon,
+  .header-actions__cart-icon .svg-wrapper,
+  .header-actions__cart-icon .cart-bubble,
+  .pdp-gallery__track {
+    transition: none;
+    transform: none;
+    rotate: none;
+    scale: none;
+    translate: none;
+  }
+
+  .nawm-cta[data-added] .pdp-buy__label,
+  .nawm-cta[data-added] .nawm-cta__added {
+    animation: none;
+  }
 }

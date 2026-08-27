@@ -1,0 +1,73 @@
+{% doc %}
+  Een band met een tot drie beelden. Zie sections/pdp-beeldband.liquid.
+
+  De markup staat in een snippet omdat er twee banden op de productpagina
+  staan en Shopify dezelfde statische sectie niet twee keer wil renderen.
+  Twee sectiebestanden met elk hun eigen instellingen delen dus deze ene
+  weergave.
+
+  @param {object} conf - section.settings van de aanroepende sectie.
+{% enddoc %}
+
+{% liquid
+  assign images = ''
+  if conf.image_1 != blank
+    assign images = images | append: '1,'
+  endif
+  if conf.image_2 != blank
+    assign images = images | append: '2,'
+  endif
+  if conf.image_3 != blank
+    assign images = images | append: '3,'
+  endif
+  assign keys = images | split: ','
+  assign count = keys.size
+%}
+
+{%- if count > 0 -%}
+  <section class="nawm-section pdp-band ctx-dawn">
+    <div class="nawm-wrap">
+      {%- if conf.heading != blank -%}
+        <div class="pdp-head pdp-head--wide nawm-reveal">
+          {%- if conf.eyebrow != blank -%}
+            {% render 'nawm-eyebrow', text: conf.eyebrow %}
+          {%- endif -%}
+          <h2>{{ conf.heading }}</h2>
+        </div>
+      {%- endif -%}
+
+      <ul
+        class="pdp-band__list"
+        style="--band-count: {{ count }}; --band-ratio: {{ conf.ratio }};"
+      >
+        {%- for key in keys -%}
+          {%- liquid
+            assign image_key = 'image_' | append: key
+            assign image = conf[image_key]
+            assign caption_key = 'caption_' | append: key
+            assign caption = conf[caption_key]
+            assign delay = forloop.index0 | times: 80
+          -%}
+          <li class="pdp-band__item nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
+            <figure class="pdp-band__figure">
+              {{
+                image
+                | image_url: width: 1600
+                | image_tag:
+                  widths: '400,600,900,1200,1600',
+                  sizes: '(min-width: 900px) 40vw, 92vw',
+                  alt: image.alt,
+                  loading: 'lazy',
+                  decoding: 'async'
+              }}
+              {%- if caption != blank -%}
+                <figcaption class="nawm-mono pdp-band__caption">{{ caption }}</figcaption>
+              {%- endif -%}
+            </figure>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </section>
+{%- endif -%}
+
