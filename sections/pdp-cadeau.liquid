@@ -1,13 +1,13 @@
 {% comment %}
   PDP-sectie: de tweede koper. Vervangt de oude staffelkorting.
-  Zie conversiespec v2 §2.5.
+  Zie conversiespec v2 Â§2.5.
 
   Twee opties, meer niet. Drie en vier stuks stonden er eerder en zagen er
-  berekend uit; niemand koopt vier wekkers. Twee is wél verdedigbaar: partner,
+  berekend uit; niemand koopt vier wekkers. Twee is wÃ©l verdedigbaar: partner,
   huisgenoot of cadeau. Een van de eigen geverifieerde beoordelingen zegt het
   letterlijk: "Ook leuk idee voor een kadootje."
 
-  De tweede optie doet twee dingen tegelijk: hij geeft korting én tikt de
+  De tweede optie doet twee dingen tegelijk: hij geeft korting Ã©n tikt de
   gratisverzendingsdrempel aan. Dat is een echte reden om er twee te nemen, geen
   verzonnen urgentie.
 
@@ -15,9 +15,9 @@
   zonder prijs verstuurd kan worden. Dat kost niets en verlaagt de drempel voor
   de cadeaukoper.
 
-  Het percentage komt uit één themasetting, dezelfde die het koopblok en de
+  Het percentage komt uit Ã©Ã©n themasetting, dezelfde die het koopblok en de
   winkelwagen gebruiken. Drie plekken die hetzelfde bedrag moeten noemen en het
-  uit drie velden halen, gaan een keer uit elkaar lopen. Die setting moet wél
+  uit drie velden halen, gaan een keer uit elkaar lopen. Die setting moet wÃ©l
   gelijk staan aan de automatische korting in de admin: geeft de kassa hem niet,
   dan hoort de pagina hem niet te beloven.
 {% endcomment %}
@@ -53,6 +53,14 @@
   assign pair_total = pair_gross | minus: pair_discount
   assign pair_each = pair_total | divided_by: 2
 
+  comment
+    Het bedrag wordt hier opgemaakt en niet in de `t`-aanroep. Zelfde fout als
+    in de winkelwagen, zelfde gevolg: `| money` werkte op de vertaalde zin in
+    plaats van op het getal, en dan staat er € 0,00. Zie v5 A3 en
+    snippets/nawm-cart-extras.liquid.
+  endcomment
+  assign pair_each_money = pair_each | money
+
   assign pair_free_shipping = false
   if free_from_cents > 0 and pair_total >= free_from_cents
     assign pair_free_shipping = true
@@ -77,7 +85,7 @@
         data-nawm-gift-form
       >
         <input type="hidden" name="form_type" value="product">
-        <input type="hidden" name="utf8" value="✓">
+        <input type="hidden" name="utf8" value="â">
         <input type="hidden" name="id" value="{{ variant.id }}">
 
         <fieldset class="pdp-gift__options">
@@ -104,9 +112,9 @@
               </span>
               <span class="pdp-gift__total nawm-mono">{{ pair_total | money }}</span>
               <span class="pdp-gift__meta nawm-mono">
-                {{- 'nawm.pdp.gift.each' | t: amount: pair_each | money -}}
+                {{- 'nawm.pdp.gift.each' | t: amount: pair_each_money -}}
                 {%- if pair_free_shipping -%}
-                  {{ ' · ' }}{{ 'nawm.pdp.gift.free_shipping' | t }}
+                  {{ ' Â· ' }}{{ 'nawm.pdp.gift.free_shipping' | t }}
                 {%- endif -%}
               </span>
             </span>
@@ -115,7 +123,7 @@
 
         {%- comment -%}
           De cadeauoptie gaat als line item property mee. Hij verschijnt pas bij
-          twee stuks — bij één exemplaar voor jezelf is de vraag onzin.
+          twee stuks â bij Ã©Ã©n exemplaar voor jezelf is de vraag onzin.
         {%- endcomment -%}
         <label class="pdp-gift__checkbox" data-gift-toggle hidden>
           <input type="checkbox" name="properties[Cadeau]" value="ja" data-gift-check>
@@ -291,11 +299,11 @@
 
 {% schema %}
 {
-  "name": "NAWM · PDP cadeau",
+  "name": "NAWM Â· PDP cadeau",
   "settings": [
     {
       "type": "paragraph",
-      "content": "Twee opties, meer niet. Het percentage staat onder Thema-instellingen bij de winkelwagen en geldt voor het koopblok, deze sectie en de winkelwagen tegelijk. Het moet gelijk staan aan de automatische korting onder Kortingen in de admin — als de kassa hem niet geeft, hoort de pagina hem niet te beloven."
+      "content": "Twee opties, meer niet. Het percentage staat onder Thema-instellingen bij de winkelwagen en geldt voor het koopblok, deze sectie en de winkelwagen tegelijk. Het moet gelijk staan aan de automatische korting onder Kortingen in de admin â als de kassa hem niet geeft, hoort de pagina hem niet te beloven."
     },
     { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
     { "type": "textarea", "id": "heading", "label": "Kop" },
@@ -306,6 +314,6 @@
       "info": "Bedrag in hele euro's. Bij dat bedrag verschijnt het label bij de tweede optie."
     }
   ],
-  "presets": [{ "name": "NAWM · PDP cadeau" }]
+  "presets": [{ "name": "NAWM Â· PDP cadeau" }]
 }
 {% endschema %}

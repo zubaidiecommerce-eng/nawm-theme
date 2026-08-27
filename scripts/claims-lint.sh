@@ -32,6 +32,12 @@ STRICT=0
 TARGETS="locales sections snippets blocks templates config content"
 ALLOW="scripts/claims-allow.txt"
 
+# Voor de sleutelcontrole. `layout` staat er wel bij en `locales` niet: het gaat
+# om bestanden die sleutels ópvragen, niet om het bestand dat ze bevat.
+LOCALE="locales/nl.default.json"
+LOCALE_TARGETS="sections snippets blocks templates layout"
+FLATTEN="$(dirname "$0")/locale-flatten.awk"
+
 # De grenspagina verwijst naar wie er wél over gaat en mag daarom benoemen
 # waar wij niet over gaan (§9). Zonder deze uitzondering zou de derde controle
 # hieronder die pagina afkeuren voor het uitvoeren van zijn eigen opdracht.
@@ -122,6 +128,58 @@ if [ -n "$physiology" ]; then
   FAIL=1
 else
   echo "✓ schoon"
+fi
+
+echo
+echo "→ ontbrekende vertaalsleutels"
+# Fix & verfijning v5, punt A4.
+#
+# "Translation missing: nl.nawm.iets" op een gepubliceerde pagina komt niet
+# door een ontbrekende taal maar door een sleutel die een Liquid-bestand
+# opvraagt en die niet in het talenbestand staat. Dat is een fout die je pas
+# ziet als een bezoeker hem ziet, en dus hoort hij hier.
+#
+# Alleen letterlijke sleutels worden gecontroleerd. Sleutels die met `append`
+# worden opgebouwd — `'nawm.gids.pijler.' | append: page.handle` — zijn
+# statisch niet te kennen, en een lint die daarop gokt geeft vals alarm.
+#
+# Een sleutel telt als aanwezig wanneer hijzelf, of zijn `.one`/`.other`,
+# in het bestand staat. Shopify lost meervoudsvormen zo op: `content.item_count`
+# bestaat als object met `one` en `other` eronder.
+if [ -f "$LOCALE" ] && [ -f "$FLATTEN" ] && command -v gawk >/dev/null 2>&1; then
+  have="$(mktemp)"; used="$(mktemp)"; missing="$(mktemp)"
+  gawk -f "$FLATTEN" "$LOCALE" | sort -u > "$have"
+
+  # `[a-zA-Z0-9_.-]` en niet alleen kleine letters: handles als
+  # `wake-up-light` zitten in sleutelpaden. De punt is verplicht — dat filtert
+  # de voorbeelden in doc-blokken weg, zoals `'sleutel' | t`.
+  grep -rhoE "'[a-zA-Z0-9_.-]+'[[:space:]]*\|[[:space:]]*t\b" \
+    --include='*.liquid' $LOCALE_TARGETS 2>/dev/null \
+    | sed -E "s/^'([^']+)'.*/\1/" | grep '\.' | sort -u > "$used"
+
+  while IFS= read -r key; do
+    [ -z "$key" ] && continue
+    if grep -qxF -- "$key" "$have"; then continue; fi
+    if grep -qxF -- "$key.one" "$have"; then continue; fi
+    if grep -qxF -- "$key.other" "$have"; then continue; fi
+    printf '%s\n' "$key" >> "$missing"
+  done < "$used"
+
+  if [ -s "$missing" ]; then
+    while IFS= read -r key; do
+      printf '  %s\n' "$key"
+      grep -rn --include='*.liquid' -- "'$key'" $LOCALE_TARGETS 2>/dev/null | head -2 | sed 's/^/    /'
+    done < "$missing"
+    echo "✖ BLOCKER: sleutel(s) zonder tekst in $LOCALE"
+    echo "  Op de pagina staat dan letterlijk 'Translation missing'."
+    FAIL=1
+  else
+    used_count="$(wc -l < "$used" | tr -d ' ')"
+    echo "✓ $used_count letterlijke sleutels, allemaal aanwezig"
+  fi
+  rm -f "$have" "$used" "$missing"
+else
+  echo "· overgeslagen — gawk of $LOCALE ontbreekt"
 fi
 
 echo

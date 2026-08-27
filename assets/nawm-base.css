@@ -1347,7 +1347,12 @@ html.nawm-pdp .pdp-hero {
   overflow: hidden;
 }
 
+/* De vulling leest zijn breedte uit `--pct`, dat de Liquid inline zet. Dat
+   scheelt niets in het resultaat maar wel in wat je eraan kunt hangen: een
+   gloedpuls bij het bereiken van de drempel heeft het percentage nodig, en een
+   inline `inline-size` is daar niet uit te lezen. */
 .nawm-cart__fill {
+  inline-size: var(--pct, 0%);
   block-size: 100%;
   border-radius: var(--r-pill);
   background: linear-gradient(90deg, var(--nawm-ember), var(--nawm-amber));

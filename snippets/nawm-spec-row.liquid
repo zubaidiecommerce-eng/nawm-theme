@@ -17,7 +17,9 @@
   @param {string} [label] - Al vertaald label. Alleen voor tekst die niet uit locales komt.
   @param {object} [metafield] - Het metafield zelf, niet .value.
   @param {string} field - Sleutel voor docs/OPEN.md, bijvoorbeeld 'weight_g'.
-  @param {string} [kind] - 'text' (standaard), 'bool' of 'list'.
+  @param {string} [kind] - 'text' (standaard), 'bool' of 'list'. Een boolean of
+    een lijst wordt aan het type van het metafield herkend en heeft dit dus niet
+    nodig; geef het alleen mee wanneer de weergave niet uit het type volgt.
   @param {string} [suffix] - Eenheid achter de waarde.
   @param {string} [note] - Wat er geverifieerd moet worden en waaruit.
   @param {boolean} [optional] - Laat de rij weg zolang de waarde ontbreekt, in
@@ -31,6 +33,30 @@
   assign exists = false
   if metafield.type != blank
     assign exists = true
+  endif
+
+  comment
+    Het type van het metafield beslist, niet wat de aanroeper meegeeft. Zie
+    fix & verfijning v5, punt A5.
+
+    Op de homepage stond letterlijk `Display dimbaar: true`. De oorzaak was één
+    letter: de aanroep gaf `kind: 'boolean'` mee terwijl deze snippet `'bool'`
+    verwacht. Dat viel stilzwijgend in de standaardtak, en die drukt de ruwe
+    waarde af — bij een boolean dus `true`.
+
+    Een tikfout die als geldige inhoud rendert is een slechte constructie, niet
+    alleen een slechte aanroep. Daarom leest de soort nu in eerste instantie uit
+    `metafield.type`. Een boolean rendert Ja of Nee, ongeacht wat er meegegeven
+    wordt, en de spelling van `kind` kan het niet meer kapotmaken.
+
+    `kind` blijft bestaan voor de gevallen die je niet aan het type ziet — een
+    lijst die als lijst hoort te lezen, of een getal met een eenheid erachter.
+  endcomment
+  assign row_kind = kind
+  if metafield.type == 'boolean'
+    assign row_kind = 'bool'
+  elsif metafield.type contains 'list.'
+    assign row_kind = 'list'
   endif
 
   comment
@@ -53,7 +79,7 @@
   <dt class="nawm-specs__label">{{ row_label }}</dt>
   <dd class="nawm-specs__value nawm-mono">
     {%- if exists -%}
-      {%- case kind -%}
+      {%- case row_kind -%}
         {%- when 'bool' -%}
           {%- if metafield.value -%}
             {{- 'nawm.common.yes' | t -}}
