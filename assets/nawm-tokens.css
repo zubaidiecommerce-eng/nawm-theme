@@ -28,9 +28,36 @@
   --r-card:14px; --r-pill:999px; --r-data:4px;
   --wrap:1240px; --gutter:clamp(1.25rem,4vw,2.5rem);
 
-  /* motion */
-  --ease:cubic-bezier(.22,1,.36,1);
-  --dur-fast:180ms; --dur:420ms; --dur-slow:900ms;
+  /* motion — fix & verfijning v5, B0.
+
+     Drie regels die alles sturen:
+       1. Feedback binnen 120ms, afronding binnen 420ms. Iets dat later dan
+          120ms begint te reageren voelt traag, hoe mooi de animatie ook is.
+       2. Beweeg licht en opaciteit, niet positie. Maximaal 8px verplaatsing.
+       3. Eén bewegend element per viewport.
+
+     De `--t-*`-namen zijn vanaf v5 de bron. De oudere `--dur-*`-namen staan er
+     nog omdat ze op tientallen plekken in de theme gebruikt worden; waar de
+     waarde gelijk was, wijzen ze nu naar de nieuwe token, zodat er één getal
+     bestaat en niet twee die uit elkaar kunnen lopen.
+
+     `--dur-fast` is bewust níét omgezet. Die staat op 180ms en wordt gebruikt
+     voor hover-overgangen; B0 zet hover op 220ms en directe feedback op 120ms.
+     Alle bestaande gebruiken in één keer naar een van beide verschuiven is een
+     wijziging die je op vijftig plekken moet nakijken, en dat is geen werk voor
+     dezelfde commit als een bugfix. Nieuw werk gebruikt `--t-instant` of
+     `--t-quick`. */
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --ease-in-out:cubic-bezier(.65,0,.35,1);
+  --t-instant:120ms;   /* directe feedback: press, focus */
+  --t-quick:220ms;     /* hover, kleine staatswissels */
+  --t-normal:420ms;    /* reveals, panelen */
+  --t-slow:900ms;      /* licht dat opbouwt */
+
+  --ease:var(--ease-out);
+  --dur-fast:180ms;
+  --dur:var(--t-normal);
+  --dur-slow:var(--t-slow);
   --glow-amber:0 0 80px -20px rgb(242 162 76 / .45);
 }
 

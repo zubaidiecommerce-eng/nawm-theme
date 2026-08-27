@@ -361,6 +361,48 @@ html:not(.nawm-js) .nawm-reveal { opacity: 1; transform: none; }
   .nawm-reveal { opacity: 1; transform: none; transition: none; }
 }
 
+/* ------------------------------------------------------------ het lichtpunt */
+
+/* Fix & verfijning v5, B2. Eén amber lichtpunt reist van de koopknop naar het
+   winkelwagenicoon. De baan wordt in JavaScript getekend omdat hij van twee
+   posities op het scherm afhangt; hier staat alleen hoe het punt eruitziet.
+
+   `position: fixed` en niet absolute: de baan wordt uit viewport-coördinaten
+   berekend, en op een pagina die gescrold is klopt absolute niet.
+
+   De negatieve marge centreert het punt op de coördinaat in plaats van het met
+   zijn linkerbovenhoek daar neer te zetten. */
+.nawm-light-dot {
+  position: fixed;
+  z-index: 90;
+  inline-size: 10px;
+  block-size: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--nawm-amber);
+  box-shadow: 0 0 20px 4px rgb(242 162 76 / .7);
+  pointer-events: none;
+}
+
+/* De puls op het icoon. Eén keer, en terug naar normaal.
+
+   600ms staat hier én als `PULS` in nawm-light-dot.js, dat het attribuut na
+   afloop weghaalt. Wijzig je de ene, wijzig dan de andere — anders blijft het
+   attribuut staan of verdwijnt het halverwege de animatie. */
+[data-pulse] {
+  animation: nawm-cart-pulse 600ms var(--ease-out);
+}
+
+@keyframes nawm-cart-pulse {
+  0%, 100% { transform: scale(1); }
+  40%      { transform: scale(1.16); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-light-dot { display: none; }
+  [data-pulse] { animation: none; }
+}
+
 /* --------------------------------------------------------------------- focus */
 
 html.nawm-page :is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
@@ -1097,12 +1139,23 @@ html.nawm-pdp .pdp-evening {
   display: none;
 }
 
+/* De gloed. Fix & verfijning v5, B1.
+
+   B1 beschrijft een amber knop die bij hover lichter wordt aan de randen. Deze
+   knop is niet amber — het thema koos daar eerder bewust tegen, want een
+   amberen pil met een verloop erover las als een uitverkoopknop. Het idee
+   werkt wel: het merkaccent is amber, en bij hover komt daar licht uit.
+
+   Wat er verandert ten opzichte van v4: de schaduw was een subtiele slagschaduw
+   in de kleur van de knop zelf. Nu is het een amber gloed die van de rand af
+   uitstraalt, en die staat los van de achtergrondverschuiving. */
 @media (hover: hover) {
   .nawm-cta:hover {
     background: color-mix(in oklab, var(--cta-bg) 88%, var(--cta-accent));
     box-shadow:
       inset 0 0 0 1px color-mix(in oklab, var(--cta-accent) 70%, transparent),
-      0 12px 32px -20px var(--cta-bg);
+      0 0 0 1px rgb(242 162 76 / .4),
+      0 0 32px -6px rgb(242 162 76 / .55);
     transform: translateY(-1px);
   }
 
@@ -1126,8 +1179,15 @@ html.nawm-pdp .pdp-evening {
   }
 }
 
+/* De indruk. B1 noemt dit het belangrijkste detail van dat hoofdstuk, en dat
+   klopt: het kost drie regels en het is het verschil tussen een knop en een
+   plaatje. `.985` is klein genoeg om niet als animatie op te vallen en groot
+   genoeg om als indrukken te voelen.
+
+   Op `--t-instant`, want feedback die later dan 120ms begint voelt traag. */
 .nawm-cta:active {
-  transform: translateY(0);
+  transform: scale(.985);
+  transition-duration: var(--t-instant);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1136,7 +1196,8 @@ html.nawm-pdp .pdp-evening {
     transition: none;
   }
 
-  .nawm-cta:hover {
+  .nawm-cta:hover,
+  .nawm-cta:active {
     transform: none;
   }
 }
