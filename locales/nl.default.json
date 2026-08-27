@@ -847,25 +847,14 @@
       "free_shipping": "Gratis verzending vanaf {{ amount }}"
     },
     "popup": {
-      "eyebrow": "{{ percentage }}% korting op je eerste bestelling",
-      "heading": "Word wakker met licht. Begin met korting.",
-      "body": "Schrijf je in en je code staat er meteen. Daarna hoor je alleen van ons als er iets is dat je wilt weten — geen dagelijkse mail.",
       "email_label": "Je e-mailadres",
       "email_placeholder": "jouw@email.nl",
-      "cta": "Stuur mijn kortingscode",
-      "fine_print": "Eén e-mail met je code, daarna hooguit een paar per jaar. Uitschrijven kan met één klik.",
-      "decline": "Nu niet",
-      "close": "Sluiten",
-      "error": "Dat e-mailadres herkennen we niet. Controleer het even.",
-      "success_eyebrow": "Gelukt",
-      "success_heading": "Je code staat klaar.",
-      "success_body": "Gebruik deze code bij het afrekenen voor {{ percentage }}% korting op je eerste bestelling. Hij staat ook in je inbox.",
-      "success_cta": "Verder kijken"
+      "close": "Sluiten"
     },
     "footer": {
-      "newsletter_heading": "Krijg {{ percentage }}% korting op je eerste bestelling",
-      "newsletter_body": "Schrijf je in voor de nieuwsbrief en je kortingscode komt direct binnen. Verder mailen we alleen als er iets te melden is.",
-      "newsletter_label": "Inschrijven"
+      "newsletter_heading": "Gratis verzending op je eerste bestelling",
+      "newsletter_body": "Schrijf je in en je code komt per mail binnen.",
+      "newsletter_label": "Stuur mijn code"
     },
     "gate": {
       "eyebrow": "Handleiding · PDF",

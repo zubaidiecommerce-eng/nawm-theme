@@ -434,10 +434,16 @@ html.nawm-page :is(a, button, input, select, textarea, summary, [tabindex]):focu
   background: var(--nawm-amber);
 }
 
-/* ------------------------------------------------------- nieuwsbriefpopup */
+/* --------------------------------------------------------------- dialogen */
 
 /* Op het native <dialog>: de browser regelt focus, Escape en het inert maken
-   van de achtergrond. Hier staat alleen hoe hij eruitziet. */
+   van de achtergrond. Hier staat alleen hoe hij eruitziet.
+
+   Deze klassen heetten naar de nieuwsbriefpopup, en die is sinds v5 weg — hij
+   claimde de plek van de Shopify Forms-popup. Wat overblijft is de
+   handleidingspoort in snippets/nawm-manual-gate.liquid, die dezelfde vorm
+   gebruikt. De naam `.nawm-popup` blijft staan omdat hernoemen alleen de
+   klassen verplaatst en niets oplost; dit blok is nu van de poort. */
 .nawm-popup {
   width: min(27rem, 100% - var(--gutter) * 2);
   max-height: min(90dvh, 44rem);

@@ -132,10 +132,6 @@
     "support_response_time": "24 uur",
     "free_shipping_threshold_cart": 100,
     "cart_pair_discount": 10,
-    "popup_enabled": true,
-    "popup_delay_seconds": 8,
-    "popup_discount_percentage": 5,
-    "popup_discount_code": "WELKOM5",
     "nawm_self_hosted_fonts": false,
     "sections": {
       "pdp-hero": {
