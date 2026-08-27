@@ -204,16 +204,16 @@ hoeft te scannen.
 ---
 
 <!-- claims-lint:start -->
-_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-27 14:07.  Niet met de hand bijwerken._
+_Gegenereerd door `scripts/claims-lint.sh` op 2026-08-27 14:13.  Niet met de hand bijwerken._
 
 ### Openstaande VERIFY-tokens (36)
 
 ```
 sections/nawm-faq.liquid:115:                  {% render 'nawm-verify',
 sections/nawm-inbox.liquid:104:        {% render 'nawm-verify',
-sections/nawm-specs.liquid:77:            {% render 'nawm-verify',
-sections/nawm-sunrise-demo.liquid:133:                {% render 'nawm-verify',
-sections/nawm-sunrise-demo.liquid:189:                {% render 'nawm-verify',
+sections/nawm-specs.liquid:87:            {% render 'nawm-verify',
+sections/nawm-sunrise-demo.liquid:139:                {% render 'nawm-verify',
+sections/nawm-sunrise-demo.liquid:195:                {% render 'nawm-verify',
 sections/nawm-system.liquid:80:              {% render 'nawm-verify',
 sections/pdp-brand.liquid:56:          {% render 'nawm-verify',
 sections/pdp-brand.liquid:67:          {% render 'nawm-verify',
@@ -239,10 +239,10 @@ sections/pdp-offer.liquid:210:              {% render 'nawm-verify',
 sections/pdp-offer.liquid:220:              {% render 'nawm-verify',
 sections/pdp-offer.liquid:241:            {% render 'nawm-verify',
 sections/pdp-offer.liquid:257:            {{ ' ' }}{% render 'nawm-verify',
-sections/pdp-setup.liquid:79:          {% render 'nawm-verify',
+sections/pdp-setup.liquid:87:          {% render 'nawm-verify',
 sections/pdp-specs.liquid:74:                {% render 'nawm-verify',
 snippets/nawm-price.liquid:29:  {%- render 'nawm-verify',
-snippets/nawm-spec-row.liquid:96:      {% render 'nawm-verify', field: field, note: note %}
+snippets/nawm-spec-row.liquid:104:      {% render 'nawm-verify', field: field, note: note %}
 snippets/pdp-microcopy.liquid:37:    {% render 'nawm-verify',
 snippets/pdp-microcopy.liquid:46:    {{ ' · ' }}{% render 'nawm-verify', field: 'return_days', note: 'retourtermijn in dagen' %}
 ```

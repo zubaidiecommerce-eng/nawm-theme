@@ -327,6 +327,76 @@ html[data-tijdvak="nacht"]   .nawm-hero__eyebrow[data-tijdvak="nacht"] {
   background: color-mix(in oklab, var(--nawm-amber) 18%, transparent);
 }
 
+/* De ring bij het aanraken. Fix & verfijning v5, B5.
+
+   Eén amber ring die vanuit de chip uitzet en vervaagt. Geen ripple die het
+   klikpunt volgt: dat vraagt om JavaScript dat coördinaten meet, en het
+   verschil is bij een pil van 40px hoog niet te zien.
+
+   Op `::after` en niet op `::before`, want `::before` is vrij voor een
+   toekomstige speelknop bij de audio uit v3 §12. */
+.nawm-chip {
+  position: relative;
+  transition:
+    border-color var(--t-quick) var(--ease-out),
+    background-color var(--t-quick) var(--ease-out),
+    transform var(--t-instant) var(--ease-out);
+}
+
+.nawm-chip:active {
+  transform: scale(.97);
+}
+
+.nawm-chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--nawm-amber);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nawm-chip[aria-pressed="true"]::after {
+  animation: nawm-chip-ring 500ms var(--ease-out);
+}
+
+@keyframes nawm-chip-ring {
+  from { opacity: .9; transform: scale(1); }
+  to   { opacity: 0;  transform: scale(1.28); }
+}
+
+/* Een actieve chip houdt een klein pulserend puntje, zodat je zonder kleuren te
+   vergelijken ziet welke aanstaat. Dat is ook het toegankelijke deel: kleur is
+   niet het enige verschil tussen aan en uit. */
+.nawm-chip__dot {
+  inline-size: 6px;
+  block-size: 6px;
+  margin-inline-end: var(--sp-1);
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .25;
+  flex: none;
+}
+
+.nawm-chip[aria-pressed="true"] .nawm-chip__dot {
+  background: var(--nawm-ember);
+  opacity: 1;
+  animation: nawm-chip-dot 2.4s var(--ease-in-out) infinite;
+}
+
+@keyframes nawm-chip-dot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-chip,
+  .nawm-chip:active { transform: none; transition: none; }
+  .nawm-chip[aria-pressed="true"]::after { animation: none; }
+  .nawm-chip[aria-pressed="true"] .nawm-chip__dot { animation: none; }
+}
+
 /* -------------------------------------------------------------------- figure */
 
 .nawm-figure { margin: 0; }
@@ -364,12 +434,19 @@ html[data-tijdvak="nacht"]   .nawm-hero__eyebrow[data-tijdvak="nacht"] {
 
 /* -------------------------------------------------------------------- reveal */
 
+/* B4 stelt twee dingen bij die uit B0 volgen: maximaal 8px verplaatsing — alles
+   wat verder springt oogt goedkoop — en `--t-normal` in plaats van `--t-slow`.
+   900ms was de duur van licht dat opbouwt; een reveal is een afronding en die
+   hoort binnen 420ms klaar te zijn.
+
+   `--reveal-delay` blijft het stagger-mechanisme. De secties zetten hem inline
+   per element, zodat de vertraging bij de inhoud staat en niet bij het script. */
 .nawm-reveal {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(8px);
   transition:
-    opacity var(--dur-slow) var(--ease) var(--reveal-delay, 0ms),
-    transform var(--dur-slow) var(--ease) var(--reveal-delay, 0ms);
+    opacity var(--t-normal) var(--ease-out) var(--reveal-delay, 0ms),
+    transform var(--t-normal) var(--ease-out) var(--reveal-delay, 0ms);
 }
 .nawm-reveal.is-revealed { opacity: 1; transform: none; }
 
@@ -1436,7 +1513,29 @@ html.nawm-pdp .pdp-hero {
   block-size: 100%;
   border-radius: var(--r-pill);
   background: linear-gradient(90deg, var(--nawm-ember), var(--nawm-amber));
-  transition: inline-size var(--dur-slow) var(--ease);
+
+  /* 520ms uit v5, B6. 900ms was de duur van licht dat opbouwt; een balk die
+     naar een nieuwe stand loopt is een staatswissel en hoort sneller klaar te
+     zijn dan de tijd die je erop wacht. */
+  transition: inline-size 520ms var(--ease-out);
+}
+
+/* Eén korte gloedpuls zodra de drempel gehaald is. Alleen bij het bereiken —
+   de balk staat daarna vol en pulst niet door. `data-state` wordt server-side
+   gezet in snippets/nawm-cart-extras.liquid; omdat de sectie na elke mutatie
+   opnieuw rendert, is het element nieuw en start de animatie vanzelf. */
+.nawm-cart__progress[data-state="complete"] .nawm-cart__fill {
+  animation: nawm-cart-glow 700ms var(--ease-out);
+}
+
+@keyframes nawm-cart-glow {
+  0%   { box-shadow: 0 0 0 0 rgb(242 162 76 / 0); }
+  40%  { box-shadow: 0 0 18px 2px rgb(242 162 76 / .65); }
+  100% { box-shadow: 0 0 0 0 rgb(242 162 76 / 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-cart__progress[data-state="complete"] .nawm-cart__fill { animation: none; }
 }
 
 .nawm-cart__upsell {

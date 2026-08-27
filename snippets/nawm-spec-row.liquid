@@ -22,6 +22,9 @@
     nodig; geef het alleen mee wanneer de weergave niet uit het type volgt.
   @param {string} [suffix] - Eenheid achter de waarde.
   @param {string} [note] - Wat er geverifieerd moet worden en waaruit.
+  @param {boolean} [count_up] - Laat de getallen in de waarde oplopen wanneer de
+    rij in beeld komt (v5, B3). Alleen voor de kerngetallen op de homepage; in
+    een specificatietabel van twintig rijen wordt het een kermis.
   @param {boolean} [optional] - Laat de rij weg zolang de waarde ontbreekt, in
     plaats van er een VERIFY-token te tonen. Alleen voor specificaties die de
     fabrikant niet opgeeft: een rij die er niet staat, belooft niets. Voor alles
@@ -77,7 +80,12 @@
 {%- if show_row -%}
 <div class="nawm-specs__row">
   <dt class="nawm-specs__label">{{ row_label }}</dt>
-  <dd class="nawm-specs__value nawm-mono">
+  <dd
+    class="nawm-specs__value nawm-mono"
+    {% if count_up and exists %}
+      data-count-up
+    {% endif %}
+  >
     {%- if exists -%}
       {%- case row_kind -%}
         {%- when 'bool' -%}

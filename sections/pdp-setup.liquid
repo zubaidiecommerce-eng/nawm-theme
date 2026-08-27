@@ -39,7 +39,6 @@
   if heading == blank
     assign heading = 'nawm.pdp.setup.heading' | t
   endif
-
   assign steps = 's1,s2,s3,s4' | split: ','
 %}
 
@@ -57,7 +56,16 @@
           assign k_time = base | append: '.time'
           assign k_title = base | append: '.title'
           assign k_body = base | append: '.body'
-          assign delay = forloop.index0 | times: 60
+          comment
+            Maximaal vijf stappen stagger (v5, B4). Bij zeven stellingen zou de
+            laatste 360ms na de eerste beginnen, en dan wacht je op een lijst in
+            plaats van hem te lezen.
+          endcomment
+          assign step = forloop.index0
+          if step > 4
+            assign step = 4
+          endif
+          assign delay = step | times: 60
         -%}
         <li class="nawm-card pdp-setup__step nawm-lift nawm-reveal" style="--reveal-delay: {{ delay }}ms;">
           <p class="nawm-mono pdp-setup__time">{{ k_time | t }}</p>

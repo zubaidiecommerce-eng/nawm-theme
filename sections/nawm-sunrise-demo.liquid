@@ -125,6 +125,12 @@
                   {% endif %}
                   aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
                 >
+                  {%- comment -%}
+                    Het puntje uit v5, B5. Zonder dit is aan-of-uit alleen aan de
+                    kleur te zien, en dat is voor een deel van de bezoekers geen
+                    verschil.
+                  {%- endcomment -%}
+                  <span class="nawm-chip__dot" aria-hidden="true"></span>
                   {{ sound }}
                 </button>
               {%- endfor -%}
