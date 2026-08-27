@@ -129,7 +129,18 @@
               assign setup = k | t
             endif
           -%}
-          <div class="pdp-mirror__outcome" data-outcome="{{ profile }}">
+          {%- comment -%}
+            `data-setup` draagt de startinstelling als kale waarde. Fix &
+            verfijning v5, C2: die reist mee naar de winkelwagen als line item
+            property, en dan moet hij zonder het label "Zo zou jij hem
+            instellen" beschikbaar zijn. De JS uit de opmaak laten vissen zou
+            werken tot iemand dat label wijzigt.
+          {%- endcomment -%}
+          <div
+            class="pdp-mirror__outcome"
+            data-outcome="{{ profile }}"
+            data-setup="{{ setup | escape }}"
+          >
             <h3 class="pdp-mirror__outcome-title">{{ title }}</h3>
             <p class="pdp-mirror__outcome-body">{{ body }}</p>
 

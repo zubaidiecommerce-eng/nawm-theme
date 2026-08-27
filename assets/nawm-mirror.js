@@ -56,13 +56,35 @@ if (section) {
       }, 1200);
     };
 
+    /* De startinstelling reist mee naar de winkelwagen. Fix & verfijning v5, C2.
+     *
+     * De velden staan in elk koopformulier op de pagina — het koopblok, het
+     * aanbod, de mobiele balk — dus ze worden alle drie bijgewerkt. Welk
+     * formulier de bezoeker uiteindelijk verstuurt, weten we hier niet.
+     *
+     * Leeg zetten wanneer er geen uitkomst is, is net zo belangrijk als vullen:
+     * wie een profiel kiest en zich daarna bedenkt, hoort geen instelling in
+     * zijn bestelling te krijgen die hij heeft weggeklikt. Shopify laat een
+     * lege property vallen, dus leeg is echt weg. */
+    const properties = [...document.querySelectorAll('[data-mirror-property]')];
+
+    const carryProfile = (outcome) => {
+      const setup = outcome?.dataset.setup?.trim() || '';
+      for (const field of properties) field.value = setup;
+    };
+
     const update = () => {
       const touched = section.dataset.touched === 'true';
       const profile = profileOf();
+      let visible = null;
 
       for (const outcome of outcomes) {
-        outcome.hidden = !touched || outcome.dataset.outcome !== profile;
+        const hidden = !touched || outcome.dataset.outcome !== profile;
+        outcome.hidden = hidden;
+        if (!hidden) visible = outcome;
       }
+
+      carryProfile(visible);
 
       if (touched) report(profile);
     };

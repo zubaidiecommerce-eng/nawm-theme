@@ -184,6 +184,25 @@ html.nawm-page .shopify-section:has(.nawm-section) {
 }
 .ctx-dawn .nawm-eyebrow { color: var(--nawm-ember); }
 
+/* De eyebrow per tijdvak. v5, C1.
+
+   Deze regels staan hier en niet in de sectie-stylesheet, en dat is de hele
+   truc: sectie-CSS staat in de body, dus tussen het parsen van de vier
+   alinea's en het laden van die stylesheet zou je ze alle vier zien staan.
+   nawm-base.css staat in de <head> en is er dus eerder dan de HTML.
+
+   `data-tijdvak` wordt in de <head> gezet, vóór de eerste paint. Ontbreekt het
+   attribuut — geen JavaScript — dan valt hij terug op `dag`. */
+.nawm-hero__eyebrow[data-tijdvak] { display: none; }
+
+html:not([data-tijdvak]) .nawm-hero__eyebrow[data-tijdvak="dag"],
+html[data-tijdvak="ochtend"] .nawm-hero__eyebrow[data-tijdvak="ochtend"],
+html[data-tijdvak="dag"]     .nawm-hero__eyebrow[data-tijdvak="dag"],
+html[data-tijdvak="avond"]   .nawm-hero__eyebrow[data-tijdvak="avond"],
+html[data-tijdvak="nacht"]   .nawm-hero__eyebrow[data-tijdvak="nacht"] {
+  display: block;
+}
+
 /* ------------------------------------------------------------------ haarlijn */
 
 .nawm-rule {

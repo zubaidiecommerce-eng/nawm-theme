@@ -10,6 +10,31 @@
   document.documentElement.classList.add('nawm-js');
 
   /*
+   * Het tijdvak. Fix & verfijning v5, C1.
+   *
+   * Dit merk gaat over het moment van de dag, dus laat de pagina weten hoe
+   * laat het is. Het attribuut staat op <html> en niet op de sectie, zodat er
+   * later ook andere dingen aan te hangen zijn — de intensiteit van de
+   * nachtgradiënt bijvoorbeeld.
+   *
+   * Hier in de <head> en niet onderaan de body: het attribuut moet er staan
+   * vóór de eerste paint, anders zie je de dag-variant kort staan en daarna de
+   * juiste. Een flits die je één keer per bezoek ziet is erger dan geen
+   * personalisatie.
+   *
+   * Zonder JavaScript blijft `dag` staan. Dat is de neutrale variant en de
+   * enige die op elk uur klopt.
+   */
+  (function () {
+    var uur = new Date().getHours();
+    var tijdvak = 'dag';
+    if (uur >= 22 || uur < 5) tijdvak = 'nacht';
+    else if (uur < 11) tijdvak = 'ochtend';
+    else if (uur >= 18) tijdvak = 'avond';
+    document.documentElement.setAttribute('data-tijdvak', tijdvak);
+  })();
+
+  /*
    * Vangnet. Zodra `nawm-js` staat, starten reveals op opacity 0 en maakt
    * nawm-reveal.js ze zichtbaar. Laadt dat script niet, dan zou de halve
    * pagina onzichtbaar blijven — een leesbaar artikel is belangrijker dan een

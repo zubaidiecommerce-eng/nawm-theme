@@ -77,7 +77,41 @@
     </div>
 
     <div class="nawm-hero__text">
-      {% render 'nawm-eyebrow', text: eyebrow, class: 'nawm-hero__eyebrow' %}
+      {%- comment -%}
+        De eyebrow weet hoe laat het is. Fix & verfijning v5, C1.
+
+        Alle vier de varianten staan in de HTML; CSS toont er één op grond van
+        `data-tijdvak` op <html>, dat in de <head> wordt gezet — dus vóór de
+        eerste paint, en dus zonder flits. Zonder JavaScript staat er `dag`.
+
+        Waarom niet de tekst met JavaScript vervangen: dan moet je wachten tot
+        het element bestaat, en dat is ná de eerste paint. Vier varianten in de
+        DOM kost een paar honderd bytes en geen enkel moment waarop de bezoeker
+        het verkeerde ziet staan.
+
+        De nachtvariant is de sterkste van de vier. Wie om kwart over één op
+        deze pagina is, is exact de persoon uit de patroonsectie — en hij weet
+        dat.
+
+        Houd dit bij deze ene plek. Op vier plekken wordt het een gimmick; op
+        één plek voelt het alsof de site oplet.
+
+        Staat er een eigen eyebrow in de sectie-instellingen, dan wint die en
+        vervalt de hele constructie. Een handmatig ingevulde tekst hoort niet
+        stilzwijgend door een tijdvak overschreven te worden.
+      {%- endcomment -%}
+      {%- if section.settings.eyebrow != blank -%}
+        {% render 'nawm-eyebrow', text: eyebrow, class: 'nawm-hero__eyebrow' %}
+      {%- else -%}
+        {%- assign tijdvakken = 'ochtend,dag,avond,nacht' | split: ',' -%}
+        {%- for tijdvak in tijdvakken -%}
+          {%- liquid
+            assign k = 'nawm.hero.eyebrow_' | append: tijdvak
+            assign tekst = k | t
+          -%}
+          <p class="nawm-eyebrow nawm-hero__eyebrow" data-tijdvak="{{ tijdvak }}">{{ tekst }}</p>
+        {%- endfor -%}
+      {%- endif -%}
 
       <h1 class="nawm-hero__heading">
         {%- for line in lines -%}
