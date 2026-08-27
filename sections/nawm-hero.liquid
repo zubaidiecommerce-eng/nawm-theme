@@ -111,6 +111,16 @@
           -%}
           <p class="nawm-eyebrow nawm-hero__eyebrow" data-tijdvak="{{ tijdvak }}">{{ tekst }}</p>
         {%- endfor -%}
+
+        {%- comment -%}
+          De terugkerende bezoeker (v5, C3). Deze wint van alle vier de
+          tijdvakken: wie hier al eens was, hoeft niet opnieuw overtuigd te
+          worden van het probleem. `data-terug` wordt door nawm-terug.js op
+          <html> gezet.
+        {%- endcomment -%}
+        <p class="nawm-eyebrow nawm-hero__eyebrow" data-tijdvak="terug">
+          {{- 'nawm.hero.eyebrow_terug' | t -}}
+        </p>
       {%- endif -%}
 
       <h1 class="nawm-hero__heading">
@@ -132,6 +142,21 @@
             {{ ' · ' }}{{ 'nawm.hero.trial' | t: nights: settings.trial_nights }}
           {%- endif -%}
         </p>
+
+        {%- comment -%}
+          Eén regel voor wie terugkomt (v5, C3). Staat in de HTML met `hidden`,
+          zodat de tekst uit het talenbestand komt en niet uit JavaScript —
+          copy hoort niet in een script.
+
+          De mailto is er omdat iemand die voor de tweede keer kijkt meestal
+          ergens over twijfelt. Een adres is dan nuttiger dan nog een argument.
+        {%- endcomment -%}
+        {%- if settings.support_email != blank and settings.return_days > 0 -%}
+          <p class="nawm-small nawm-hero__terug" data-terug-regel hidden>
+            {{ 'nawm.hero.terug_regel' | t: days: settings.return_days }}
+            <a href="mailto:{{ settings.support_email }}">{{ 'nawm.hero.terug_mail' | t }}</a>
+          </p>
+        {%- endif -%}
       </div>
     </div>
   </div>

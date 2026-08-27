@@ -203,6 +203,28 @@ html[data-tijdvak="nacht"]   .nawm-hero__eyebrow[data-tijdvak="nacht"] {
   display: block;
 }
 
+/* De terugkerende bezoeker (v5, C3) wint van het tijdvak. Twee klassen dieper
+   dan de regels hierboven, dus de volgorde in dit bestand doet er niet toe.
+
+   Hier zit één zichtbare wissel in: `data-terug` wordt door een script gezet
+   dat ná de eerste paint draait, dus wie terugkomt ziet heel even de
+   tijdvak-eyebrow. Dat is bewust. Het alternatief is de hele hero verbergen
+   tot JavaScript heeft besloten wie je bent, en dat kost iedereen iets om één
+   groep iets te geven. */
+html[data-terug] .nawm-hero__eyebrow[data-tijdvak] { display: none; }
+html[data-terug] .nawm-hero__eyebrow[data-tijdvak="terug"] { display: block; }
+
+.nawm-hero .nawm-hero__terug {
+  margin-block-start: var(--sp-3);
+  max-width: 46ch;
+}
+
+.nawm-hero__terug a {
+  color: inherit;
+  text-decoration-color: var(--nawm-amber);
+  text-underline-offset: 3px;
+}
+
 /* ------------------------------------------------------------------ haarlijn */
 
 .nawm-rule {

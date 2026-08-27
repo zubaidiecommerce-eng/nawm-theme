@@ -41,6 +41,12 @@
 {%- endcomment -%}
 <script src="{{ 'nawm-count-up.js' | asset_url }}" type="module" fetchpriority="low"></script>
 
+{%- comment -%}
+  De terugkerende bezoeker (v5, C3). Eén tijdstempel in localStorage, geen
+  identiteit en geen gedrag — maar vermeld hem wel in het privacybeleid.
+{%- endcomment -%}
+<script src="{{ 'nawm-terug.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
 <script src="{{ 'nawm-dawn.js' | asset_url }}" type="module"></script>
 <script src="{{ 'nawm-reveal.js' | asset_url }}" type="module" fetchpriority="low"></script>
 <script src="{{ 'nawm-analytics.js' | asset_url }}" type="module" fetchpriority="low"></script>
