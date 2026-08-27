@@ -149,6 +149,27 @@
         <input type="hidden" name="id" ref="variantId" value="{{ product.selected_or_first_available_variant.id }}">
       {%- endunless -%}
 
+      {%- comment -%}
+        De uitkomst van de herkenningssectie reist mee. Fix & verfijning v5, C2.
+
+        De bezoeker vult zijn profiel in en krijgt een aanbevolen
+        startinstelling, en die verdween tot nu toe op het moment dat hij op de
+        knop drukte. Nu staat hij in de winkelwagen, in de bestelbevestiging —
+        Shopify neemt line item properties daar standaard in mee — en in het
+        orderoverzicht, waar je kunt zien welk profiel het meest koopt.
+
+        Leeg blijft leeg: Shopify laat een property met een lege waarde vallen,
+        dus wie de sectie overslaat krijgt geen kale regel onder zijn product.
+
+        Gevuld door assets/nawm-mirror.js.
+      {%- endcomment -%}
+      <input
+        type="hidden"
+        name="properties[Startinstelling]"
+        data-mirror-property
+        value=""
+      >
+
       {%- if show_volume -%}
         <fieldset class="pdp-buy__volume">
           <legend class="nawm-visually-hidden">{{ 'nawm.pdp.gift.qty_label' | t }}</legend>

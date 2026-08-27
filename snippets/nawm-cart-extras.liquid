@@ -24,6 +24,32 @@
   assign threshold = threshold_euros | times: 100
   assign remaining = threshold | minus: cart.total_price
 
+  comment
+    Het bedrag wordt hier opgemaakt en niet in de `t`-aanroep. Dat is de hele
+    fix van v5 A3, en het is geen stijlkwestie.
+
+    Er stond `'nawm.cart.progress' | t: amount: remaining | money`. Liquid past
+    filters van links naar rechts toe op de hele expressie, dus `money` werkte
+    niet op `remaining` maar op de vertaalde zin die er net uit kwam. In het
+    bedrag stond dan `4005` in plaats van `€ 40,05`, en `money` op een zin
+    levert `€ 0,00` op. Precies het gemelde beeld.
+
+    Waarom het bij twee stuks wél leek te werken: dan is `remaining` nul of
+    lager en toont de andere tak `progress_done`, een zin zonder bedrag. De
+    fout was dus alleen zichtbaar bij één stuk.
+
+    Dezelfde fout stond in de upsellregel, met hetzelfde gevolg: `€ 0,00` boven
+    "Maak er twee van".
+
+    De berekening zelf loopt op `cart.total_price` in centen, en de hele sectie
+    wordt na elke mutatie server-side opnieuw gerenderd — zie
+    assets/component-cart-items.js, dat de sectie via morphSection vervangt met
+    verse HTML. Er is dus geen tweede berekening in JavaScript nodig, en die
+    zou hier ook schadelijk zijn: twee plekken die hetzelfde bedrag uitrekenen
+    is precies hoe je ze uit elkaar laat lopen.
+  endcomment
+  assign remaining_money = remaining | money
+
   assign return_days = settings.return_days | times: 1
   assign warranty_years = settings.warranty_years | times: 1
 
@@ -44,19 +70,41 @@
     assign pair_total = pair_gross | minus: pair_off
     assign second_price = pair_total | minus: unit_price
   endif
+  assign second_price_money = second_price | money
 
   assign show_upsell = false
   if cart.item_count == 1 and remaining > 0 and unit_price > 0
     assign show_upsell = true
   endif
+
+  comment
+    Bij een lege winkelwagen verdwijnt de balk in plaats van op nul te staan.
+    Een voortgangsbalk zonder voortgang meet niets en zegt alleen dat je nog
+    €59,95 te gaan hebt terwijl je nog niets hebt gekozen.
+  endcomment
+  assign show_progress = false
+  if threshold > 0 and cart.item_count > 0
+    assign show_progress = true
+  endif
 -%}
 
 <div class="nawm-cart" data-added-text="{{ 'nawm.cart.added' | t | escape }}">
-  {%- if threshold > 0 -%}
-    <div class="nawm-cart__progress" aria-live="polite">
+  {%- if show_progress -%}
+    {%- liquid
+      assign pct = cart.total_price | times: 100 | divided_by: threshold
+      if pct > 100
+        assign pct = 100
+      endif
+
+      assign progress_state = 'complete'
+      if remaining > 0
+        assign progress_state = 'incomplete'
+      endif
+    -%}
+    <div class="nawm-cart__progress" aria-live="polite" data-state="{{ progress_state }}">
       {%- if remaining > 0 -%}
         <p class="nawm-cart__progress-text">
-          {{- 'nawm.cart.progress' | t: amount: remaining | money -}}
+          {{- 'nawm.cart.progress' | t: amount: remaining_money -}}
         </p>
       {%- else -%}
         <p class="nawm-cart__progress-text nawm-cart__progress-text--done">
@@ -64,14 +112,8 @@
         </p>
       {%- endif -%}
 
-      {%- liquid
-        assign pct = cart.total_price | times: 100 | divided_by: threshold
-        if pct > 100
-          assign pct = 100
-        endif
-      -%}
       <div class="nawm-cart__track" aria-hidden="true">
-        <div class="nawm-cart__fill" style="inline-size: {{ pct }}%;"></div>
+        <div class="nawm-cart__fill" style="--pct: {{ pct }}%;"></div>
       </div>
     </div>
   {%- endif -%}
@@ -90,7 +132,7 @@
       <input type="hidden" name="line" value="1">
       <input type="hidden" name="quantity" value="2">
       <p class="nawm-cart__upsell-text">
-        {{- 'nawm.cart.upsell' | t: amount: second_price | money -}}
+        {{- 'nawm.cart.upsell' | t: amount: second_price_money -}}
       </p>
       <button type="submit" class="nawm-cta nawm-cta--ghost" data-nawm-confirm data-nawm-event="cart_upsell_click">
         {{ 'nawm.cart.upsell_cta' | t }}

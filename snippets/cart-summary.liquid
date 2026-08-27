@@ -273,19 +273,48 @@
     </span>
   </button>
 
-  {% if additional_checkout_buttons and settings.show_accelerated_checkout_buttons %}
-    <div
-      class="
-        additional-checkout-buttons
-        {% if accelerated_checkout_buttons_layout == 'vertical' %}additional-checkout-buttons--vertical{% endif %}
-      "
-    >
-      {{ content_for_additional_checkout_buttons }}
-    </div>
-  {% endif %}
+  {%- comment -%}
+    Hier stonden de accelerated checkout-knoppen: Shop Pay, PayPal, Google Pay.
+    Weg sinds v5, punt A7.
+
+    Dat zijn wallets die de hele kassa overslaan, en ze duwen een Nederlandse
+    bezoeker naar PayPal terwijl hij iDEAL wil. iDEAL kan daar niet naast staan:
+    het is geen wallet maar een lokale betaalmethode, en die verschijnt pas in
+    de kassa zelf. Eén knop naar de kassa is dus eerlijker dan drie knoppen die
+    de methode overslaan waar het publiek op rekent.
+
+    Het is bovendien de plek waar ongewenste betaalmethoden binnenkomen zonder
+    dat je ze aanzet.
+
+    De regel eronder vertelt wat er in de volgende stap gebeurt, en de statische
+    logorij uit snippets/pdp-payment-methods.liquid staat er vlak boven — daar
+    staat iDEAL eerst en groter.
+
+    `settings.show_accelerated_checkout_buttons` doet hierdoor niets meer voor
+    de winkelwagen. De instelling blijft van Horizon; zet hem uit om verwarring
+    te voorkomen.
+  {%- endcomment -%}
 </div>
 
+{%- comment -%}
+  Wat er in de volgende stap te kiezen valt. Zonder de wallet-knoppen is dit het
+  enige signaal vóór de kassa dat iDEAL er is, en dat is precies de vraag die
+  een Nederlandse bezoeker op deze knop heeft.
+
+  Controleer onder Instellingen → Betalingen dat iDEAL | Wero daadwerkelijk aan
+  staat. Staat hij uit, dan belooft deze regel iets wat de kassa niet levert —
+  en dat is een Misrepresentation-signaal voor Google Ads.
+{%- endcomment -%}
+<p class="cart-payment-note">{{ 'nawm.cart.ideal_note' | t }}</p>
+
 {% stylesheet %}
+  .cart-payment-note {
+    margin-block-start: var(--margin-xs);
+    text-align: center;
+    font-size: var(--font-size--xs);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-70));
+  }
+
   .cart-actions {
     display: flex;
     flex-direction: column;

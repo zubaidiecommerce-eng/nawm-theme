@@ -67,7 +67,17 @@
     <dl class="nawm-specs__list nawm-specs__list--core nawm-reveal">
       <div class="nawm-specs__row">
         <dt class="nawm-specs__label">{{ 'nawm.specs.rows.sunrise_range' | t }}</dt>
-        <dd class="nawm-specs__value nawm-mono">
+        {%- comment -%}
+          Het bereik telt mee op (v5, B3). Beide getallen tegelijk, want alleen
+          de 60 laten oplopen levert onderweg "10–37" op — een bereik dat niet
+          bestaat. Zie assets/nawm-count-up.js.
+        {%- endcomment -%}
+        <dd
+          class="nawm-specs__value nawm-mono"
+          {% if mf.sunrise_min_minutes.type != blank and mf.sunrise_max_minutes.type != blank %}
+            data-count-up
+          {% endif %}
+        >
           {%- if mf.sunrise_min_minutes.type != blank and mf.sunrise_max_minutes.type != blank -%}
             {{-
               'nawm.specs.sunrise_range_value'
@@ -86,6 +96,7 @@
         label_key: 'nawm.specs.rows.brightness_levels',
         metafield: mf.brightness_levels,
         field: 'brightness_levels',
+        count_up: true,
         note: 'aantal helderheidsniveaus — bevestigen op het verkoopmodel'
       %}
 
@@ -101,7 +112,7 @@
         label_key: 'nawm.specs.rows.display_dimmable',
         metafield: mf.display_dimmable,
         field: 'display_dimmable',
-        kind: 'boolean',
+        kind: 'bool',
         note: 'of het display volledig uit kan'
       %}
     </dl>

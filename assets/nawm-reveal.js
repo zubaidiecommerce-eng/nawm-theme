@@ -22,7 +22,10 @@ if (reduce.matches || !('IntersectionObserver' in window)) {
         io.unobserve(entry.target);
       }
     },
-    { rootMargin: '0px 0px -12% 0px', threshold: 0.1 }
+    /* threshold 0.15 uit B4. Iets later dan 0.1, zodat een element dat net met
+       een randje in beeld schuift niet al begint — dat leest als iets dat
+       gebeurde terwijl je wegkeek. */
+    { rootMargin: '0px 0px -12% 0px', threshold: 0.15 }
   );
 
   const observe = () => {

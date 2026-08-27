@@ -263,9 +263,18 @@
     </div>
 
     {%- comment -%}
-      De nieuwsbriefpopup leunt op de NAWM-tokens, dus hij verschijnt op de twee
-      sjablonen die die tokens laden: de landingspagina en de productpagina.
-      Daar komt vrijwel al het verkeer binnen.
+      Hier stond de nieuwsbriefpopup van het thema. Die is weg, en niet alleen
+      verborgen — zie fix & verfijning v5, punt A1.
+
+      Twee popups die om dezelfde plek vechten leveren er samen nul op. De
+      Shopify Forms-popup verscheen niet omdat deze de positie al claimde, en
+      een formulier dat je met CSS wegzet blijft in de DOM staan en vangt nog
+      steeds inzendingen — dan heb je een verborgen tweede lijst.
+
+      De inschrijving loopt nu via Shopify Forms en via het footerformulier.
+      Verschijnt de Forms-popup nog steeds niet, dan ligt het aan de
+      weergaveregels in Forms zelf (scrolldiepte of frequentie) en niet meer aan
+      dit thema.
     {%- endcomment -%}
     {%- if nawm_page -%}
       {% render 'nawm-newsletter-popup' %}

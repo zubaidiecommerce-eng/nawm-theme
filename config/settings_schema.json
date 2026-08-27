@@ -2463,48 +2463,11 @@
       },
       {
         "type": "header",
-        "content": "Nieuwsbriefpopup"
+        "content": "Nieuwsbrief"
       },
       {
         "type": "paragraph",
-        "content": "De popup verschijnt één keer per bezoeker en nooit op de winkelwagen of de kassa. De kortingscode moet ook echt bestaan onder Kortingen — anders belooft de popup iets wat bij het afrekenen niet werkt."
-      },
-      {
-        "type": "checkbox",
-        "id": "popup_enabled",
-        "label": "Popup tonen",
-        "default": true
-      },
-      {
-        "type": "range",
-        "id": "popup_delay_seconds",
-        "label": "Verschijnt na",
-        "min": 0,
-        "max": 30,
-        "step": 1,
-        "unit": "s",
-        "default": 8,
-        "info": "Meteen tonen werkt averechts: wie nog niet weet wat hij ziet, heeft niets aan een korting.",
-        "visible_if": "{{ settings.popup_enabled }}"
-      },
-      {
-        "type": "range",
-        "id": "popup_discount_percentage",
-        "label": "Kortingspercentage",
-        "min": 0,
-        "max": 25,
-        "step": 1,
-        "unit": "%",
-        "default": 5,
-        "visible_if": "{{ settings.popup_enabled }}"
-      },
-      {
-        "type": "text",
-        "id": "popup_discount_code",
-        "label": "Kortingscode",
-        "default": "WELKOM5",
-        "info": "Exact zoals de code onder Kortingen heet.",
-        "visible_if": "{{ settings.popup_enabled }}"
+        "content": "De popup van het thema is weg (v5, A1). Twee popups die om dezelfde plek vechten leveren er samen nul op: die van het thema claimde de positie en de Shopify Forms-popup verscheen niet. Inschrijven loopt nu via Forms en via het footerformulier. De weergaveregels — scrolldiepte, frequentie — stel je in Forms in, niet hier."
       },
       {
         "type": "header",

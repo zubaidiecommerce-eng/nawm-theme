@@ -214,6 +214,47 @@ html.nawm-page .shopify-section:has(.nawm-section) {
 }
 .ctx-dawn .nawm-eyebrow { color: var(--nawm-ember); }
 
+/* De eyebrow per tijdvak. v5, C1.
+
+   Deze regels staan hier en niet in de sectie-stylesheet, en dat is de hele
+   truc: sectie-CSS staat in de body, dus tussen het parsen van de vier
+   alinea's en het laden van die stylesheet zou je ze alle vier zien staan.
+   nawm-base.css staat in de <head> en is er dus eerder dan de HTML.
+
+   `data-tijdvak` wordt in de <head> gezet, vóór de eerste paint. Ontbreekt het
+   attribuut — geen JavaScript — dan valt hij terug op `dag`. */
+.nawm-hero__eyebrow[data-tijdvak] { display: none; }
+
+html:not([data-tijdvak]) .nawm-hero__eyebrow[data-tijdvak="dag"],
+html[data-tijdvak="ochtend"] .nawm-hero__eyebrow[data-tijdvak="ochtend"],
+html[data-tijdvak="dag"]     .nawm-hero__eyebrow[data-tijdvak="dag"],
+html[data-tijdvak="avond"]   .nawm-hero__eyebrow[data-tijdvak="avond"],
+html[data-tijdvak="nacht"]   .nawm-hero__eyebrow[data-tijdvak="nacht"] {
+  display: block;
+}
+
+/* De terugkerende bezoeker (v5, C3) wint van het tijdvak. Twee klassen dieper
+   dan de regels hierboven, dus de volgorde in dit bestand doet er niet toe.
+
+   Hier zit één zichtbare wissel in: `data-terug` wordt door een script gezet
+   dat ná de eerste paint draait, dus wie terugkomt ziet heel even de
+   tijdvak-eyebrow. Dat is bewust. Het alternatief is de hele hero verbergen
+   tot JavaScript heeft besloten wie je bent, en dat kost iedereen iets om één
+   groep iets te geven. */
+html[data-terug] .nawm-hero__eyebrow[data-tijdvak] { display: none; }
+html[data-terug] .nawm-hero__eyebrow[data-tijdvak="terug"] { display: block; }
+
+.nawm-hero .nawm-hero__terug {
+  margin-block-start: var(--sp-3);
+  max-width: 46ch;
+}
+
+.nawm-hero__terug a {
+  color: inherit;
+  text-decoration-color: var(--nawm-amber);
+  text-underline-offset: 3px;
+}
+
 /* ------------------------------------------------------------------ haarlijn */
 
 .nawm-rule {
@@ -340,6 +381,76 @@ html.nawm-page .shopify-section:has(.nawm-section) {
   background: color-mix(in oklab, var(--nawm-amber) 18%, transparent);
 }
 
+/* De ring bij het aanraken. Fix & verfijning v5, B5.
+
+   Eén amber ring die vanuit de chip uitzet en vervaagt. Geen ripple die het
+   klikpunt volgt: dat vraagt om JavaScript dat coördinaten meet, en het
+   verschil is bij een pil van 40px hoog niet te zien.
+
+   Op `::after` en niet op `::before`, want `::before` is vrij voor een
+   toekomstige speelknop bij de audio uit v3 §12. */
+.nawm-chip {
+  position: relative;
+  transition:
+    border-color var(--t-quick) var(--ease-out),
+    background-color var(--t-quick) var(--ease-out),
+    transform var(--t-instant) var(--ease-out);
+}
+
+.nawm-chip:active {
+  transform: scale(.97);
+}
+
+.nawm-chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid var(--nawm-amber);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nawm-chip[aria-pressed="true"]::after {
+  animation: nawm-chip-ring 500ms var(--ease-out);
+}
+
+@keyframes nawm-chip-ring {
+  from { opacity: .9; transform: scale(1); }
+  to   { opacity: 0;  transform: scale(1.28); }
+}
+
+/* Een actieve chip houdt een klein pulserend puntje, zodat je zonder kleuren te
+   vergelijken ziet welke aanstaat. Dat is ook het toegankelijke deel: kleur is
+   niet het enige verschil tussen aan en uit. */
+.nawm-chip__dot {
+  inline-size: 6px;
+  block-size: 6px;
+  margin-inline-end: var(--sp-1);
+  border-radius: 50%;
+  background: currentColor;
+  opacity: .25;
+  flex: none;
+}
+
+.nawm-chip[aria-pressed="true"] .nawm-chip__dot {
+  background: var(--nawm-ember);
+  opacity: 1;
+  animation: nawm-chip-dot 2.4s var(--ease-in-out) infinite;
+}
+
+@keyframes nawm-chip-dot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: .45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-chip,
+  .nawm-chip:active { transform: none; transition: none; }
+  .nawm-chip[aria-pressed="true"]::after { animation: none; }
+  .nawm-chip[aria-pressed="true"] .nawm-chip__dot { animation: none; }
+}
+
 /* -------------------------------------------------------------------- figure */
 
 .nawm-figure { margin: 0; }
@@ -377,12 +488,19 @@ html.nawm-page .shopify-section:has(.nawm-section) {
 
 /* -------------------------------------------------------------------- reveal */
 
+/* B4 stelt twee dingen bij die uit B0 volgen: maximaal 8px verplaatsing — alles
+   wat verder springt oogt goedkoop — en `--t-normal` in plaats van `--t-slow`.
+   900ms was de duur van licht dat opbouwt; een reveal is een afronding en die
+   hoort binnen 420ms klaar te zijn.
+
+   `--reveal-delay` blijft het stagger-mechanisme. De secties zetten hem inline
+   per element, zodat de vertraging bij de inhoud staat en niet bij het script. */
 .nawm-reveal {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(8px);
   transition:
-    opacity var(--dur-slow) var(--ease) var(--reveal-delay, 0ms),
-    transform var(--dur-slow) var(--ease) var(--reveal-delay, 0ms);
+    opacity var(--t-normal) var(--ease-out) var(--reveal-delay, 0ms),
+    transform var(--t-normal) var(--ease-out) var(--reveal-delay, 0ms);
 }
 .nawm-reveal.is-revealed { opacity: 1; transform: none; }
 
@@ -391,6 +509,48 @@ html:not(.nawm-js) .nawm-reveal { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .nawm-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ------------------------------------------------------------ het lichtpunt */
+
+/* Fix & verfijning v5, B2. Eén amber lichtpunt reist van de koopknop naar het
+   winkelwagenicoon. De baan wordt in JavaScript getekend omdat hij van twee
+   posities op het scherm afhangt; hier staat alleen hoe het punt eruitziet.
+
+   `position: fixed` en niet absolute: de baan wordt uit viewport-coördinaten
+   berekend, en op een pagina die gescrold is klopt absolute niet.
+
+   De negatieve marge centreert het punt op de coördinaat in plaats van het met
+   zijn linkerbovenhoek daar neer te zetten. */
+.nawm-light-dot {
+  position: fixed;
+  z-index: 90;
+  inline-size: 10px;
+  block-size: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--nawm-amber);
+  box-shadow: 0 0 20px 4px rgb(242 162 76 / .7);
+  pointer-events: none;
+}
+
+/* De puls op het icoon. Eén keer, en terug naar normaal.
+
+   600ms staat hier én als `PULS` in nawm-light-dot.js, dat het attribuut na
+   afloop weghaalt. Wijzig je de ene, wijzig dan de andere — anders blijft het
+   attribuut staan of verdwijnt het halverwege de animatie. */
+[data-pulse] {
+  animation: nawm-cart-pulse 600ms var(--ease-out);
+}
+
+@keyframes nawm-cart-pulse {
+  0%, 100% { transform: scale(1); }
+  40%      { transform: scale(1.16); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-light-dot { display: none; }
+  [data-pulse] { animation: none; }
 }
 
 /* --------------------------------------------------------------------- focus */
@@ -466,10 +626,16 @@ html.nawm-page :is(a, button, input, select, textarea, summary, [tabindex]):focu
   background: var(--nawm-amber);
 }
 
-/* ------------------------------------------------------- nieuwsbriefpopup */
+/* --------------------------------------------------------------- dialogen */
 
 /* Op het native <dialog>: de browser regelt focus, Escape en het inert maken
-   van de achtergrond. Hier staat alleen hoe hij eruitziet. */
+   van de achtergrond. Hier staat alleen hoe hij eruitziet.
+
+   Deze klassen heetten naar de nieuwsbriefpopup, en die is sinds v5 weg — hij
+   claimde de plek van de Shopify Forms-popup. Wat overblijft is de
+   handleidingspoort in snippets/nawm-manual-gate.liquid, die dezelfde vorm
+   gebruikt. De naam `.nawm-popup` blijft staan omdat hernoemen alleen de
+   klassen verplaatst en niets oplost; dit blok is nu van de poort. */
 .nawm-popup {
   width: min(27rem, 100% - var(--gutter) * 2);
   max-height: min(90dvh, 44rem);
@@ -1123,12 +1289,23 @@ html.nawm-pdp .pdp-evening {
   display: none;
 }
 
+/* De gloed. Fix & verfijning v5, B1.
+
+   B1 beschrijft een amber knop die bij hover lichter wordt aan de randen. Deze
+   knop is niet amber — het thema koos daar eerder bewust tegen, want een
+   amberen pil met een verloop erover las als een uitverkoopknop. Het idee
+   werkt wel: het merkaccent is amber, en bij hover komt daar licht uit.
+
+   Wat er verandert ten opzichte van v4: de schaduw was een subtiele slagschaduw
+   in de kleur van de knop zelf. Nu is het een amber gloed die van de rand af
+   uitstraalt, en die staat los van de achtergrondverschuiving. */
 @media (hover: hover) {
   .nawm-cta:hover {
     background: color-mix(in oklab, var(--cta-bg) 88%, var(--cta-accent));
     box-shadow:
       inset 0 0 0 1px color-mix(in oklab, var(--cta-accent) 70%, transparent),
-      0 12px 32px -20px var(--cta-bg);
+      0 0 0 1px rgb(242 162 76 / .4),
+      0 0 32px -6px rgb(242 162 76 / .55);
     transform: translateY(-1px);
   }
 
@@ -1152,8 +1329,15 @@ html.nawm-pdp .pdp-evening {
   }
 }
 
+/* De indruk. B1 noemt dit het belangrijkste detail van dat hoofdstuk, en dat
+   klopt: het kost drie regels en het is het verschil tussen een knop en een
+   plaatje. `.985` is klein genoeg om niet als animatie op te vallen en groot
+   genoeg om als indrukken te voelen.
+
+   Op `--t-instant`, want feedback die later dan 120ms begint voelt traag. */
 .nawm-cta:active {
-  transform: translateY(0);
+  transform: scale(.985);
+  transition-duration: var(--t-instant);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1162,7 +1346,8 @@ html.nawm-pdp .pdp-evening {
     transition: none;
   }
 
-  .nawm-cta:hover {
+  .nawm-cta:hover,
+  .nawm-cta:active {
     transform: none;
   }
 }
@@ -1377,11 +1562,38 @@ html.nawm-pdp .pdp-hero {
   overflow: hidden;
 }
 
+/* De vulling leest zijn breedte uit `--pct`, dat de Liquid inline zet. Dat
+   scheelt niets in het resultaat maar wel in wat je eraan kunt hangen: een
+   gloedpuls bij het bereiken van de drempel heeft het percentage nodig, en een
+   inline `inline-size` is daar niet uit te lezen. */
 .nawm-cart__fill {
+  inline-size: var(--pct, 0%);
   block-size: 100%;
   border-radius: var(--r-pill);
   background: linear-gradient(90deg, var(--nawm-ember), var(--nawm-amber));
-  transition: inline-size var(--dur-slow) var(--ease);
+
+  /* 520ms uit v5, B6. 900ms was de duur van licht dat opbouwt; een balk die
+     naar een nieuwe stand loopt is een staatswissel en hoort sneller klaar te
+     zijn dan de tijd die je erop wacht. */
+  transition: inline-size 520ms var(--ease-out);
+}
+
+/* Eén korte gloedpuls zodra de drempel gehaald is. Alleen bij het bereiken —
+   de balk staat daarna vol en pulst niet door. `data-state` wordt server-side
+   gezet in snippets/nawm-cart-extras.liquid; omdat de sectie na elke mutatie
+   opnieuw rendert, is het element nieuw en start de animatie vanzelf. */
+.nawm-cart__progress[data-state="complete"] .nawm-cart__fill {
+  animation: nawm-cart-glow 700ms var(--ease-out);
+}
+
+@keyframes nawm-cart-glow {
+  0%   { box-shadow: 0 0 0 0 rgb(242 162 76 / 0); }
+  40%  { box-shadow: 0 0 18px 2px rgb(242 162 76 / .65); }
+  100% { box-shadow: 0 0 0 0 rgb(242 162 76 / 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nawm-cart__progress[data-state="complete"] .nawm-cart__fill { animation: none; }
 }
 
 .nawm-cart__upsell {
